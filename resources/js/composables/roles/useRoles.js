@@ -9,7 +9,7 @@ const oRole = ref({
 });
 
 export const useRoles = () => {
-    const setProyecto = (item = null) => {
+    const setRole = (item = null) => {
         if (item) {
             oRole.value.id = item.id;
             oRole.value.nombre = item.nombre;
@@ -21,7 +21,7 @@ export const useRoles = () => {
         return false;
     };
 
-    const limpiarProyecto = () => {
+    const limpiarRole = () => {
         oRole.value.id = 0;
         oRole.value.nombre = "";
         oRole.value.permisos = "";
@@ -33,7 +33,7 @@ export const useRoles = () => {
 
     return {
         oRole,
-        setProyecto,
-        limpiarProyecto,
+        setRole,
+        limpiarRole,
     };
 };

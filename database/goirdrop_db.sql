@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 07-02-2025 a las 17:10:04
+-- Tiempo de generación: 08-02-2025 a las 18:05:38
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -123,14 +123,24 @@ CREATE TABLE `historial_accions` (
   `user_id` bigint UNSIGNED NOT NULL,
   `accion` varchar(155) COLLATE utf8mb4_unicode_ci NOT NULL,
   `descripcion` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `datos_original` text COLLATE utf8mb4_unicode_ci,
-  `datos_nuevo` text COLLATE utf8mb4_unicode_ci,
+  `datos_original` json DEFAULT NULL,
+  `datos_nuevo` json DEFAULT NULL,
   `modulo` varchar(155) COLLATE utf8mb4_unicode_ci NOT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `historial_accions`
+--
+
+INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `datos_original`, `datos_nuevo`, `modulo`, `fecha`, `hora`, `created_at`, `updated_at`) VALUES
+(1, 1, 'CREACIÓN', 'EL USUARIO admin@admin.com REGISTRO UN ROLE', '{\"id\": 13, \"nombre\": \"ADMINISTRADOR\", \"created_at\": \"2025-02-08T17:41:05.000000Z\", \"updated_at\": \"2025-02-08T17:41:05.000000Z\"}', NULL, 'ROLES', '2025-02-08', '13:41:05', '2025-02-08 17:41:05', '2025-02-08 17:41:05'),
+(2, 1, 'CREACIÓN', 'EL USUARIO admin@admin.com REGISTRO UN ROLE', '{\"id\": 14, \"nombre\": \"AUXILIAR\", \"created_at\": \"2025-02-08T17:41:11.000000Z\", \"updated_at\": \"2025-02-08T17:41:11.000000Z\"}', NULL, 'ROLES', '2025-02-08', '13:41:11', '2025-02-08 17:41:11', '2025-02-08 17:41:11'),
+(3, 1, 'ELIMINACIÓN', 'EL USUARIO admin@admin.com ELIMINÓ UN ROLE', '{\"id\": 14, \"nombre\": \"AUXILIAR\", \"permisos\": 0, \"usuarios\": 1, \"created_at\": \"2025-02-08T17:41:11.000000Z\", \"updated_at\": \"2025-02-08T17:41:11.000000Z\"}', NULL, 'ROLES', '2025-02-08', '14:04:34', '2025-02-08 18:04:34', '2025-02-08 18:04:34'),
+(4, 1, 'ELIMINACIÓN', 'EL USUARIO admin@admin.com ELIMINÓ UN ROLE', '{\"id\": 13, \"nombre\": \"ADMINISTRADOR\", \"permisos\": 0, \"usuarios\": 1, \"created_at\": \"2025-02-08T17:41:05.000000Z\", \"updated_at\": \"2025-02-08T17:41:05.000000Z\"}', NULL, 'ROLES', '2025-02-08', '14:04:59', '2025-02-08 18:04:59', '2025-02-08 18:04:59');
 
 -- --------------------------------------------------------
 
@@ -184,6 +194,55 @@ CREATE TABLE `modulos` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `modulos`
+--
+
+INSERT INTO `modulos` (`id`, `modulo`, `nombre`, `accion`, `descripcion`, `created_at`, `updated_at`) VALUES
+(1, 'Gestión de usuarios', 'usuarios.index', 'VER', 'VER LA LISTA DE USUARIOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(2, 'Gestión de usuarios', 'usuarios.create', 'CREAR', 'CREAR USUARIOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(3, 'Gestión de usuarios', 'usuarios.edit', 'EDITAR', 'EDITAR USUARIOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(4, 'Gestión de usuarios', 'usuarios.destroy', 'ELIMINAR', 'ELIMINAR USUARIOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(5, 'Roles y Permisos', 'roles.index', 'VER', 'VER LA LISTA DE ROLES Y PERMISOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(6, 'Roles y Permisos', 'roles.create', 'CREAR', 'CREAR ROLES Y PERMISOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(7, 'Roles y Permisos', 'roles.edit', 'EDITAR', 'EDITAR ROLES Y PERMISOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(8, 'Roles y Permisos', 'roles.destroy', 'ELIMINAR', 'ELIMINAR ROLES Y PERMISOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(9, 'Configuración', 'configuracions.index', 'VER', 'VER INFORMACIÓN DE LA CONFIGURACIÓN DEL SISTEMA', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(10, 'Configuración', 'configuracions.edit', 'EDITAR', 'EDITAR LA CONFIGURACIÓN DEL SISTEMA', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(11, 'Configuración de pagos', 'configuracion_pagos.index', 'VER', 'VER LA LISTA DE CONFIGURACIÓN DE PAGOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(12, 'Configuración de pagos', 'configuracion_pagos.create', 'CREAR', 'CREAR CONFIGURACIÓN DE PAGOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(13, 'Configuración de pagos', 'configuracion_pagos.edit', 'EDITAR', 'EDITAR CONFIGURACIÓN DE PAGOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(14, 'Configuración de pagos', 'configuracion_pagos.destroy', 'ELIMINAR', 'ELIMINAR CONFIGURACIÓN DE PAGOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(15, 'Categorías', 'categorias.index', 'VER', 'VER LA LISTA DE CATEGORIAS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(16, 'Categorías', 'categorias.create', 'CREAR', 'CREAR CATEGORIAS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(17, 'Categorías', 'categorias.edit', 'EDITAR', 'EDITAR CATEGORIAS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(18, 'Categorías', 'categorias.destroy', 'ELIMINAR', 'ELIMINAR CATEGORIAS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(19, 'Productos', 'productos.index', 'VER', 'VER LA LISTA DE PRODUCTOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(20, 'Productos', 'productos.create', 'CREAR', 'CREAR PRODUCTOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(21, 'Productos', 'productos.edit', 'EDITAR', 'EDITAR PRODUCTOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(22, 'Productos', 'productos.destroy', 'ELIMINAR', 'ELIMINAR PRODUCTOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(23, 'Orden de venta', 'orden_ventas.index', 'VER', 'VER LA LISTA DE ORDENES DE VENTA', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(24, 'Orden de venta', 'orden_ventas.todos', 'TODAS LAS ORDENES DE VENTA', 'VER TODAS LAS ORDENES DE VENTA', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(25, 'Orden de venta', 'orden_ventas.confirmar', 'CONFIRMAR', 'CONFIRMAR ORDENES DE VENTA', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(26, 'Orden de venta', 'orden_ventas.create', 'CREAR', 'CREAR ORDEN DE VENTA', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(27, 'Orden de venta', 'orden_ventas.edit', 'EDITAR', 'EDITAR ORDEN DE VENTA', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(28, 'Orden de venta', 'orden_ventas.destroy', 'ELIMINAR', 'ELIMINAR ORDEN DE VENTA', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(29, 'Solicitud de productos', 'solicitud_productos.index', 'VER', 'VER LA LISTA DE SOLICITUDES DE PRODUCTOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(30, 'Solicitud de productos', 'solicitud_productos.todos', 'TODAS LAS SOLICITUDES DE PRODUCTOS', 'VER TODAS LAS SOLICITUDES DE PRODUCTOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(31, 'Solicitud de productos', 'solicitud_productos.confirmar', 'VERIFICAR', 'VERIFICAR SOLICITUDES DE PRODUCTOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(32, 'Solicitud de productos', 'solicitud_productos.seguimiento', 'SEGUIMIENTO', 'SEGUIMIENTO DE SOLICITUDES DE PRODUCTOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(33, 'Solicitud de productos', 'solicitud_productos.create', 'CREAR', 'CREAR SOLICITUD DE PRODUCTO', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(34, 'Solicitud de productos', 'solicitud_productos.edit', 'EDITAR', 'EDITAR SOLICITUD DE PRODUCTO', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(35, 'Solicitud de productos', 'solicitud_productos.destroy', 'ELIMINAR', 'ELIMINAR SOLICITUD DE PRODUCTO', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(36, 'Reportes', 'reportes.usuarios', 'REPORTE LISTA DE USUARIOS', 'GENERAR REPORTES DE LISTA DE USUARIOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(37, 'Reportes', 'reportes.productos', 'REPORTE PRODUCTOS', 'GENERAR REPORTES DE PRODUCTOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(38, 'Reportes', 'reportes.orden_ventas', 'REPORTE ORDENES DE VENTAS', 'GENERAR REPORTES DE ORDENES DE VENTAS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(39, 'Reportes', 'reportes.solicitud_productos', 'REPORTE DE SOLICITUD DE PRODUCTOS', 'GENERAR REPORTES DE SOLICITUD DE PRODUCTOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(40, 'Reportes', 'reportes.seguimiento_solicituds', 'REPORTE DE SEGUIMIENTO DE SOLICITUD DE PRODUCTOS', 'GENERAR REPORTES DE SEGUIMIENTO DE SOLICITUD DE PRODUCTOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(41, 'Reportes', 'reportes.g_orden_ventas', 'REPORTE GRÁFICO DE ORDENES DE VENTAS', 'GENERAR REPORTE GRÁFICO DE ORDENES DE VENTAS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(42, 'Reportes', 'reportes.g_solicitud_productos', 'REPORTE GRÁFICO DE SOLICITUD DE PRODUCTOS', 'GENERAR REPORTE GRÁFICO DE SOLICITUD DE PRODUCTOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16'),
+(43, 'Reportes', 'reportes.g_seguimiento_productos', 'REPORTE GRÁFICO DE SEGUIMIENTO DE SOLICITUD DE PRODUCTOS', 'GENERAR REPORTE GRÁFICO DE SEGUIMIENTO DE SOLICITUD DE PRODUCTOS', '2025-02-08 17:55:16', '2025-02-08 17:55:16');
 
 -- --------------------------------------------------------
 
@@ -590,7 +649,7 @@ ALTER TABLE `detalle_ventas`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `migrations`
@@ -602,7 +661,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT de la tabla `modulos`
 --
 ALTER TABLE `modulos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT de la tabla `notificacions`
@@ -620,7 +679,7 @@ ALTER TABLE `orden_ventas`
 -- AUTO_INCREMENT de la tabla `permisos`
 --
 ALTER TABLE `permisos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`

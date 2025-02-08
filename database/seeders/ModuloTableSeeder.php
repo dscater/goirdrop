@@ -1,9 +1,7 @@
-<<?php
+<?php
 
 namespace Database\Seeders;
-
 use App\Models\Modulo;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ModuloTableSeeder extends Seeder
@@ -180,14 +178,14 @@ class ModuloTableSeeder extends Seeder
             "accion" => "VER",
             "descripcion" => "VER LA LISTA DE ORDENES DE VENTA"
         ]);
-        
+
         Modulo::create([
             "modulo" => "Orden de venta",
             "nombre" => "orden_ventas.todos",
             "accion" => "TODAS LAS ORDENES DE VENTA",
             "descripcion" => "VER TODAS LAS ORDENES DE VENTA"
         ]);
-        
+
         Modulo::create([
             "modulo" => "Orden de venta",
             "nombre" => "orden_ventas.confirmar",
@@ -223,21 +221,21 @@ class ModuloTableSeeder extends Seeder
             "accion" => "VER",
             "descripcion" => "VER LA LISTA DE SOLICITUDES DE PRODUCTOS"
         ]);
-        
+
         Modulo::create([
             "modulo" => "Solicitud de productos",
             "nombre" => "solicitud_productos.todos",
             "accion" => "TODAS LAS SOLICITUDES DE PRODUCTOS",
             "descripcion" => "VER TODAS LAS SOLICITUDES DE PRODUCTOS"
         ]);
-        
+
         Modulo::create([
             "modulo" => "Solicitud de productos",
             "nombre" => "solicitud_productos.confirmar",
             "accion" => "VERIFICAR",
             "descripcion" => "VERIFICAR SOLICITUDES DE PRODUCTOS"
         ]);
-        
+
         Modulo::create([
             "modulo" => "Solicitud de productos",
             "nombre" => "solicitud_productos.seguimiento",
@@ -265,7 +263,7 @@ class ModuloTableSeeder extends Seeder
             "accion" => "ELIMINAR",
             "descripcion" => "ELIMINAR SOLICITUD DE PRODUCTO"
         ]);
-        
+
         // REPORTES
         Modulo::create([
             "modulo" => "Reportes",
@@ -280,42 +278,42 @@ class ModuloTableSeeder extends Seeder
             "accion" => "REPORTE PRODUCTOS",
             "descripcion" => "GENERAR REPORTES DE PRODUCTOS"
         ]);
-        
+
         Modulo::create([
             "modulo" => "Reportes",
             "nombre" => "reportes.orden_ventas",
             "accion" => "REPORTE ORDENES DE VENTAS",
             "descripcion" => "GENERAR REPORTES DE ORDENES DE VENTAS"
         ]);
-        
+
         Modulo::create([
             "modulo" => "Reportes",
             "nombre" => "reportes.solicitud_productos",
             "accion" => "REPORTE DE SOLICITUD DE PRODUCTOS",
             "descripcion" => "GENERAR REPORTES DE SOLICITUD DE PRODUCTOS"
         ]);
-        
+
         Modulo::create([
             "modulo" => "Reportes",
             "nombre" => "reportes.seguimiento_solicituds",
             "accion" => "REPORTE DE SEGUIMIENTO DE SOLICITUD DE PRODUCTOS",
             "descripcion" => "GENERAR REPORTES DE SEGUIMIENTO DE SOLICITUD DE PRODUCTOS"
         ]);
-        
+
         Modulo::create([
             "modulo" => "Reportes",
             "nombre" => "reportes.g_orden_ventas",
             "accion" => "REPORTE GRÁFICO DE ORDENES DE VENTAS",
             "descripcion" => "GENERAR REPORTE GRÁFICO DE ORDENES DE VENTAS"
         ]);
-        
+
         Modulo::create([
             "modulo" => "Reportes",
             "nombre" => "reportes.g_solicitud_productos",
             "accion" => "REPORTE GRÁFICO DE SOLICITUD DE PRODUCTOS",
             "descripcion" => "GENERAR REPORTE GRÁFICO DE SOLICITUD DE PRODUCTOS"
         ]);
-        
+
         Modulo::create([
             "modulo" => "Reportes",
             "nombre" => "reportes.g_seguimiento_productos",

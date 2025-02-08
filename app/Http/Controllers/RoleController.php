@@ -2,74 +2,69 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RoleStoreRequest;
+use App\Http\Requests\RoleUpdateRequest;
 use App\Models\HistorialAccion;
 use App\Models\Modulo;
 use App\Models\Permiso;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\RoleService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use Inertia\Response as ResponseInertia;
 
 class RoleController extends Controller
 {
-    public $validacion = [
-        "nombre" => "required|min:1",
-    ];
 
-    public $mensajes = [
-        "nombre.required" => "Este campo es obligatorio",
-        "nombre.min" => "Debes ingresar al menos :min caracteres",
-    ];
+    public function __construct(private RoleService $roleService) {}
 
-    public function index()
+    /**
+     * Página index
+     *
+     * @return Response
+     */
+    public function index(): ResponseInertia
     {
         return Inertia::render("Admin/Roles/Index");
     }
 
-    public function listado()
+    /**
+     * Listado de roles sin ids: 1 y 2
+     *
+     * @return JsonResponse
+     */
+    public function listado(): JsonResponse
     {
-        $roles = Role::select("roles.*")->where("usuarios", 1)->get();
         return response()->JSON([
-            "roles" => $roles
+            "roles" => $this->roleService->listado()
         ]);
     }
 
-    public function api(Request $request)
+    /**
+     * Endpoint para obtener la lista de roles paginado
+     * via un datatable
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function api(Request $request): JsonResponse
     {
 
-        $length = $request->input('length', 10); // Valor de `length` enviado por DataTable
-        $start = $request->input('start', 0); // Índice de inicio enviado por DataTable
-        $page = ($start / $length) + 1; // Cálculo de la página actual
-        $search = $request->input('search');
+        $length = (int)$request->input('length', 10); // Valor de `length` enviado por DataTable
+        $start = (int)$request->input('start', 0); // Índice de inicio enviado por DataTable
+        $page = (int)(($start / $length) + 1); // Cálculo de la página actual
+        $search = (string)$request->input('search', '');
 
-        $usuarios = Role::select("roles.*");
-        if ($search && trim($search) != '') {
-            $usuarios->where("nombre", "LIKE", "%$search%");
-        }
-        $usuarios = $usuarios->paginate($length, ['*'], 'page', $page);
+        $usuarios = $this->roleService->listadoPaginado($length, $start, $page, $search);
 
-        return response()->JSON([
-            'data' => $usuarios->items(),
-            'recordsTotal' => $usuarios->total(),
-            'recordsFiltered' => $usuarios->total(),
-            'draw' => intval($request->input('draw')),
-        ]);
-    }
-
-    public function paginado(Request $request)
-    {
-        $search = $request->search;
-        $usuarios = Role::select("roles.*");
-
-        if (trim($search) != "") {
-            $usuarios->where("nombre", "LIKE", "%$search%");
-        }
-
-        $usuarios = $usuarios->paginate($request->itemsPerPage);
         return response()->JSON([
             'data' => $usuarios->items(),
             'recordsTotal' => $usuarios->total(),
@@ -78,24 +73,18 @@ class RoleController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    /**
+     * Registrar un nuevo role
+     *
+     * @param RoleStoreRequest $request
+     * @return RedirectResponse|Response
+     */
+    public function store(RoleStoreRequest $request): RedirectResponse|Response
     {
-        $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
             // crear el Role
-            $nuevo_usuario = Role::create(array_map('mb_strtoupper', $request->all()));
-            $datos_original = HistorialAccion::getDetalleRegistro($nuevo_usuario, "roles");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'CREACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->usuario . ' REGISTRO UN ROLE',
-                'datos_original' => $datos_original,
-                'modulo' => 'ROLES',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
-
+            $this->roleService->crear($request->validated());
             DB::commit();
             return redirect()->route("roles.index")->with("bien", "Registro realizado");
         } catch (\Exception $e) {
@@ -106,12 +95,18 @@ class RoleController extends Controller
         }
     }
 
-    public function show(Role $role)
+    /**
+     * Mostrar un role
+     *
+     * @param Role $role
+     * @return JsonResponse
+     */
+    public function show(Role $role): JsonResponse
     {
         return response()->JSON($role);
     }
 
-    public function edit(Role $role)
+    public function edit(Role $role): ResponseInertia
     {
         $modulos_group = Modulo::select('modulo')->distinct()->pluck('modulo');
 
@@ -158,24 +153,12 @@ class RoleController extends Controller
         ]);
     }
 
-    public function update(Role $role, Request $request)
+    public function update(Role $role, RoleUpdateRequest $request)
     {
-        $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
-            $datos_original = HistorialAccion::getDetalleRegistro($role, "roles");
-            $datos_nuevo = HistorialAccion::getDetalleRegistro($role, "roles");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'MODIFICACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->usuario . ' MODIFICÓ UN ROLE',
-                'datos_original' => $datos_original,
-                'datos_nuevo' => $datos_nuevo,
-                'modulo' => 'ROLES',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
-
+            // actualizar role
+            $this->roleService->actualizar($request->validated(), $role);
             DB::commit();
             return redirect()->route("roles.index")->with("bien", "Registro actualizado");
         } catch (\Exception $e) {
@@ -187,28 +170,17 @@ class RoleController extends Controller
         }
     }
 
-    public function destroy(Role $role)
+    /**
+     * Eliminar role
+     *
+     * @param Role $role
+     * @return JsonResponse|Response
+     */
+    public function destroy(Role $role): JsonResponse|Response
     {
         DB::beginTransaction();
         try {
-            $usos = User::where("role_id", $role->id)->get();
-            if (count($usos) > 0) {
-                throw ValidationException::withMessages([
-                    'error' =>  "No es posible eliminar este registro porque esta siendo utilizado por otros registros",
-                ]);
-            }
-
-            $datos_original = HistorialAccion::getDetalleRegistro($role, "roles");
-            $role->delete();
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'ELIMINACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->usuario . ' ELIMINÓ UN ROLE',
-                'datos_original' => $datos_original,
-                'modulo' => 'ROLES',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            $this->roleService->eliminar($role);
             DB::commit();
             return response()->JSON([
                 'sw' => true,

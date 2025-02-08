@@ -32,7 +32,31 @@ const listPermisos = ref(props.array_permisos);
 
 const verificaPermiso = (modulo, accion) => {
     if (props.role.id == 1) {
+        if (modulo == "Solicitud de productos") {
+            if (accion == "CREAR" || accion == "EDITAR") {
+                return false;
+            }
+        }
+        if (modulo == "Orden de venta") {
+            if (accion == "CREAR" || accion == "EDITAR") {
+                return false;
+            }
+        }
         return true;
+    }
+
+    if (props.role.id == 2) {
+        if (modulo == "Solicitud de productos") {
+            if (accion == "CREAR" || accion == "EDITAR") {
+                return true;
+            }
+        }
+        if (modulo == "Orden de venta") {
+            if (accion == "CREAR" || accion == "EDITAR") {
+                return true;
+            }
+        }
+        return false;
     }
     let existe = listPermisos.value[modulo].filter(
         (elem) => elem.accion == accion

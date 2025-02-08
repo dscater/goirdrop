@@ -18,6 +18,7 @@ const breadbrums = [
 import { useApp } from "@/composables/useApp";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import { useRoles } from "@/composables/roles/useRoles";
+import { useAxios } from "@/composables/axios/useAxios";
 import { initDataTable } from "@/composables/datatable.js";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import PanelToolbar from "@/Components/PanelToolbar.vue";
@@ -32,7 +33,8 @@ onMounted(() => {
     }, 300);
 });
 
-const { getRoles, setRole, limpiarRole, deleteRole } = useRoles();
+const { setRole, limpiarRole } = useRoles();
+const { axiosDelete } = useAxios();
 
 const columns = [
     {
@@ -119,7 +121,7 @@ const accionesRow = () => {
         }).then(async (result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-                let respuesta = await deleteRole(id);
+                let respuesta = await axiosDelete(route("roles.destroy", id));
                 if (respuesta && respuesta.sw) {
                     updateDatatable();
                 }

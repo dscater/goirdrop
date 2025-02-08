@@ -1,7 +1,7 @@
 import axios from "axios";
 import { usePage } from "@inertiajs/vue3";
 
-export const useCrudAxios = () => {
+export const useAxios = () => {
     let flash = null;
     const axiosGet = async (url, data) => {
         try {
