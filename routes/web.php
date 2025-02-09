@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecuperarContrasenaController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SedeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
@@ -105,17 +106,14 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
         ["index", "store", "edit", "show", "update", "destroy"]
     );
 
+    // SEDES
+    Route::get("sedes/listado", [SedeController::class, 'listado'])->name("sedes.listado");
+
     // PRODUCTOS
+    Route::get("productos/api", [ProductoController::class, 'api'])->name("productos.api");
     Route::get("productos/paginado", [ProductoController::class, 'paginado'])->name("productos.paginado");
     Route::get("productos/listado", [ProductoController::class, 'listado'])->name("productos.listado");
     Route::resource("productos", ProductoController::class)->only(
-        ["index", "store", "show", "update", "destroy"]
-    );
-
-    // ORDEN DE VENTAS
-    Route::get("orden_ventas/paginado", [OrdenVentaController::class, 'paginado'])->name("orden_ventas.paginado");
-    Route::get("orden_ventas/listado", [OrdenVentaController::class, 'listado'])->name("orden_ventas.listado");
-    Route::resource("orden_ventas", OrdenVentaController::class)->only(
         ["index", "store", "show", "update", "destroy"]
     );
 

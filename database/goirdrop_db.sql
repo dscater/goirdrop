@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 08-02-2025 a las 18:05:38
+-- Tiempo de generación: 09-02-2025 a las 16:29:04
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -140,7 +140,10 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (1, 1, 'CREACIÓN', 'EL USUARIO admin@admin.com REGISTRO UN ROLE', '{\"id\": 13, \"nombre\": \"ADMINISTRADOR\", \"created_at\": \"2025-02-08T17:41:05.000000Z\", \"updated_at\": \"2025-02-08T17:41:05.000000Z\"}', NULL, 'ROLES', '2025-02-08', '13:41:05', '2025-02-08 17:41:05', '2025-02-08 17:41:05'),
 (2, 1, 'CREACIÓN', 'EL USUARIO admin@admin.com REGISTRO UN ROLE', '{\"id\": 14, \"nombre\": \"AUXILIAR\", \"created_at\": \"2025-02-08T17:41:11.000000Z\", \"updated_at\": \"2025-02-08T17:41:11.000000Z\"}', NULL, 'ROLES', '2025-02-08', '13:41:11', '2025-02-08 17:41:11', '2025-02-08 17:41:11'),
 (3, 1, 'ELIMINACIÓN', 'EL USUARIO admin@admin.com ELIMINÓ UN ROLE', '{\"id\": 14, \"nombre\": \"AUXILIAR\", \"permisos\": 0, \"usuarios\": 1, \"created_at\": \"2025-02-08T17:41:11.000000Z\", \"updated_at\": \"2025-02-08T17:41:11.000000Z\"}', NULL, 'ROLES', '2025-02-08', '14:04:34', '2025-02-08 18:04:34', '2025-02-08 18:04:34'),
-(4, 1, 'ELIMINACIÓN', 'EL USUARIO admin@admin.com ELIMINÓ UN ROLE', '{\"id\": 13, \"nombre\": \"ADMINISTRADOR\", \"permisos\": 0, \"usuarios\": 1, \"created_at\": \"2025-02-08T17:41:05.000000Z\", \"updated_at\": \"2025-02-08T17:41:05.000000Z\"}', NULL, 'ROLES', '2025-02-08', '14:04:59', '2025-02-08 18:04:59', '2025-02-08 18:04:59');
+(4, 1, 'ELIMINACIÓN', 'EL USUARIO admin@admin.com ELIMINÓ UN ROLE', '{\"id\": 13, \"nombre\": \"ADMINISTRADOR\", \"permisos\": 0, \"usuarios\": 1, \"created_at\": \"2025-02-08T17:41:05.000000Z\", \"updated_at\": \"2025-02-08T17:41:05.000000Z\"}', NULL, 'ROLES', '2025-02-08', '14:04:59', '2025-02-08 18:04:59', '2025-02-08 18:04:59'),
+(5, 1, 'CREACIÓN', 'EL USUARIO admin@admin.com REGISTRO UN ROLE', '{\"id\": 3, \"nombre\": \"ADMINITRADOR\", \"created_at\": \"2025-02-09T15:32:31.000000Z\", \"updated_at\": \"2025-02-09T15:32:31.000000Z\"}', NULL, 'ROLES', '2025-02-09', '11:32:31', '2025-02-09 15:32:31', '2025-02-09 15:32:31'),
+(6, 1, 'CREACIÓN', 'EL USUARIO admin@admin.com REGISTRO UN USUARIO', '{\"ci\": \"222222\", \"id\": 2, \"foto\": \"21739118494.jpg\", \"acceso\": \"1\", \"ci_exp\": \"LP\", \"correo\": \"juan@gmail.com\", \"nombres\": \"JUAN\", \"role_id\": \"3\", \"usuario\": \"juan@gmail.com\", \"apellidos\": \"PERES\", \"created_at\": \"2025-02-09T16:28:14.000000Z\", \"sedes_todo\": 0, \"updated_at\": \"2025-02-09T16:28:14.000000Z\", \"fecha_registro\": \"2025-02-09\"}', NULL, 'USUARIOS', '2025-02-09', '12:28:14', '2025-02-09 16:28:14', '2025-02-09 16:28:14'),
+(7, 1, 'MODIFICACIÓN', 'admin@admin.com ACTUALIZO LAS SEDES DEL USUARIO juan@gmail.com', '{\"sedes\": [1, 2, 3]}', '{\"updated\": [], \"attached\": [8], \"detached\": []}', 'USUARIOS', '2025-02-09', '12:28:27', '2025-02-09 16:28:27', '2025-02-09 16:28:27');
 
 -- --------------------------------------------------------
 
@@ -369,7 +372,8 @@ CREATE TABLE `roles` (
 
 INSERT INTO `roles` (`id`, `nombre`, `permisos`, `usuarios`, `created_at`, `updated_at`) VALUES
 (1, 'SUPER USUARIO', 1, 0, '2025-02-07 15:17:41', '2025-02-07 15:17:41'),
-(2, 'CLIENTE', 0, 0, NULL, NULL);
+(2, 'CLIENTE', 0, 0, NULL, NULL),
+(3, 'ADMINITRADOR', 0, 1, '2025-02-09 15:32:31', '2025-02-09 15:32:31');
 
 -- --------------------------------------------------------
 
@@ -384,6 +388,21 @@ CREATE TABLE `sedes` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `sedes`
+--
+
+INSERT INTO `sedes` (`id`, `nombre`, `created_at`, `updated_at`) VALUES
+(1, 'LA PAZ', '2025-02-09 15:11:10', '2025-02-09 15:11:10'),
+(2, 'COCHABAMBA', '2025-02-09 15:11:10', '2025-02-09 15:11:10'),
+(3, 'SANTA CRUZ', '2025-02-09 15:11:10', '2025-02-09 15:11:10'),
+(4, 'CHUQUISACA', '2025-02-09 15:11:10', '2025-02-09 15:11:10'),
+(5, 'ORURO', '2025-02-09 15:11:10', '2025-02-09 15:11:10'),
+(6, 'POTOSÍ', '2025-02-09 15:11:10', '2025-02-09 15:11:10'),
+(7, 'TARIJA', '2025-02-09 15:11:10', '2025-02-09 15:11:10'),
+(8, 'BENI', '2025-02-09 15:11:10', '2025-02-09 15:11:10'),
+(9, 'PANDO', '2025-02-09 15:11:10', '2025-02-09 15:11:10');
+
 -- --------------------------------------------------------
 
 --
@@ -396,6 +415,16 @@ CREATE TABLE `sede_users` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `sede_users`
+--
+
+INSERT INTO `sede_users` (`sede_id`, `user_id`, `created_at`, `updated_at`) VALUES
+(1, 2, '2025-02-09 16:28:14', '2025-02-09 16:28:14'),
+(2, 2, '2025-02-09 16:28:14', '2025-02-09 16:28:14'),
+(3, 2, '2025-02-09 16:28:14', '2025-02-09 16:28:14'),
+(8, 2, '2025-02-09 16:28:27', '2025-02-09 16:28:27');
 
 -- --------------------------------------------------------
 
@@ -449,6 +478,7 @@ CREATE TABLE `users` (
   `nombres` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `apellidos` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `ci` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ci_exp` varchar(155) COLLATE utf8mb4_unicode_ci NOT NULL,
   `correo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `role_id` bigint UNSIGNED DEFAULT NULL,
@@ -465,8 +495,9 @@ CREATE TABLE `users` (
 -- Volcado de datos para la tabla `users`
 --
 
-INSERT INTO `users` (`id`, `usuario`, `nombres`, `apellidos`, `ci`, `correo`, `password`, `role_id`, `sedes_todo`, `foto`, `fecha_registro`, `acceso`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'admin@admin.com', 'admin', 'admin', '0', 'admin@admin.com', '$2y$12$65d4fgZsvBV5Lc/AxNKh4eoUdbGyaczQ4sSco20feSQANshNLuxSC', 1, 1, NULL, '2025-02-07', 1, 1, '2025-02-07 15:17:42', '2025-02-07 15:17:42');
+INSERT INTO `users` (`id`, `usuario`, `nombres`, `apellidos`, `ci`, `ci_exp`, `correo`, `password`, `role_id`, `sedes_todo`, `foto`, `fecha_registro`, `acceso`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'admin@admin.com', 'admin', 'admin', '0', '', 'admin@admin.com', '$2y$12$65d4fgZsvBV5Lc/AxNKh4eoUdbGyaczQ4sSco20feSQANshNLuxSC', 1, 1, NULL, '2025-02-07', 1, 1, '2025-02-07 15:17:42', '2025-02-07 15:17:42'),
+(2, 'juan@gmail.com', 'JUAN', 'PERES', '222222', 'LP', 'juan@gmail.com', '$2y$12$qIdvl7RF7Xc91UMfZn8rn.tO6Jgh9mhL1B1.eN/tfklHOHun6ldHe', 3, 0, '21739118494.jpg', '2025-02-09', 1, 1, '2025-02-09 16:28:14', '2025-02-09 16:28:14');
 
 --
 -- Índices para tablas volcadas
@@ -585,7 +616,7 @@ ALTER TABLE `sedes`
 --
 ALTER TABLE `sede_users`
   ADD KEY `sede_users_sede_id_foreign` (`sede_id`),
-  ADD KEY `sede_users_user_id_foreign` (`user_id`);
+  ADD KEY `fk_sede_users_user` (`user_id`);
 
 --
 -- Indices de la tabla `solicitud_detalles`
@@ -649,7 +680,7 @@ ALTER TABLE `detalle_ventas`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `migrations`
@@ -697,13 +728,13 @@ ALTER TABLE `producto_imagens`
 -- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `sedes`
 --
 ALTER TABLE `sedes`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `solicitud_detalles`
@@ -721,7 +752,7 @@ ALTER TABLE `solicitud_productos`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas
@@ -783,6 +814,7 @@ ALTER TABLE `producto_imagens`
 -- Filtros para la tabla `sede_users`
 --
 ALTER TABLE `sede_users`
+  ADD CONSTRAINT `fk_sede_users_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `sede_users_sede_id_foreign` FOREIGN KEY (`sede_id`) REFERENCES `sedes` (`id`),
   ADD CONSTRAINT `sede_users_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 

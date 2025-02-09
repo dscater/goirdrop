@@ -47,17 +47,18 @@ watch(
 const { flash } = usePage().props;
 
 const listRoles = ref([]);
-// const listExpedido = [
-//     { value: "LP", label: "La Paz" },
-//     { value: "CB", label: "Cochabamba" },
-//     { value: "SC", label: "Santa Cruz" },
-//     { value: "CH", label: "Chuquisaca" },
-//     { value: "OR", label: "Oruro" },
-//     { value: "PT", label: "Potosi" },
-//     { value: "TJ", label: "Tarija" },
-//     { value: "PD", label: "Pando" },
-//     { value: "BN", label: "Beni" },
-// ];
+const listSedes = ref([]);
+const listExpedido = [
+    { value: "LP", label: "La Paz" },
+    { value: "CB", label: "Cochabamba" },
+    { value: "SC", label: "Santa Cruz" },
+    { value: "CH", label: "Chuquisaca" },
+    { value: "OR", label: "Oruro" },
+    { value: "PT", label: "Potosi" },
+    { value: "TJ", label: "Tarija" },
+    { value: "PD", label: "Pando" },
+    { value: "BN", label: "Beni" },
+];
 const foto = ref(null);
 
 function cargaArchivo(e, key) {
@@ -136,6 +137,7 @@ const cerrarDialog = () => {
 
 const cargarListas = () => {
     cargarRoles();
+    cargarSedes();
 };
 
 const cargarRoles = async () => {
@@ -143,6 +145,41 @@ const cargarRoles = async () => {
         listRoles.value = response.data.roles;
     });
 };
+
+const cargarSedes = async () => {
+    axios.get(route("sedes.listado")).then((response) => {
+        listSedes.value = response.data.sedes;
+    });
+};
+
+const indeterminate = ref(false);
+watch(
+    () => form.id_almacens,
+    (val) => {
+        if (val.length === 0) {
+            form.sedes_todo = false;
+            indeterminate.value = false;
+        } else if (val.length === listSedes.value.length) {
+            form.sedes_todo = true;
+            indeterminate.value = false;
+        } else {
+            indeterminate.value = true;
+        }
+    }
+);
+
+const handleCheckAll = (val) => {
+    indeterminate.value = false;
+    if (val) {
+        form.array_sedes_id = listSedes.value.map((_) => _.id);
+    } else {
+        console.log(form.array_sedes_id)
+        if(form.id == 0){
+            form.array_sedes_id = [];
+        }
+    }
+};
+
 
 onMounted(() => {
     cargarListas();
@@ -214,47 +251,73 @@ onMounted(() => {
                                 </ul>
                             </div>
                             <div class="col-md-4 mt-2">
-                                <label>Usuario*</label>
+                                <label>Número de C.I.*</label>
                                 <input
-                                    type="text"
+                                    type="number"
                                     class="form-control"
                                     :class="{
-                                        'parsley-error': form.errors?.usuario,
+                                        'parsley-error': form.errors?.ci,
                                     }"
-                                    v-model="form.usuario"
+                                    v-model="form.ci"
                                 />
 
                                 <ul
-                                    v-if="form.errors?.usuario"
+                                    v-if="form.errors?.ci"
                                     class="parsley-errors-list filled"
                                 >
                                     <li class="parsley-required">
-                                        {{ form.errors?.usuario }}
+                                        {{ form.errors?.ci }}
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-md-4 mt-2">
-                                <label>Contraseña*</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
+                                <label>Expedido*</label>
+                                <select
+                                    class="form-select"
                                     :class="{
-                                        'parsley-error': form.errors?.password,
+                                        'parsley-error': form.errors?.ci_exp,
                                     }"
-                                    v-model="form.password"
-                                />
-
+                                    v-model="form.ci_exp"
+                                >
+                                    <option value="">- Seleccione -</option>
+                                    <option
+                                        v-for="item in listExpedido"
+                                        :value="item.value"
+                                    >
+                                        {{ item.label }}
+                                    </option>
+                                </select>
                                 <ul
-                                    v-if="form.errors?.password"
+                                    v-if="form.errors?.ci_exp"
                                     class="parsley-errors-list filled"
                                 >
                                     <li class="parsley-required">
-                                        {{ form.errors?.password }}
+                                        {{ form.errors?.ci_exp }}
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-md-4 mt-2">
-                                <label>Tipo de Usuario*</label>
+                                <label>Correo electrónico*</label>
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    :class="{
+                                        'parsley-error': form.errors?.correo,
+                                    }"
+                                    v-model="form.correo"
+                                />
+
+                                <ul
+                                    v-if="form.errors?.correo"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.correo }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <label>Seleccionar Rol*</label>
                                 <select
                                     class="form-select"
                                     :class="{
@@ -279,8 +342,50 @@ onMounted(() => {
                                         {{ form.errors?.role_id }}
                                     </li>
                                 </ul>
+                            </div>    <div class="col-md-4 mt-2">
+                                <label>Seleccionar Sede*</label>
+                                <el-select
+                                    class="w-100"
+                                    :class="{
+                                        'border border-red rounded':
+                                            form.errors?.array_sedes_id,
+                                    }"
+                                    multiple
+                                    clearable
+                                    collapse-tags
+                                    placeholder="- Seleccione -"
+                                    popper-class="custom-header"
+                                    no-data-text="Sin datos"
+                                    :max-collapse-tags="1"
+                                    filterable
+                                    v-model="form.array_sedes_id"
+                                >
+                                    <template #header>
+                                        <el-checkbox
+                                            v-model="form.almacen_todos"
+                                            :indeterminate="indeterminate"
+                                            @change="handleCheckAll"
+                                        >
+                                            Todos
+                                        </el-checkbox>
+                                    </template>
+                                    <el-option
+                                        v-for="item in listSedes"
+                                        :key="item.id"
+                                        :value="item.id"
+                                        :label="item.nombre"
+                                    />
+                                </el-select>
+                                <ul
+                                    v-if="form.errors?.array_sedes_id"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.array_sedes_id }}
+                                    </li>
+                                </ul>
                             </div>
-                            <!-- <div class="col-md-4 mt-2">
+                            <div class="col-md-4 mt-2">
                                 <label>Foto</label>
                                 <input
                                     type="file"
@@ -300,7 +405,7 @@ onMounted(() => {
                                         {{ form.errors?.foto }}
                                     </li>
                                 </ul>
-                            </div> -->
+                            </div>
                             <div class="col-md-4 mt-2">
                                 <label for="flexSwitchCheckChecked"
                                     >Acceso*</label

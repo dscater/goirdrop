@@ -18,6 +18,7 @@ const breadbrums = [
 import { useApp } from "@/composables/useApp";
 import { Head, Link, usePage } from "@inertiajs/vue3";
 import { useUsuarios } from "@/composables/usuarios/useUsuarios";
+import { useAxios } from "@/composables/axios/useAxios";
 import { initDataTable } from "@/composables/datatable.js";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import PanelToolbar from "@/Components/PanelToolbar.vue";
@@ -33,8 +34,8 @@ onMounted(() => {
     }, 300);
 });
 
-const { getUsuarios, setUsuario, limpiarUsuario, deleteUsuario } =
-    useUsuarios();
+const { setUsuario, limpiarUsuario } = useUsuarios();
+const { axiosGet, axiosDelete } = useAxios();
 
 const columns = [
     {
@@ -54,16 +55,24 @@ const columns = [
         },
     },
     {
-        title: "USUARIO",
-        data: "usuario",
-    },
-    {
         title: "NOMBRE COMPLETO",
         data: "full_name",
     },
     {
+        title: "C.I.",
+        data: "full_ci",
+    },
+    {
+        title: "CORREO ELECTRÓNICO",
+        data: "correo",
+    },
+    {
         title: "ROLE",
         data: "role.nombre",
+    },
+    {
+        title: "SEDE(S)",
+        data: "nom_sedes",
     },
     {
         title: "ACCESO",
@@ -148,7 +157,7 @@ const accionesRow = () => {
         }).then(async (result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-                let respuesta = await deleteUsuario(id);
+                let respuesta = await axiosDelete(route("usuarios.destroy", id));
                 if (respuesta && respuesta.sw) {
                     updateDatatable();
                 }

@@ -603,7 +603,10 @@ const logout = () => {
                     "
                     class="menu-item"
                     :class="[
-                        route_current == 'roles.index' ? 'active' : 'none',
+                        route_current == 'roles.index' ||
+                        route_current == 'roles.edit'
+                            ? 'active'
+                            : 'none',
                     ]"
                 >
                     <Link :href="route('roles.index')" class="menu-link">
@@ -655,10 +658,7 @@ const logout = () => {
                             : 'none',
                     ]"
                 >
-                    <Link
-                        :href="route('reportes.usuarios')"
-                        class="menu-link"
-                    >
+                    <Link :href="route('reportes.usuarios')" class="menu-link">
                         <div class="menu-icon">
                             <i class="fa fa-chart-pie"></i>
                         </div>

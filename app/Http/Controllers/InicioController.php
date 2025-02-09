@@ -16,7 +16,6 @@ class InicioController extends Controller
 
     public function getParcialDatosPago()
     {
-
         $parametrizacion = Parametrizacion::first();
         $o_datos_banco = $parametrizacion->o_datos_banco;
 

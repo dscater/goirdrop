@@ -22,7 +22,7 @@ class HistorialAccionService
         $user = Auth::user();
         $user_id = $user->id;
         $this->descripcion .= $user->usuario . " " . $descripcion;
-        $datos_original = $modelo->toArray();
+        $datos_original = $modelo->makeHidden($modelo->getAppends())->toArray();
         $datos = [
             "user_id" => $user_id,
             "accion" => $accion,
@@ -35,12 +35,26 @@ class HistorialAccionService
         if ($modelo_update) {
             if ($modelo_update->wasChanged()) {
                 // actualizacion
-                $datos["datos_nuevo"] = $modelo_update ? $modelo_update->toArray() : null;
+                $datos["datos_nuevo"] = $modelo_update ? $modelo_update->makeHidden($modelo_update->getAppends())->toArray() : null;
                 $this->crearAccion($datos);
             }
         } else {
             $this->crearAccion($datos);
         }
+    }
+
+    public function registrarAccionRelaciones(string $modulo, string $descripcion, $datos_original, $datos_nuevo): void
+    {
+        $user = Auth::user();
+        $this->descripcion = $user->usuario . " " . $descripcion;
+        $this->crearAccion([
+            "user_id" => $user->id,
+            "accion" => "MODIFICACIÓN",
+            "descripcion" => $this->descripcion,
+            "datos_original" => $datos_original,
+            'datos_nuevo' => $datos_nuevo,
+            "modulo" => $modulo,
+        ]);
     }
 
     private function crearAccion(array $datos): void

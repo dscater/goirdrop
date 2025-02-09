@@ -22,14 +22,18 @@ class User extends Authenticatable
         "usuario",
         "nombres",
         "apellidos",
-        "role_id",
+        "ci",
+        "ci_exp",
+        "correo",
         "password",
-        "acceso",
+        "role_id",
+        "sedes_todo",
+        "foto",
         "fecha_registro",
-        "ultima_sesion",
+        "acceso",
         "status",
     ];
-    protected $appends = ["permisos", "url_foto", "foto_b64", "full_name", "fecha_registro_t", "usuario_abrev"];
+    protected $appends = ["permisos", "url_foto", "foto_b64", "full_name", "full_ci", "fecha_registro_t", "usuario_abrev", "nom_sedes", "array_sedes_id"];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -49,9 +53,39 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+    // APPENDS
+    public function getArraySedesIdAttribute()
+    {
+        $id_sedes = [];
+        if (Auth::check()) {
+            if ($this->sedes_todo === 1) {
+                $id_sedes =  Sede::select("id")->get()->pluck("id")->toArray();
+            } else {
+                $id_sedes = $this->sedes->pluck("id")->toArray();
+            }
+        }
+        return $id_sedes;
+    }
+
+    public function getNomSedesAttribute()
+    {
+        $nom_sedes = [];
+        if (Auth::check()) {
+            if ($this->sedes_todo === 1) {
+                $nom_sedes =  Sede::select("nombre")->get()->pluck("nombre")->toArray();
+            } else {
+                $id_sedes = $this->sedes->pluck("id")->toArray();
+                $nom_sedes =  Sede::select("nombre")
+                    ->whereIn("id", $id_sedes)->get()->pluck("nombre")->toArray();
+            }
+        }
+
+        return !empty($nom_sedes) ? implode(", ", $nom_sedes) : "";
     }
 
     public function getUsuarioAbrevAttribute()
@@ -77,6 +111,11 @@ class User extends Authenticatable
     public function getFullNameAttribute()
     {
         return $this->nombres . ' ' . $this->apellidos;
+    }
+
+    public function getFullCiAttribute()
+    {
+        return $this->ci . ' ' . $this->ci_exp;
     }
 
     public function getUrlFotoAttribute()
@@ -109,22 +148,24 @@ class User extends Authenticatable
     {
         return $this->hasOne(Cliente::class, 'user_id');
     }
-    // FUNCIONES
-    public static function getNombreUsuario($nom, $apep)
+
+    public function sedes()
     {
-        //determinando el nombre de usuario inicial del 1er_nombre+apep+tipoUser
-        $nombre_user = substr(mb_strtoupper($nom), 0, 1); //inicial 1er_nombre
-        $nombre_user .= mb_strtoupper($apep);
-        return $nombre_user;
+        return $this->belongsToMany(Sede::class, 'sede_users', 'user_id', 'sede_id')->withTimestamps();
     }
 
-
-    public function getPermisos()
+    // FUNCIONES
+    /**
+     * Obtener permisos de usuario logeado
+     *
+     * @return array
+     */
+    public function getPermisos(): array|string
     {
         $role_id = Auth::user()->role_id;
         $role = Role::find($role_id);
         if ($role->permisos == 1) {
-            // todos los permisos de administración
+            // todos los permisos
             return "*";
         }
         $permisos = Permiso::join("modulos", "modulos.id", "=", "permisos.modulo_id")
@@ -133,10 +174,5 @@ class User extends Authenticatable
             ->toArray();
 
         return $permisos;
-    }
-
-    public static function verificaPermiso($permiso)
-    {
-        return false;
     }
 }

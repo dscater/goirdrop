@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             UserTableSeeder::class,
             ConfiguracionTableSeeder::class,
             ModuloTableSeeder::class,
+            SedeTableSeeder::class,
         ]);
     }
 }

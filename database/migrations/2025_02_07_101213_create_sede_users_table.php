@@ -17,7 +17,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign("sede_id")->on("sedes")->references("id");
-            $table->foreign("user_id")->on("users")->references("id");
+            $table->foreign("user_id")->on("users")->references("id")->onDelete("cascade");
         });
     }
 

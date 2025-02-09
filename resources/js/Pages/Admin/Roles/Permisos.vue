@@ -47,12 +47,12 @@ const verificaPermiso = (modulo, accion) => {
 
     if (props.role.id == 2) {
         if (modulo == "Solicitud de productos") {
-            if (accion == "CREAR" || accion == "EDITAR") {
+            if (accion == "CREAR" || accion == "EDITAR"|| accion == "VER") {
                 return true;
             }
         }
         if (modulo == "Orden de venta") {
-            if (accion == "CREAR" || accion == "EDITAR") {
+            if (accion == "CREAR" || accion == "EDITAR"|| accion == "VER") {
                 return true;
             }
         }
