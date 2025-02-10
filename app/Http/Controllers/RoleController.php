@@ -49,8 +49,7 @@ class RoleController extends Controller
     }
 
     /**
-     * Endpoint para obtener la lista de roles paginado
-     * via un datatable
+     * Endpoint para obtener la lista de roles paginado para datatable
      *
      * @param Request $request
      * @return JsonResponse

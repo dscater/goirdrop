@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text("observaciones");
             $table->string("publico");
             $table->date("fecha_registro");
+            $table->integer("status");
             $table->timestamps();
 
             $table->foreign("categoria_id")->on("categorias")->references("id");

@@ -535,18 +535,30 @@ const logout = () => {
                         user_logeado.permisos.includes('productos.index')
                     "
                     class="menu-item"
-                    :class="[
-                        route_current == 'productos.index' ||
-                        route_current == 'subastas.clientes'
-                            ? 'active'
-                            : '',
-                    ]"
+                    :class="[route_current == 'productos.index']"
                 >
                     <Link :href="route('productos.index')" class="menu-link">
                         <div class="menu-icon">
                             <i class="fa fa-list"></i>
                         </div>
-                        <div class="menu-text">Publicaciones</div>
+                        <div class="menu-text">Productos</div>
+                    </Link>
+                </div>
+                <div
+                    v-if="
+                        user_logeado.permisos == '*' ||
+                        user_logeado.permisos.includes('categorias.index')
+                    "
+                    class="menu-item"
+                    :class="[
+                        route_current == 'categorias.index' ? 'active' : 'none',
+                    ]"
+                >
+                    <Link :href="route('categorias.index')" class="menu-link">
+                        <div class="menu-icon">
+                            <i class="fa fa-list"></i>
+                        </div>
+                        <div class="menu-text">Categorías</div>
                     </Link>
                 </div>
                 <div

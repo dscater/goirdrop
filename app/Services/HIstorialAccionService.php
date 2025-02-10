@@ -43,13 +43,24 @@ class HistorialAccionService
         }
     }
 
-    public function registrarAccionRelaciones(string $modulo, string $descripcion, $datos_original, $datos_nuevo): void
+    /**
+     * Registrar acciones de relaciones de un modelo
+     *
+     * @param string $modulo
+     * @param string $accion
+     * @param string $descripcion
+     * @param [type] $datos_original
+     * @param [type] $datos_nuevo
+     * @return void
+     */
+    public function registrarAccionRelaciones(string $modulo, string $accion, string $descripcion, $datos_original, $datos_nuevo = null): void
     {
         $user = Auth::user();
         $this->descripcion = $user->usuario . " " . $descripcion;
+
         $this->crearAccion([
             "user_id" => $user->id,
-            "accion" => "MODIFICACIÓN",
+            "accion" => $accion,
             "descripcion" => $this->descripcion,
             "datos_original" => $datos_original,
             'datos_nuevo' => $datos_nuevo,

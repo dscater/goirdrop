@@ -6,7 +6,6 @@ use Illuminate\Http\UploadedFile;
 
 class CargarArchivoService
 {
-
     /**
      * Cargar archvos
      *

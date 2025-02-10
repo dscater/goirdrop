@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\InicioController;
@@ -108,6 +109,15 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
 
     // SEDES
     Route::get("sedes/listado", [SedeController::class, 'listado'])->name("sedes.listado");
+
+    // CATEGORIAS
+    Route::get("categorias/api", [CategoriaController::class, 'api'])->name("categorias.api");
+    Route::get("categorias/paginado", [CategoriaController::class, 'paginado'])->name("categorias.paginado");
+    Route::get("categorias/listado", [CategoriaController::class, 'listado'])->name("categorias.listado");
+    Route::post("categorias/actualizaPermiso/{role}", [CategoriaController::class, 'actualizaPermiso'])->name("categorias.actualizaPermiso");
+    Route::resource("categorias", CategoriaController::class)->only(
+        ["index", "store", "show", "update", "destroy"]
+    );
 
     // PRODUCTOS
     Route::get("productos/api", [ProductoController::class, 'api'])->name("productos.api");

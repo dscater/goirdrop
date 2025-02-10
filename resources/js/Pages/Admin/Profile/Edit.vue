@@ -196,7 +196,10 @@ const enviaFormulario = () => {
                 <div class="panel-heading">Cambiar contraseña</div>
                 <div class="panel-body">
                     <form>
-                        <div class="row mt-2">
+                        <div class="row">
+                            <div class="alert alert-info mb-2 mt-0">
+                                Para la nueva contraseña ingresa al menos un número, una letra mayuscula, y un simbolo($#./)
+                            </div>
                             <div class="col-12">
                                 <label>Contraseña actual</label>
                                 <input
@@ -218,7 +221,9 @@ const enviaFormulario = () => {
                                         {{ form.errors?.password_actual }}
                                     </li>
                                 </ul>
-                                <label>Ingresa la nueva contraseña</label>
+                                <label class="mt-2"
+                                    >Ingresa la nueva contraseña</label
+                                >
                                 <input
                                     placeholder="Ingresa la nueva contraseña"
                                     prepend-inner-icon="mdi-lock-outline"

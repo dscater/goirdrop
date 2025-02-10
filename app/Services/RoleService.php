@@ -5,9 +5,11 @@ namespace App\Services;
 use App\Services\HistorialAccionService;
 use App\Models\Role;
 use App\Models\User;
+use Exception;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Validation\ValidationException;
 
 class RoleService
 {
@@ -25,12 +27,12 @@ class RoleService
 
     public function listadoPaginado(int $length, int $start, int $page, string $search): LengthAwarePaginator
     {
-        $usuarios = Role::select("roles.*");
+        $roles = Role::select("roles.*");
         if ($search && trim($search) != '') {
-            $usuarios->where("nombre", "LIKE", "%$search%");
+            $roles->where("nombre", "LIKE", "%$search%");
         }
-        $usuarios = $usuarios->paginate($length, ['*'], 'page', $page);
-        return $usuarios;
+        $roles = $roles->paginate($length, ['*'], 'page', $page);
+        return $roles;
     }
 
     /**
@@ -76,7 +78,7 @@ class RoleService
      * @param Role $role
      * @return boolean
      */
-    public function eliminar(Role $role): bool
+    public function eliminar(Role $role): bool|Exception
     {
         // verificar usos
         $usos = User::where("role_id", $role->id)->get();
@@ -97,6 +99,7 @@ class RoleService
 
             return true;
         }
-        return false;
+
+        throw new Exception("No es posible eliminar este role");
     }
 }

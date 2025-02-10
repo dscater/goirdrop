@@ -65,13 +65,18 @@ class UserService
             $this->cargarFoto($user, $datos["foto"]);
         }
 
+        // registrar accion
+        $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UN USUARIO", $user);
+
         // registrar sedes
         if ($sedes_todo === 0) {
             $user->sedes()->sync($datos["array_sedes_id"]);
+            // registrar sedes asignadas
+            $sedes_original = [
+                "sedes" => $user->sedes->pluck("id")
+            ];
+            $this->historialAccionService->registrarAccionRelaciones($this->modulo, "CREACIÓN", "REGISTRO LAS SEDES DEL USUARIO " . $user->usuario, $sedes_original);
         }
-
-        // registrar accion
-        $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UN USUARIO", $user);
 
         return $user;
     }
@@ -120,7 +125,7 @@ class UserService
             if (!empty($changes['attached']) || !empty($changes['detached']) || !empty($changes['updated'])) {
                 // Se detectó un cambio en la relación
                 // Log::info("Sedes actualizadas para el usuario {$user->id}", $changes);
-                $this->historialAccionService->registrarAccionRelaciones($this->modulo, "ACTUALIZO LAS SEDES DEL USUARIO " . $user->usuario, $sedes_original, $changes);
+                $this->historialAccionService->registrarAccionRelaciones($this->modulo, "MODIFICACIÓN", "ACTUALIZO LAS SEDES DEL USUARIO " . $user->usuario, $sedes_original, $changes);
             }
         }
 

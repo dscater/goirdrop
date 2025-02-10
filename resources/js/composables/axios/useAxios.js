@@ -3,7 +3,7 @@ import { usePage } from "@inertiajs/vue3";
 
 export const useAxios = () => {
     let flash = null;
-    const axiosGet = async (url, data) => {
+    const axiosGet = async (url, data = {}) => {
         try {
             const response = await axios.get(url, {
                 headers: { Accept: "application/json" },
