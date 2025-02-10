@@ -8,6 +8,7 @@ use App\Models\Sede;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class UserService
@@ -75,6 +76,13 @@ class UserService
         return $user;
     }
 
+    /**
+     * Actualizar user
+     *
+     * @param array $datos
+     * @param User $user
+     * @return User
+     */
     public function actualizar(array $datos, User $user): User
     {
         $old_user = User::find($user->id);
@@ -122,6 +130,27 @@ class UserService
         return $user;
     }
 
+    /**
+     * Actualizar password
+     *
+     * @param array $datos
+     * @param User $user
+     * @return User
+     */
+    public function actualizarPassword(array $datos, User $user): User
+    {
+        $user->password = Hash::make($datos["password"]);
+        $user->save();
+        return $user;
+    }
+
+    /**
+     * Cargar foto
+     *
+     * @param User $user
+     * @param UploadedFile $foto
+     * @return void
+     */
     public function cargarFoto(User $user, UploadedFile $foto): void
     {
         if ($user->foto) {

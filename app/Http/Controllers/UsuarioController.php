@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserPasswordRequest;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Models\HistorialAccion;
@@ -228,32 +229,13 @@ class UsuarioController extends Controller
         }
     }
 
-    public function actualizaPassword(User $user, Request $request)
+    public function actualizaPassword(User $user, UserPasswordRequest $request)
     {
-        $request->validate([
-            "password" => "required"
-        ]);
         DB::beginTransaction();
         try {
-            $datos_original = HistorialAccion::getDetalleRegistro($user, "users");
-            $user->password = Hash::make($request->password);
-            $user->save();
-
-            $datos_nuevo = HistorialAccion::getDetalleRegistro($user, "users");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'MODIFICACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->usuario . ' MODIFICÓ UN LA CONTRASEÑA DE UN USUARIO',
-                'datos_original' => $datos_original,
-                'datos_nuevo' => $datos_nuevo,
-                'modulo' => 'USUARIOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
-
-
+            $this->userService->actualizarPassword($request->validated(), $user);
             DB::commit();
-            if ($user->tipo == 'CLIENTE') {
+            if ($user->role_id == 2) {
                 return redirect()->route("clientes.index")->with("bien", "Registro actualizado");
             }
             return redirect()->route("usuarios.index")->with("bien", "Registro actualizado");
