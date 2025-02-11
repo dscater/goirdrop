@@ -16,19 +16,70 @@ class ProductoService
 
     public function __construct(private HistorialAccionService $historialAccionService, private ProductoImagenService $productoImagenService) {}
 
+    /**
+     * Lista de todos los productos
+     *
+     * @return Collection
+     */
     public function listado(): Collection
     {
         $productos = Producto::select("productos.*")->where("status", 1)->get();
         return $productos;
     }
 
-    public function listadoDataTable(int $length, int $start, int $page, string $search): LengthAwarePaginator
+    /**
+     * Lista de productos paginado con filtros
+     *
+     * @param integer $length
+     * @param integer $page
+     * @param string $search
+     * @param array $columnsSerachLike
+     * @param array $columnsFilter
+     * @return LengthAwarePaginator
+     */
+    public function listadoPaginado(int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
     {
-        $productos = Producto::with(["imagens", "categoria"])->select("productos.*");
-        if ($search && trim($search) != '') {
-            $productos->where("nombre", "LIKE", "%$search%");
+        $productos = Producto::with(["imagens", "categoria"])
+            ->select("productos.*")
+            ->leftJoin("detalle_ventas", "productos.id", "=", "detalle_ventas.producto_id")
+            ->selectRaw("SUM(detalle_ventas.cantidad) as total_vendido")
+            ->groupBy("productos.id");
+
+        if (!empty($columnsFilter)) {
+            foreach ($columnsFilter as $key => $value) {
+                if ($value) {
+                    $productos->where($key, $value);
+                }
+            }
         }
-        $productos = $productos->where("status", 1)->paginate($length, ['*'], 'page', $page);
+
+        if (!empty($columnsBetweenFilter)) {
+            foreach ($columnsBetweenFilter as $key => $value) {
+                if ($value[0] && $value[1]) {
+                    $productos->whereBetween($key, $value);
+                }
+            }
+        }
+
+        if ($search && trim($search) != '') {
+            if (!empty($columnsSerachLike)) {
+                foreach ($columnsSerachLike as $col) {
+                    $productos->orWhere($col, "LIKE", "%$search%");
+                }
+            }
+        }
+
+
+        $productos->where("status", 1);
+
+        if (!empty($orderBy)) {
+            foreach ($orderBy as $value) {
+                $productos->orderBy($value[0], $value[1]);
+            }
+        }
+
+
+        $productos = $productos->paginate($length, ['*'], 'page', $page);
         return $productos;
     }
 

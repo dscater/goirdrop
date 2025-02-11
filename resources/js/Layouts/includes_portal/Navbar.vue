@@ -104,7 +104,20 @@ onMounted(() => {
                                 ]"
                             >
                                 <Link :href="route('portal.index')"
-                                    ><i class="fa fa-home fa-1x"></i>Inicio</Link
+                                    ><i class="fa fa-home fa-1x"></i
+                                    >Inicio</Link
+                                >
+                            </li>
+                            <li
+                                :class="[
+                                    route_current == 'portal.productos'
+                                        ? 'active'
+                                        : '',
+                                ]"
+                            >
+                                <Link :href="route('portal.productos')"
+                                    ><i class="fa fa-list fa-1x"></i
+                                    >Productos</Link
                                 >
                             </li>
                             <li
@@ -115,30 +128,8 @@ onMounted(() => {
                                 ]"
                             >
                                 <Link :href="route('portal.index')"
-                                    ><i class="fa fa-list fa-1x"></i>Productos</Link
-                                >
-                            </li>
-                            <li
-                                :class="[
-                                    route_current == 'portal.index'
-                                        ? 'active'
-                                        : '',
-                                ]"
-                            >
-                                <Link :href="route('portal.index')"
-                                    ><i class="fa fa-clipboard fa-1x"></i>Solicitud de productos</Link
-                                >
-                            </li>
-                            <li
-                                v-if="user && user.role_id == 2"
-                                :class="[
-                                    route_current == 'portal.index'
-                                        ? 'active'
-                                        : '',
-                                ]"
-                            >
-                                <Link :href="route('portal.index')"
-                                    ><i class="fa fa-shopping-cart"></i>Mi carrito</Link
+                                    ><i class="fa fa-clipboard fa-1x"></i
+                                    >Solicitud de productos</Link
                                 >
                             </li>
                             <li
@@ -150,7 +141,21 @@ onMounted(() => {
                                 ]"
                             >
                                 <Link :href="route('portal.index')"
-                                    ><i class="fa fa-table"></i>Ordenes de venta</Link
+                                    ><i class="fa fa-shopping-cart"></i>Mi
+                                    carrito</Link
+                                >
+                            </li>
+                            <li
+                                v-if="user && user.role_id == 2"
+                                :class="[
+                                    route_current == 'portal.index'
+                                        ? 'active'
+                                        : '',
+                                ]"
+                            >
+                                <Link :href="route('portal.index')"
+                                    ><i class="fa fa-table"></i>Ordenes de
+                                    venta</Link
                                 >
                             </li>
                         </ul>

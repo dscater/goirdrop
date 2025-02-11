@@ -42,6 +42,47 @@ class ProductoController extends Controller
     }
 
     /**
+     * Obtener registro de productos paginado
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function productosPaginadoPortal(Request $request): JsonResponse
+    {
+        $perPage = $request->perPage;
+        $page = (int)($request->input("page", 1));
+        $search = (string)$request->input("search", "");
+        $precioDesde = $request->precioDesde;
+        $precioHasta = $request->precioHasta;
+        $categoria_id = $request->categoria_id;
+        $orderByCol = $request->orderByCol;
+        $desc = $request->desc;
+
+        $columnsSerachLike = ["nombre", "descripcion"];
+        $columnsFilter = [
+            "categoria_id" => $categoria_id,
+            "publico" => "HABILITADO",
+        ];
+        $columnsBetweenFilter = [
+            "precio_venta" => [$precioDesde, $precioHasta]
+        ];
+
+        $arrayOrderBy = [];
+        if ($orderByCol && $desc) {
+            $arrayOrderBy = [
+                [$orderByCol, $desc]
+            ];
+        }
+
+        $productos = $this->productoService->listadoPaginado($perPage, $page, $search, $columnsSerachLike, $columnsFilter, $columnsBetweenFilter, $arrayOrderBy);
+        return response()->JSON([
+            "total" => $productos->total(),
+            "productos" => $productos->items(),
+            "lastPage" => $productos->lastPage()
+        ]);
+    }
+
+    /**
      * Endpoint para obtener la lista de productos paginado para data table
      *
      * @param Request $request
@@ -49,13 +90,12 @@ class ProductoController extends Controller
      */
     public function api(Request $request): JsonResponse
     {
-
         $length = (int)$request->input('length', 10); // Valor de `length` enviado por DataTable
         $start = (int)$request->input('start', 0); // Índice de inicio enviado por DataTable
         $page = (int)(($start / $length) + 1); // Cálculo de la página actual
         $search = (string)$request->input('search', '');
 
-        $productos = $this->productoService->listadoDataTable($length, $start, $page, $search);
+        $productos = $this->productoService->listadoPaginado($length, $page, $search);
 
         return response()->JSON([
             'data' => $productos->items(),
@@ -73,7 +113,7 @@ class ProductoController extends Controller
      */
     public function productosInicioPortal(Request $request): JsonResponse
     {
-        $tomar = 5;
+        $tomar = 9;
         if ($request->tomar && $request->tomar != '') {
             $tomar = $request->tomar;
         }

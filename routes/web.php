@@ -1,16 +1,13 @@
 <?php
 
-use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\ConfiguracionPagoController;
 use App\Http\Controllers\InicioController;
-use App\Http\Controllers\OrdenVentaController;
 use App\Http\Controllers\PortalController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RecuperarContrasenaController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SedeController;
@@ -45,10 +42,13 @@ Route::get('/registro', function () {
 Route::get("configuracions/getConfiguracion", [ConfiguracionController::class, 'getConfiguracion'])->name("configuracions.getConfiguracion");
 
 // PORTAL
-Route::get("vehiculos", [PortalController::class, 'vehiculos'])->name("portal.vehiculos");
+Route::get("productos", [PortalController::class, 'productos'])->name("portal.productos");
 
-// publicaciones
-Route::get("productos", [ProductoController::class, 'productosInicioPortal'])->name("productos.productosInicioPortal");
+Route::get("productos/verProducto/{producto}", [PortalController::class, 'producto'])->name("portal.producto");
+
+// productos
+Route::get("productos/inicioPortal", [ProductoController::class, 'productosInicioPortal'])->name("productos.productosInicioPortal");
+Route::get("productos/dataProductos", [ProductoController::class, 'productosPaginadoPortal'])->name("productos.dataProductos");
 
 // categorias
 Route::get("categorias/listadoPortal", [CategoriaController::class, 'listadoPortal'])->name("categorias.listadoPortal");

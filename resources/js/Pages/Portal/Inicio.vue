@@ -6,11 +6,9 @@ export default {
 </script>
 <script setup>
 import { onMounted, ref } from "vue";
-import { Link, usePage } from "@inertiajs/vue3";
-import PublicacionLista from "@/Components/PublicacionLista.vue";
+import { Link, usePage, router } from "@inertiajs/vue3";
 import { useAxios } from "@/composables/axios/useAxios";
 import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
-
 const { oConfiguracion } = useConfiguracion();
 const { props: props_page } = usePage();
 const user = ref(props_page.auth?.user);
@@ -30,6 +28,7 @@ const obtenerProductos = async () => {
         route("productos.productosInicioPortal"),
         paramsProductos.value
     );
+
     productoPrincipal.value = data[0];
     listProductos1.value = data.splice(1, 3);
     listProductos2.value = data.splice(1, 7);
@@ -47,6 +46,12 @@ const filtraRegistros = (categoria_id) => {
         paramsProductos.value.categoria_id = "";
     }
     obtenerProductos();
+};
+
+const mostrarProdPrincipal = () => {
+    if (productoPrincipal.value) {
+        router.get(route("portal.producto", productoPrincipal.value.id));
+    }
 };
 
 const cargarListas = () => {
@@ -71,7 +76,9 @@ onMounted(() => {
                         increíbles!</small
                     >
                 </span>
-                <a href="#" class="btn">Ver todos</a>
+                <Link :href="route('portal.productos')" class="btn"
+                    >Ver todos</Link
+                >
             </h4>
             <div class="category-container">
                 <!-- BEGIN category-sidebar -->
@@ -97,7 +104,12 @@ onMounted(() => {
                 <!-- BEGIN category-detail -->
                 <div class="category-detail">
                     <!-- BEGIN category-item -->
-                    <a href="#" class="category-item full">
+                    <a
+                        v-if="productoPrincipal"
+                        href="#"
+                        @click.prevent="mostrarProdPrincipal"
+                        class="category-item full"
+                    >
                         <div
                             class="item"
                             v-if="
@@ -136,8 +148,8 @@ onMounted(() => {
                                 class="item item-thumbnail"
                                 v-for="item in listProductos1"
                             >
-                                <a
-                                    href="product_detail.html"
+                                <Link
+                                    :href="route('portal.producto', item.id)"
                                     class="item-image"
                                 >
                                     <img
@@ -145,12 +157,18 @@ onMounted(() => {
                                         alt=""
                                     />
                                     <!-- <div class="discount">15% OFF</div> -->
-                                </a>
+                                </Link>
                                 <div class="item-info">
                                     <h4 class="item-title">
-                                        <a href="product_detail.html">{{
-                                            item.nombre
-                                        }}</a>
+                                        <Link
+                                            :href="
+                                                route(
+                                                    'portal.producto',
+                                                    item.id
+                                                )
+                                            "
+                                            >{{ item.nombre }}</Link
+                                        >
                                     </h4>
                                     <p class="item-desc">
                                         {{ item.descripcion }}
@@ -171,8 +189,8 @@ onMounted(() => {
                                 class="item item-thumbnail"
                                 v-for="item in listProductos2"
                             >
-                                <a
-                                    href="product_detail.html"
+                                <Link
+                                    :href="route('portal.producto', item.id)"
                                     class="item-image"
                                 >
                                     <img
@@ -180,12 +198,18 @@ onMounted(() => {
                                         alt=""
                                     />
                                     <!-- <div class="discount">15% OFF</div> -->
-                                </a>
+                                </Link>
                                 <div class="item-info">
                                     <h4 class="item-title">
-                                        <a href="product_detail.html">{{
-                                            item.nombre
-                                        }}</a>
+                                        <Link
+                                            :href="
+                                                route(
+                                                    'portal.producto',
+                                                    item.id
+                                                )
+                                            "
+                                            >{{ item.nombre }}</Link
+                                        >
                                     </h4>
                                     <p class="item-desc">
                                         {{ item.descripcion }}

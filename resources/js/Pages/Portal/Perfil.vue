@@ -1,6 +1,5 @@
 <script>
 import Portal from "@/Layouts/Portal.vue";
-import Publicacion from "@/Components/Publicacion.vue";
 export default {
     layout: Portal,
 };
