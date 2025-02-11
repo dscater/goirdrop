@@ -7,6 +7,7 @@ use App\Models\Categoria;
 use App\Models\Producto;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class CategoriaService

@@ -31,7 +31,7 @@ class ProductoStoreRequest extends FormRequest
             "precio_venta" => "required|numeric|min:0",
             "observaciones" => "nullable|min:4",
             "publico" => "required",
-            "imagens" => ["required", "array", "min:1", new ProductoImagensRule],
+            "imagens" => ["required", "array", "min:1", "max:5", new ProductoImagensRule],
         ];
     }
 
@@ -56,6 +56,8 @@ class ProductoStoreRequest extends FormRequest
             "observaciones.min" => "Debes ingresar al menos :min caracteres",
             "publico.required" => "Debes seleccionar un valor",
             "imagens.required" => "Debes cargar al menos 1 imagen",
+            "imagens.min" => "Debes cargar al menos :min imagen",
+            "imagens.max" => "Solo puedes cargar :max imagenes",
         ];
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
@@ -34,6 +35,18 @@ class CategoriaController extends Controller
      * @return JsonResponse
      */
     public function listado(): JsonResponse
+    {
+        return response()->JSON([
+            "categorias" => $this->categoriaService->listado()
+        ]);
+    }
+
+    /**
+     * Listado de categorias para portal
+     *
+     * @return JsonResponse
+     */
+    public function listadoPortal(): JsonResponse
     {
         return response()->JSON([
             "categorias" => $this->categoriaService->listado()

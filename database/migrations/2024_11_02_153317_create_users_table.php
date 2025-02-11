@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string("usuario", 255)->unique();
             $table->string("nombres", 255);
             $table->string("apellidos", 255);
-            $table->string("ci");
+            $table->string("ci")->nullable();
+            $table->string("ci_exp", 155)->nullable();
             $table->string("correo", 255)->unique();
             $table->string('password');
             $table->unsignedBigInteger("role_id")->nullable();

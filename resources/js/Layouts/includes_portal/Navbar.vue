@@ -84,9 +84,8 @@ onMounted(() => {
                 <!-- BEGIN header-logo -->
                 <div class="header-logo">
                     <a :href="route('portal.index')" class="mr-5">
-                        <img :src="url_asset + 'imgs/8.png'" alt="Img" />
+                        <img :src="`${oConfiguracion.url_logo}`" alt="Img" />
                     </a>
-                    <img :src="url_asset + 'imgs/10.png'" alt="Img" />
                 </div>
                 <!-- END header-logo -->
                 <!-- BEGIN header-nav -->
@@ -105,68 +104,53 @@ onMounted(() => {
                                 ]"
                             >
                                 <Link :href="route('portal.index')"
-                                    ><img
-                                        :src="url_asset + 'imgs/home2.png'"
-                                        alt="Img"
-                                    />Inicio</Link
+                                    ><i class="fa fa-home fa-1x"></i>Inicio</Link
                                 >
                             </li>
                             <li
                                 :class="[
-                                    route_current == 'portal.vehiculos'
+                                    route_current == 'portal.index'
                                         ? 'active'
                                         : '',
                                 ]"
                             >
-                                <Link :href="route('portal.vehiculos')"
-                                    ><img
-                                        :src="url_asset + 'imgs/3.png'"
-                                        alt="Img"
-                                    />Vehículos</Link
+                                <Link :href="route('portal.index')"
+                                    ><i class="fa fa-list fa-1x"></i>Productos</Link
                                 >
                             </li>
                             <li
                                 :class="[
-                                    route_current == 'portal.otros_bienes'
+                                    route_current == 'portal.index'
                                         ? 'active'
                                         : '',
                                 ]"
                             >
-                                <Link :href="route('portal.otros_bienes')"
-                                    ><img
-                                        :src="url_asset + 'imgs/20.png'"
-                                        alt="Img"
-                                    />Otros Bienes</Link
-                                >
-                            </li>
-                            <li
-                                :class="[
-                                    route_current == 'portal.ecologicos'
-                                        ? 'active'
-                                        : '',
-                                ]"
-                            >
-                                <Link :href="route('portal.ecologicos')"
-                                    ><img
-                                        :src="url_asset + 'imgs/2.png'"
-                                        alt="Img"
-                                    />Ecológico</Link
+                                <Link :href="route('portal.index')"
+                                    ><i class="fa fa-clipboard fa-1x"></i>Solicitud de productos</Link
                                 >
                             </li>
                             <li
                                 v-if="user && user.role_id == 2"
                                 :class="[
-                                    route_current == 'portal.mis_subastas'
+                                    route_current == 'portal.index'
                                         ? 'active'
                                         : '',
                                 ]"
                             >
-                                <Link :href="route('portal.mis_subastas')"
-                                    ><img
-                                        :src="url_asset + 'imgs/7.png'"
-                                        class="img_mis_subastas"
-                                        alt="Img"
-                                    />Mis subastas</Link
+                                <Link :href="route('portal.index')"
+                                    ><i class="fa fa-shopping-cart"></i>Mi carrito</Link
+                                >
+                            </li>
+                            <li
+                                v-if="user && user.role_id == 2"
+                                :class="[
+                                    route_current == 'portal.index'
+                                        ? 'active'
+                                        : '',
+                                ]"
+                            >
+                                <Link :href="route('portal.index')"
+                                    ><i class="fa fa-table"></i>Ordenes de venta</Link
                                 >
                             </li>
                         </ul>
@@ -178,10 +162,7 @@ onMounted(() => {
                     <ul class="nav">
                         <li v-if="!user">
                             <a :href="route('registro')">
-                                <img
-                                    :src="url_asset + 'imgs/6.png'"
-                                    class="icon-1"
-                                />
+                                <i class="fa fa-edit fa-1x"></i>
                                 <span class="d-none d-xl-inline">
                                     Registro</span
                                 >
@@ -189,10 +170,7 @@ onMounted(() => {
                         </li>
                         <li v-if="!user">
                             <a :href="route('login')">
-                                <img
-                                    :src="url_asset + 'imgs/1.png'"
-                                    class="icon-1"
-                                />
+                                <i class="fa fa-sign-in"></i>
                                 <span class="d-none d-xl-inline"> Acceder</span>
                             </a>
                         </li>
@@ -293,20 +271,16 @@ onMounted(() => {
 }
 
 .header-logo img {
-    max-height: 60px;
-}
-
-.header-logo img:nth-child(1) {
-    max-height: 160px;
+    max-height: 70px;
 }
 
 /* menu */
 .header-menu {
-    margin-top: 15px;
+    margin-top: 35px;
 }
 
 .header.header-fixed .header-menu {
-    margin-top: 0px;
+    margin-top: 20px;
 }
 
 .header-menu .nav li {
@@ -409,7 +383,7 @@ onMounted(() => {
         height: 66px;
     }
 
-    .header-logo{
+    .header-logo {
         margin-right: 0px;
     }
 

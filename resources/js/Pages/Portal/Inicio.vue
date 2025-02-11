@@ -8,55 +8,50 @@ export default {
 import { onMounted, ref } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
 import PublicacionLista from "@/Components/PublicacionLista.vue";
+import { useAxios } from "@/composables/axios/useAxios";
+import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 
+const { oConfiguracion } = useConfiguracion();
 const { props: props_page } = usePage();
 const user = ref(props_page.auth?.user);
 const url_asset = ref(props_page.url_assets);
+const { axiosGet } = useAxios();
+const listCategorias = ref([]);
+const listProductos1 = ref([]);
+const listProductos2 = ref([]);
+const productoPrincipal = ref([]);
+const paramsProductos = ref({
+    tomar: 7,
+    categoria_id: "",
+});
 
-const listVehiculos = ref([]);
-const listOtrosBienes = ref([]);
-const listEcologicos = ref([]);
-
-const obtenerVehiculos = () => {
-    axios
-        .get(route("publicacions.porCategoriaLimitado"), {
-            params: {
-                categoria: "VEHÍCULOS",
-            },
-        })
-        .then((response) => {
-            listVehiculos.value = response.data;
-        });
+const obtenerProductos = async () => {
+    const data = await axiosGet(
+        route("productos.productosInicioPortal"),
+        paramsProductos.value
+    );
+    productoPrincipal.value = data[0];
+    listProductos1.value = data.splice(1, 3);
+    listProductos2.value = data.splice(1, 7);
 };
 
-const obtenerOtrosBienes = () => {
-    axios
-        .get(route("publicacions.porCategoriaLimitado"), {
-            params: {
-                categoria: "OTROS BIENES",
-            },
-        })
-        .then((response) => {
-            listOtrosBienes.value = response.data;
-        });
+const obtenerCategorias = async () => {
+    const data = await axiosGet(route("categorias.listadoPortal"));
+    listCategorias.value = data.categorias;
 };
 
-const obtenerEcologicos = () => {
-    axios
-        .get(route("publicacions.porCategoriaLimitado"), {
-            params: {
-                categoria: "ECOLÓGICO",
-            },
-        })
-        .then((response) => {
-            listEcologicos.value = response.data;
-        });
+const filtraRegistros = (categoria_id) => {
+    if (paramsProductos.value.categoria_id != categoria_id) {
+        paramsProductos.value.categoria_id = categoria_id;
+    } else {
+        paramsProductos.value.categoria_id = "";
+    }
+    obtenerProductos();
 };
 
 const cargarListas = () => {
-    obtenerVehiculos();
-    obtenerOtrosBienes();
-    obtenerEcologicos();
+    obtenerProductos();
+    obtenerCategorias();
 };
 
 onMounted(() => {
@@ -64,178 +59,164 @@ onMounted(() => {
 });
 </script>
 <template>
-    <!-- BEGIN #vehiculos -->
-    <div id="vehiculos" class="seccion_categoria vehiculos">
+    <!-- BEGIN #productos -->
+    <div id="productos" class="productos pt-5 pb-5 mb-5">
         <!-- BEGIN container -->
         <div class="container mb-0">
-            <!-- BEGIN section-title -->
-            <h4 class="titlesec">
-                <img :src="url_asset + 'imgs/14.png'" alt="" />
-                <span class="flex-1"> Vehículos Siniestrados</span>
+            <h4 class="section-title clearfix">
+                <span class="flex-1">
+                    Nuestros productos
+                    <small
+                        >¡Compra y consigue tu producto favorito a precios
+                        increíbles!</small
+                    >
+                </span>
+                <a href="#" class="btn">Ver todos</a>
             </h4>
-            <!-- END section-title -->
-            <!-- BEGIN row -->
-            <div class="row gx-2">
-                <!-- BEGIN col-2 -->
-                <div
-                    class="col-lg-2 col-md-4 col-sm-6 mt-3"
-                    v-for="item in listVehiculos"
-                >
-                    <!-- BEGIN item -->
-                    <div class="item item-thumbnail">
-                        <PublicacionLista
-                            :publicacion="item"
-                        ></PublicacionLista>
+            <div class="category-container">
+                <!-- BEGIN category-sidebar -->
+                <div class="category-sidebar">
+                    <ul class="category-list">
+                        <li class="list-header">Categorías</li>
+                        <li v-for="item in listCategorias">
+                            <a
+                                href="#"
+                                class="categoria px-1"
+                                :class="
+                                    item.id == paramsProductos.categoria_id
+                                        ? 'active'
+                                        : ''
+                                "
+                                @click.prevent="filtraRegistros(item.id)"
+                                >{{ item.nombre }}</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+                <!-- END category-sidebar -->
+                <!-- BEGIN category-detail -->
+                <div class="category-detail">
+                    <!-- BEGIN category-item -->
+                    <a href="#" class="category-item full">
+                        <div
+                            class="item"
+                            v-if="
+                                productoPrincipal && productoPrincipal.imagens
+                            "
+                        >
+                            <div class="item-cover">
+                                <img
+                                    :src="
+                                        productoPrincipal.imagens[0].url_imagen
+                                    "
+                                    alt=""
+                                />
+                            </div>
+                            <div class="item-info bottom">
+                                <h4 class="item-title">
+                                    {{ productoPrincipal.nombre }}
+                                </h4>
+                                <p class="item-desc">
+                                    {{ productoPrincipal.descripcion }}
+                                </p>
+                                <div class="item-price">
+                                    {{ oConfiguracion.conf_moneda.abrev }}
+                                    {{ productoPrincipal.precio_venta }}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <!-- END category-item -->
+                    <!-- BEGIN category-item -->
+                    <div class="category-item list">
+                        <!-- BEGIN item-row -->
+                        <div class="item-row" v-if="listProductos1.length > 0">
+                            <!-- BEGIN item -->
+                            <div
+                                class="item item-thumbnail"
+                                v-for="item in listProductos1"
+                            >
+                                <a
+                                    href="product_detail.html"
+                                    class="item-image"
+                                >
+                                    <img
+                                        :src="item.imagens[0].url_imagen"
+                                        alt=""
+                                    />
+                                    <!-- <div class="discount">15% OFF</div> -->
+                                </a>
+                                <div class="item-info">
+                                    <h4 class="item-title">
+                                        <a href="product_detail.html">{{
+                                            item.nombre
+                                        }}</a>
+                                    </h4>
+                                    <p class="item-desc">
+                                        {{ item.descripcion }}
+                                    </p>
+                                    <div class="item-price">
+                                        {{ oConfiguracion.conf_moneda.abrev }}
+                                        {{ item.precio_venta }}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END item -->
+                        </div>
+                        <!-- END item-row -->
+                        <!-- BEGIN item-row -->
+                        <div class="item-row" v-if="listProductos2.length > 0">
+                            <!-- BEGIN item -->
+                            <div
+                                class="item item-thumbnail"
+                                v-for="item in listProductos2"
+                            >
+                                <a
+                                    href="product_detail.html"
+                                    class="item-image"
+                                >
+                                    <img
+                                        :src="item.imagens[0].url_imagen"
+                                        alt=""
+                                    />
+                                    <!-- <div class="discount">15% OFF</div> -->
+                                </a>
+                                <div class="item-info">
+                                    <h4 class="item-title">
+                                        <a href="product_detail.html">{{
+                                            item.nombre
+                                        }}</a>
+                                    </h4>
+                                    <p class="item-desc">
+                                        {{ item.descripcion }}
+                                    </p>
+                                    <div class="item-price">
+                                        {{ oConfiguracion.conf_moneda.abrev }}
+                                        {{ item.precio_venta }}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END item -->
+                        </div>
+                        <!-- END item-row -->
                     </div>
-                    <!-- END item -->
+                    <!-- END category-item -->
                 </div>
-                <!-- END col-2 -->
-                <div class="col-12 text-center mt-20px">
-                    <Link
-                        :href="route('portal.vehiculos')"
-                        class="btn btn-primary"
-                        >Ver más <i class="fa fa-arrow-right"></i
-                    ></Link>
-                </div>
+                <!-- END category-detail -->
             </div>
-            <!-- END row -->
         </div>
         <!-- END container -->
     </div>
-    <!-- END #vehiculos -->
-    <!-- BEGIN #otros_bienes -->
-    <div
-        id="otros_bienes"
-        class="section-container seccion_categoria otros_bienes"
-    >
-        <!-- BEGIN container -->
-        <div class="container">
-            <!-- BEGIN section-title -->
-            <h4 class="titlesec">
-                <img :src="url_asset + 'imgs/16.png'" alt="" />
-                <span> Otros Bienes Siniestrados</span>
-            </h4>
-            <!-- END section-title -->
-            <!-- BEGIN row -->
-            <div class="row gx-2">
-                <!-- BEGIN col-2 -->
-                <div
-                    class="col-lg-2 col-md-4 col-sm-6"
-                    v-for="item in listOtrosBienes"
-                >
-                    <!-- BEGIN item -->
-                    <div class="item item-thumbnail">
-                        <PublicacionLista
-                            :publicacion="item"
-                        ></PublicacionLista>
-                    </div>
-                    <!-- END item -->
-                </div>
-                <!-- END col-2 -->
-            </div>
-            <div class="col-12 text-center mt-20px">
-                <Link
-                    :href="route('portal.otros_bienes')"
-                    class="btn btn-primary"
-                    >Ver más <i class="fa fa-arrow-right"></i
-                ></Link>
-            </div>
-            <!-- END row -->
-        </div>
-        <!-- END container -->
-    </div>
-    <!-- END #otros_bienes -->
-    <!-- BEGIN #ecologicos -->
-    <div id="ecologicos" class="section-container seccion_categoria ecologicos">
-        <!-- BEGIN container -->
-        <div class="container">
-            <!-- BEGIN section-title -->
-            <h4 class="titlesec">
-                <img :src="url_asset + 'imgs/15.png'" alt="" />
-                <span class="flex-1"> Ecológicos (Bienes Siniestrados)</span>
-            </h4>
-            <!-- END section-title -->
-            <!-- BEGIN row -->
-            <div class="row gx-2">
-                <!-- BEGIN col-2 -->
-                <div
-                    class="col-lg-2 col-md-4 col-sm-6"
-                    v-for="item in listEcologicos"
-                >
-                    <!-- BEGIN item -->
-                    <div class="item item-thumbnail">
-                        <PublicacionLista
-                            :publicacion="item"
-                        ></PublicacionLista>
-                    </div>
-                    <!-- END item -->
-                </div>
-                <!-- END col-2 -->
-            </div>
-            <div class="col-12 text-center mt-20px">
-                <Link :href="route('portal.ecologicos')" class="btn btn-primary"
-                    >Ver más <i class="fa fa-arrow-right"></i
-                ></Link>
-            </div>
-            <!-- END row -->
-        </div>
-        <!-- END container -->
-    </div>
-    <!-- END #ecologicos -->
+    <!-- END #productos -->
 </template>
 
 <style scoped>
-.item.item-thumbnail {
-    margin: 0px;
-    padding: 0px;
-    border: none;
+#productos {
+    min-height: 62vh;
 }
-
-.item.item-thumbnail .item-image img {
-    width: 100% !important;
-}
-
-.seccion_categoria .container {
-    padding-bottom: 30px;
-}
-.seccion_categoria .titlesec {
-    position: relative;
-    margin-bottom: 0px;
-    color: var(--principal-portal2);
+.categoria.active {
+    background-color: var(--principal-portal2);
+    color: white !important;
     font-weight: bold;
-}
-.seccion_categoria .titlesec span {
-    padding: 3px 14px 3px 14px;
-    border-radius: 20px;
-    border: solid 1px var(--principal-portal);
-    font-size: 0.97rem;
-}
-
-.seccion_categoria .titlesec img {
-    height: 70px;
-}
-
-/* vehiculos-ecologicos */
-.seccion_categoria.vehiculos,
-.seccion_categoria.ecologicos {
-    background-color: white;
-    margin-bottom: 0px;
-}
-.seccion_categoria.ecologicos .container,
-.seccion_categoria.vehiculos .container {
-    background-color: #e8ecee;
-    padding-bottom: 40px;
-}
-/* otros bienes */
-
-.seccion_categoria.otros_bienes {
-    background-color: #e8ecee;
-}
-.seccion_categoria.otros_bienes .container {
-    background-color: white;
-}
-
-.seccion_categoria.otros_bienes .item {
-    border: solid 1px #d0d1d1;
 }
 </style>

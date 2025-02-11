@@ -180,13 +180,13 @@ onMounted(() => {
                                     Registrarse
                                 </Link>
                             </div>
-                            <div class="mb-20px">
+                            <!-- <div class="mb-20px">
                                 <Link
                                     :href="route('olvido_contrasena')"
                                     class="text-white d-block w-100 text-center"
                                     >¿Olvidaste tu contraseña?</Link
                                 >
-                            </div>
+                            </div> -->
                             <div class="mb-20px">
                                 <a
                                     :href="route('portal.index')"

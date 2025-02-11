@@ -55,14 +55,41 @@ class ProductoController extends Controller
         $page = (int)(($start / $length) + 1); // Cálculo de la página actual
         $search = (string)$request->input('search', '');
 
-        $usuarios = $this->productoService->listadoDataTable($length, $start, $page, $search);
+        $productos = $this->productoService->listadoDataTable($length, $start, $page, $search);
 
         return response()->JSON([
-            'data' => $usuarios->items(),
-            'recordsTotal' => $usuarios->total(),
-            'recordsFiltered' => $usuarios->total(),
+            'data' => $productos->items(),
+            'recordsTotal' => $productos->total(),
+            'recordsFiltered' => $productos->total(),
             'draw' => intval($request->input('draw')),
         ]);
+    }
+
+    /**
+     * Listado de productos por cantidad para mostrar en el portal
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function productosInicioPortal(Request $request): JsonResponse
+    {
+        $tomar = 5;
+        if ($request->tomar && $request->tomar != '') {
+            $tomar = $request->tomar;
+        }
+
+        $productos = Producto::with(["imagens"])
+            ->where("status", 1)
+            ->where("publico", "HABILITADO");
+
+
+        if ($request->categoria_id && $request->categoria_id != '') {
+            $productos->where("categoria_id", $request->categoria_id);
+        }
+
+        $productos = $productos->orderBy("id", "desc")->get()->take($tomar);
+
+        return response()->JSON($productos);
     }
 
     /**

@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ConfiguracionController;
+use App\Http\Controllers\ConfiguracionPagoController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\OrdenVentaController;
 use App\Http\Controllers\PortalController;
@@ -34,28 +35,25 @@ Route::get('/login', function () {
     return Inertia::render('Auth/Login');
 })->name("login");
 
-Route::post('/registro/validaForm1', [RegisteredUserController::class, 'validaForm1'])->name("registro.validaForm1");
 Route::get('/registro', function () {
     if (Auth::check()) {
         return redirect()->route('inicio');
     }
     return Inertia::render('Auth/Register');
 })->name("registro");
-Route::get('/olvido_contrasena', [RecuperarContrasenaController::class, 'olvido_contrasena'])->name("olvido_contrasena");
-Route::post('/solicitar_recuperacion', [RecuperarContrasenaController::class, 'solicitar_recuperacion'])->name("solicitar_recuperacion");
-Route::get('/recuperar_password/{recuperar_password}', [RecuperarContrasenaController::class, 'recuperar_password'])->name("recuperar_password");
-Route::post('/registrar_recuperacion/{recuperar_password}', [RecuperarContrasenaController::class, 'registrar_recuperacion'])->name("registrar_recuperacion");
 
 Route::get("configuracions/getConfiguracion", [ConfiguracionController::class, 'getConfiguracion'])->name("configuracions.getConfiguracion");
 
 // PORTAL
 Route::get("vehiculos", [PortalController::class, 'vehiculos'])->name("portal.vehiculos");
-Route::get("otros_bienes", [PortalController::class, 'otros_bienes'])->name("portal.otros_bienes");
-Route::get("ecologicos", [PortalController::class, 'ecologicos'])->name("portal.ecologicos");
-Route::get("mis_subastas", [PortalController::class, 'mis_subastas'])->name("portal.mis_subastas");
 
 // publicaciones
+Route::get("productos", [ProductoController::class, 'productosInicioPortal'])->name("productos.productosInicioPortal");
 
+// categorias
+Route::get("categorias/listadoPortal", [CategoriaController::class, 'listadoPortal'])->name("categorias.listadoPortal");
+
+// perfil cliente
 Route::get('profile_cliente', [ProfileController::class, 'profile_cliente'])->name('profile.profile_cliente');
 Route::get('getInfoCliente', [ProfileController::class, 'getInfoCliente'])->name('profile.getInfoCliente');
 Route::post('updateInfoCliente', [ProfileController::class, 'updateInfoCliente'])->name('profile.updateInfoCliente');
@@ -114,7 +112,6 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("categorias/api", [CategoriaController::class, 'api'])->name("categorias.api");
     Route::get("categorias/paginado", [CategoriaController::class, 'paginado'])->name("categorias.paginado");
     Route::get("categorias/listado", [CategoriaController::class, 'listado'])->name("categorias.listado");
-    Route::post("categorias/actualizaPermiso/{role}", [CategoriaController::class, 'actualizaPermiso'])->name("categorias.actualizaPermiso");
     Route::resource("categorias", CategoriaController::class)->only(
         ["index", "store", "show", "update", "destroy"]
     );
@@ -124,6 +121,15 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("productos/paginado", [ProductoController::class, 'paginado'])->name("productos.paginado");
     Route::get("productos/listado", [ProductoController::class, 'listado'])->name("productos.listado");
     Route::resource("productos", ProductoController::class)->only(
+        ["index", "store", "show", "update", "destroy"]
+    );
+
+    // CONFIGURACIÓN DE PAGOS
+    Route::get("configuracion_pagos/api", [ConfiguracionPagoController::class, 'api'])->name("configuracion_pagos.api");
+    Route::get("configuracion_pagos/paginado", [ConfiguracionPagoController::class, 'paginado'])->name("configuracion_pagos.paginado");
+    Route::get("configuracion_pagos/listado", [ConfiguracionPagoController::class, 'listado'])->name("configuracion_pagos.listado");
+    Route::post("configuracion_pagos/actualizaPermiso/{role}", [ConfiguracionPagoController::class, 'actualizaPermiso'])->name("configuracion_pagos.actualizaPermiso");
+    Route::resource("configuracion_pagos", ConfiguracionPagoController::class)->only(
         ["index", "store", "show", "update", "destroy"]
     );
 

@@ -681,6 +681,26 @@ const logout = () => {
                 <div
                     v-if="
                         user_logeado.permisos == '*' ||
+                        user_logeado.permisos.includes('configuracion_pagos.index')
+                    "
+                    class="menu-item"
+                    :class="[
+                        route_current == 'configuracion_pagos.index' ? 'active' : '',
+                    ]"
+                >
+                    <Link
+                        :href="route('configuracion_pagos.index')"
+                        class="menu-link"
+                    >
+                        <div class="menu-icon">
+                            <i class="fa fa-cog"></i>
+                        </div>
+                        <div class="menu-text">Configuración de Pagos</div>
+                    </Link>
+                </div>
+                <div
+                    v-if="
+                        user_logeado.permisos == '*' ||
                         user_logeado.permisos.includes('configuracions.index')
                     "
                     class="menu-item"

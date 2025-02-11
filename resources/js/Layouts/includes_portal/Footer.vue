@@ -21,7 +21,7 @@ const { oConfiguracion } = useConfiguracion();
                 <!-- END col-3 -->
                 <!-- BEGIN col-3 -->
                 <div class="col-lg-3">
-                    <h4 class="footer-header">SUBASTAS ELECTRÓNICAS</h4>
+                    <h4 class="footer-header">{{ oConfiguracion.alias }}</h4>
                     <ul class="fa-ul mb-lg-4 mb-0 p-0">
                         <li>
                             <i class="fa fa-fw fa-angle-right"></i>
@@ -29,30 +29,6 @@ const { oConfiguracion } = useConfiguracion();
                                 class="text-white"
                                 :href="route('portal.index')"
                                 >Inicio</Link
-                            >
-                        </li>
-                        <li>
-                            <i class="fa fa-fw fa-angle-right"></i>
-                            <Link
-                                class="text-white"
-                                :href="route('portal.vehiculos')"
-                                >Vehículos</Link
-                            >
-                        </li>
-                        <li>
-                            <i class="fa fa-fw fa-angle-right"></i>
-                            <Link
-                                class="text-white"
-                                :href="route('portal.otros_bienes')"
-                                >Otros bienes</Link
-                            >
-                        </li>
-                        <li>
-                            <i class="fa fa-fw fa-angle-right"></i>
-                            <Link
-                                class="text-white"
-                                :href="route('portal.ecologicos')"
-                                >Ecológicos</Link
                             >
                         </li>
                     </ul>
@@ -108,7 +84,7 @@ const { oConfiguracion } = useConfiguracion();
 
 .footer {
     color: white;
-    background-color: var(--principal-portal3);
+    background-color: var(--principal-portal);
     box-shadow: none;
 }
 
