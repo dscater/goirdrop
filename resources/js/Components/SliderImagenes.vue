@@ -47,7 +47,11 @@ const pantallaCompleta = () => {
 };
 </script>
 <template>
-    <div class="contenendor_principal_slider" ref="contenedorSlider">
+    <div
+        class="contenendor_principal_slider"
+        ref="contenedorSlider"
+        :class="[$attrs.class]"
+    >
         <span class="icon-left" @click="actualizaImagen(-1)"
             ><i class="fa fa-angle-left"></i
         ></span>
@@ -125,8 +129,7 @@ img.oculto {
 }
 
 .contenedor_sliders .slider img {
-    height: 250px;
-    object-fit: contain;
+    object-fit: cover;
 }
 
 .contenedor_puntos {

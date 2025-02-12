@@ -30,7 +30,6 @@ const num_pages = ref(props.numPages);
 const per_page = ref(props.perPage);
 
 const getTotalPages = () => {
-    console.log(props.perPage)
     return Math.ceil(total.value / per_page.value);
 };
 

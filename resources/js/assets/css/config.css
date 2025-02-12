@@ -108,6 +108,16 @@
     color: white !important;
 }
 
+.contenendor_principal_slider .contenedor_sliders,
+.contenendor_principal_slider .contenedor_sliders .slider {
+    height: 100%;
+}
+
+.contenendor_principal_slider .contenedor_sliders .slider img {
+    height: 100%;
+    object-fit: cover;
+}
+
 .seccion_categoria {
     display: flex;
     flex-direction: column;
@@ -382,6 +392,10 @@ html {
 } */
 
 .modal-open .modal {
+    background-color: rgba(0, 0, 0, 0.582);
+}
+
+.modal.show {
     background-color: rgba(0, 0, 0, 0.582);
 }
 

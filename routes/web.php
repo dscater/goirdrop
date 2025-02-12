@@ -46,6 +46,8 @@ Route::get("productos", [PortalController::class, 'productos'])->name("portal.pr
 
 Route::get("productos/verProducto/{producto}", [PortalController::class, 'producto'])->name("portal.producto");
 
+Route::get("productos/miCarrito", [PortalController::class, 'miCarrito'])->name("portal.miCarrito");
+
 // productos
 Route::get("productos/inicioPortal", [ProductoController::class, 'productosInicioPortal'])->name("productos.productosInicioPortal");
 Route::get("productos/dataProductos", [ProductoController::class, 'productosPaginadoPortal'])->name("productos.dataProductos");

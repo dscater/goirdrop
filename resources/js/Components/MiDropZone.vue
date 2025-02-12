@@ -112,7 +112,6 @@ export default {
             if (this.archivos_existentes[index].id != 0) {
                 // existente en BD
                 this.eliminados.push(this.archivos_existentes[index].id);
-                console.log(this.eliminados);
                 this.$emit(
                     "addEliminados",
                     this.eliminados,
@@ -182,7 +181,6 @@ export default {
         },
         generateThumbnail(file) {
             const reader = new FileReader();
-            console.log(url_assets);
             if (file.type.startsWith("image/")) {
                 reader.onload = (e) => {
                     this.archivos_existentes.push({

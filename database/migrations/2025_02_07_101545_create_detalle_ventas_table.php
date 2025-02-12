@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger("producto_id");
             $table->integer("cantidad");
             $table->decimal("precio", 24, 2);
+            $table->decimal("subtotal", 24, 2);
             $table->timestamps();
 
             $table->foreign("orden_venta_id")->on("orden_ventas")->references("id");

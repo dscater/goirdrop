@@ -2,8 +2,9 @@
 import { usePage, Head, router, Link } from "@inertiajs/vue3";
 import { onMounted, ref } from "vue";
 import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
+import { useOrdenVentaStore } from "@/stores/ordenVenta/ordenVentaStore";
+const ordenVentaStore = useOrdenVentaStore();
 const { oConfiguracion } = useConfiguracion();
-
 const { props: props_page } = usePage();
 const user = ref(props_page.auth?.user);
 const url_asset = ref(props_page.url_assets);
@@ -54,6 +55,7 @@ const toggleNavbar = () => {
 };
 
 onMounted(() => {
+    ordenVentaStore.initCarrito();
     handleHeaderFixedTop();
     window.addEventListener("load", () => {
         handleHeaderFixedTop();
@@ -121,18 +123,6 @@ onMounted(() => {
                                 >
                             </li>
                             <li
-                                :class="[
-                                    route_current == 'portal.index'
-                                        ? 'active'
-                                        : '',
-                                ]"
-                            >
-                                <Link :href="route('portal.index')"
-                                    ><i class="fa fa-clipboard fa-1x"></i
-                                    >Solicitud de productos</Link
-                                >
-                            </li>
-                            <li
                                 v-if="user && user.role_id == 2"
                                 :class="[
                                     route_current == 'portal.index'
@@ -141,9 +131,32 @@ onMounted(() => {
                                 ]"
                             >
                                 <Link :href="route('portal.index')"
-                                    ><i class="fa fa-shopping-cart"></i>Mi
-                                    carrito</Link
+                                    ><i class="fa fa-clipboard fa-1x"></i>Mis
+                                    solicitudes</Link
                                 >
+                            </li>
+                            <li
+                                :class="[
+                                    route_current == 'portal.miCarrito'
+                                        ? 'active'
+                                        : '',
+                                ]"
+                            >
+                                <Link :href="route('portal.miCarrito')"
+                                    ><i
+                                        class="fa fa-shopping-cart content-badge-carrito"
+                                        ><span
+                                            class="badge bg-success badge-carrito"
+                                            v-show="
+                                                ordenVentaStore.getTotalProductos() >
+                                                0
+                                            "
+                                            >{{
+                                                ordenVentaStore.getTotalProductos()
+                                            }}</span
+                                        ></i
+                                    >Mi carrito
+                                </Link>
                             </li>
                             <li
                                 v-if="user && user.role_id == 2"
@@ -336,6 +349,16 @@ onMounted(() => {
     filter: brightness(0) invert(1);
 }
 
+.content-badge-carrito {
+    position: relative;
+}
+
+.badge-carrito {
+    position: absolute;
+    top: -10px;
+    right: -13px;
+}
+
 /* REGISTRO */
 .header-registro .nav {
     height: 80px;
@@ -418,6 +441,17 @@ onMounted(() => {
         padding: 10px 20px;
         font-size: 1rem;
     }
+    .badge-carrito {
+        font-size: 0.5rem;
+        position: absolute;
+        top: -10px;
+        right: -13px;
+    }
+
+    .header-menu .nav li i {
+        margin-right: 10px;
+    }
+
     .header-menu .nav li a img {
         margin-right: 2px;
     }

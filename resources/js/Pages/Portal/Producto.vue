@@ -23,6 +23,9 @@ onMounted(() => {});
 <template>
     <div id="product" class="section-container pt-20px">
         <div class="container">
+            <h4 class="section-title clearfix">
+                <span class="flex-1">Ver producto</span>
+            </h4>
             <Producto :producto="oProducto"></Producto>
         </div>
     </div>

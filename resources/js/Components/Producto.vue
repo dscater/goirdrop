@@ -5,9 +5,11 @@ import SliderImagenes from "@/Components/SliderImagenes.vue";
 import { usePage, Link } from "@inertiajs/vue3";
 import { onMounted, ref, inject, computed, onBeforeUnmount, watch } from "vue";
 import { useFormater } from "@/composables/useFormater";
+import { useOrdenVentaStore } from "@/stores/ordenVenta/ordenVentaStore";
 import axios from "axios";
 import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 const { oConfiguracion } = useConfiguracion();
+const ordenVentaStore = useOrdenVentaStore();
 const { getFormatoMoneda } = useFormater();
 const { props: props_page } = usePage();
 const props = defineProps({
@@ -16,6 +18,66 @@ const props = defineProps({
         default: null,
     },
 });
+
+const stockIniProducto = ref(props.producto.stock_actual);
+
+const form = ref({
+    cantidad: 1,
+    errors: [],
+});
+
+const open_modal = ref(false);
+const abrirModal = () => {
+    open_modal.value = true;
+};
+const cerrarDialog = () => {
+    open_modal.value = false;
+};
+const agregarCantidadProducto = () => {
+    if (verificaCantidad() > 0) {
+        const cantidad = parseInt(form.value.cantidad);
+        ordenVentaStore.addProducto({
+            producto_id: props.producto.id,
+            url_imagen: props.producto.imagens[0].url_imagen,
+            nombre_prod: props.producto.nombre,
+            cantidad: cantidad,
+            precio: props.producto.precio_venta,
+            subtotal: 0,
+        });
+        stockIniProducto.value--;
+        Swal.fire({
+            icon: "success",
+            title: "Correcto",
+            text: `Producto agregado`,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: `Aceptar`,
+        });
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: `Stock insuficiente`,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: `Aceptar`,
+        });
+    }
+    open_modal.value = false;
+};
+
+const verificaCantidad = (cantidad) => {
+    stockIniProducto.value = props.producto.stock_actual;
+    const existeProducto = ordenVentaStore.getProductoCarrito(
+        props.producto.id
+    );
+
+    let cantidad_carrito = 0;
+    if (existeProducto) {
+        cantidad_carrito = existeProducto.cantidad;
+    }
+    stockIniProducto.value -= parseInt(cantidad_carrito);
+
+    return stockIniProducto.value;
+};
 
 watch(
     () => props.producto,
@@ -27,6 +89,8 @@ watch(
 );
 
 onMounted(() => {
+    ordenVentaStore.initCarrito();
+    verificaCantidad();
 });
 
 onBeforeUnmount(() => {});
@@ -35,98 +99,128 @@ onBeforeUnmount(() => {});
     <div class="product-detail row">
         <!-- BEGIN product-image -->
         <div class="product-image col-md-6">
-            <SliderImagenes :imagenes="producto?.imagens"></SliderImagenes>
+            <SliderImagenes
+                :imagenes="producto?.imagens"
+                class="slider-imagenes"
+            ></SliderImagenes>
         </div>
         <!-- END product-image -->
         <!-- BEGIN product-info -->
-        <div class="product-info col-md-6">
-            <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam
-                accusantium, modi neque, impedit inventore voluptates id
-                distinctio architecto beatae facere quisquam debitis aliquam
-                fugiat veritatis saepe excepturi incidunt in eaque!
-            </p>
+        <div class="product-info col-md-6 pt-4 pb-4 px-4">
+            <div class="product-info-detail pb-3">
+                <h4 class="product-title">{{ producto.nombre }}</h4>
+                <span class="text-muted">{{ producto.categoria.nombre }}</span>
+                <p class="pull-right mb-0 mt-2">{{ producto.descripcion }}</p>
+            </div>
+            <div class="product-info-detail pt-3 pb-3">
+                <div class="pull-right">Disponible: {{ stockIniProducto }}</div>
+            </div>
+            <div class="pt-4 pb-3">
+                <div class="product-price mb-3">
+                    <div class="price">
+                        {{ oConfiguracion.conf_moneda?.abrev }}
+                        {{ producto.precio_venta }}
+                    </div>
+                </div>
+                <button
+                    class="btn btn-dark btn-theme btn-lg"
+                    @click.prevent="abrirModal()"
+                >
+                    <i class="fa fa-cart-plus"></i> AGREGAR AL CARRITO
+                </button>
+            </div>
         </div>
         <!-- END product-info -->
     </div>
+
+    <div
+        class="modal fade"
+        :class="{
+            show: open_modal,
+        }"
+        id="modal-dialog-form"
+        :style="{
+            display: open_modal ? 'block' : 'none',
+        }"
+    >
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h4 class="modal-title">
+                        <i class="fa fa-cart-plus"></i> Agregar
+                    </h4>
+                    <button
+                        type="button"
+                        class="btn-close"
+                        @click="cerrarDialog()"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <form @submit.prevent="agregarCantidadProducto()">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Ingresa la cantidad*</label>
+                                <input
+                                    type="number"
+                                    step="1"
+                                    class="form-control"
+                                    :class="{
+                                        'parsley-error': form.errors?.cantidad,
+                                    }"
+                                    v-model="form.cantidad"
+                                    min="1"
+                                />
+                                <ul
+                                    v-if="form.errors?.cantidad"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.cantidad }}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a
+                        href="javascript:;"
+                        class="btn btn-white"
+                        @click="cerrarDialog()"
+                        ><i class="fa fa-times"></i> Cerrar</a
+                    >
+                    <button
+                        type="button"
+                        @click="agregarCantidadProducto()"
+                        class="btn btn-dark"
+                    >
+                        <i class="fa fa-check"></i>
+                        Aceptar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 <style scoped>
-.product-info,
-.product-image {
-    background-color: rgb(255, 255, 255);
-    border-bottom: solid 1px;
-    border-color: var(--bg_blue_dark);
-}
-
-.product-info {
-    border-bottom: solid 3px;
-    border-color: var(--principal-portal);
-}
-
-.fila_detalle {
-    margin: auto;
-    max-width: 100%;
-    position: relative;
+.slider-imagenes {
+    height: 100%;
 }
 .product-detail {
-    position: relative;
+    padding: 0;
+    background-color: white;
 }
 
-.tiempoRestante {
-    display: flex;
-    flex-direction: column;
-    background-color: rgba(0, 179, 45, 0.767);
-    color: white;
-    text-align: center;
-    padding: 5px;
-    min-width: 130px;
-    width: 20%;
-    border-radius: 5px 0px 6px 0px;
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    z-index: 500;
+.product-detail .product-image {
+    padding: 0;
 }
 
-.contenedor_imagen {
-    position: relative;
+.product-info-detail {
+    border-bottom: 1px solid var(--bs-component-border-color);
 }
 
-.product_info_imagen {
-    border-right: solid 1px rgb(204, 204, 204);
-}
-
-.text_info {
-    text-align: right;
-}
-
-.detalles_principal {
-    font-weight: bold;
-}
-
-.detalles_principal .col-12 {
-    padding: 10px;
-}
-.tabla_ofertas tbody tr:hover {
-    background-color: transparent;
-}
-
-.contenedor_detalles p {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-@media (max-width: 900px) {
-    .text_info {
-        text-align: center;
-    }
-
-    .txt_info2 {
-        text-align: center;
-    }
-    .cont_ofertas {
-        border-top: solid 1px white;
-    }
+.price {
+    font-weight: 600;
+    font-size: 2rem;
 }
 </style>

@@ -37,7 +37,18 @@ class PortalController extends Controller
      */
     public function producto(Producto $producto): InertiaResponse
     {
-        $producto = $producto->load(["imagens"]);
+        $producto = $producto->load(["imagens", "categoria"]);
         return Inertia::render("Portal/Producto", compact("producto"));
+    }
+
+    /**
+     * Ver Mi Carrito
+     *
+     * @param Producto $producto
+     * @return InertiaResponse
+     */
+    public function miCarrito(): InertiaResponse
+    {
+        return Inertia::render("Portal/MiCarrito");
     }
 }
