@@ -11,6 +11,7 @@ class OrdenVenta extends Model
 
     protected $fillable = [
         "codigo",
+        "nro",
         "cliente_id",
         "nombre_cliente",
         "apellidos_cliente",
@@ -24,4 +25,21 @@ class OrdenVenta extends Model
         "fecha_orden",
         "fecha_confirmacion",
     ];
+
+    protected $appends = ["fecha_orden_t", "fecha_confirmacion_t"];
+
+    public function getFechaOrdenTAttribute()
+    {
+        return date("d/m/Y", strtotime($this->fecha_orden));
+    }
+
+    public function getFechaConfirmacionTAttribute()
+    {
+        return $this->fecha_confirmacion ? date("d/m/Y", strtotime($this->fecha_confirmacion)) : '';
+    }
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, 'cliente_id');
+    }
 }

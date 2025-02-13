@@ -36,8 +36,8 @@ class ConfiguracionRequest extends FormRequest
             "conf_correos.encriptado" => "required",
             "conf_moneda.abrev" => "required",
             "conf_moneda.moneda" => "required",
-            "conf_captcha.key" => "required",
-            "conf_captcha.key2" => "required",
+            "conf_captcha.claveSitio" => "required",
+            "conf_captcha.claveBackend" => "required",
         ];
     }
 
@@ -63,8 +63,8 @@ class ConfiguracionRequest extends FormRequest
             "conf_correos.encriptado.required" => "Debes completar este campo",
             "conf_moneda.abrev.required" => "Debes completar este campo",
             "conf_moneda.moneda.required" => "Debes completar este campo",
-            "conf_captcha.key.required" => "Debes completar este campo",
-            "conf_captcha.key2.required" => "Debes completar este campo",
+            "conf_captcha.claveSitio.required" => "Debes completar este campo",
+            "conf_captcha.claveBackend.required" => "Debes completar este campo",
         ];
     }
 }

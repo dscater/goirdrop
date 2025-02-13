@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('orden_ventas', function (Blueprint $table) {
             $table->id();
             $table->string("codigo")->unique();
+            $table->bigInteger("nro")->unique();
             $table->unsignedBigInteger("cliente_id");
             $table->string("nombre_cliente");
             $table->string("apellidos_cliente");

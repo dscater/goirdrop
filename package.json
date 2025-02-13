@@ -28,6 +28,7 @@
         "pinia": "^2.1.7",
         "sweetalert2": "^11.10.4",
         "vue-awesome-paginate": "^1.1.46",
-        "vue-multiselect": "^3.0.0-beta.3"
+        "vue-multiselect": "^3.0.0-beta.3",
+        "vue3-recaptcha2": "^1.8.0"
     }
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 13-02-2025 a las 16:34:31
+-- Tiempo de generación: 13-02-2025 a las 22:10:33
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -93,7 +93,7 @@ CREATE TABLE `configuracions` (
 --
 
 INSERT INTO `configuracions` (`id`, `nombre_sistema`, `alias`, `logo`, `fono`, `dir`, `conf_correos`, `conf_moneda`, `conf_captcha`, `created_at`, `updated_at`) VALUES
-(1, 'GOIRDROP S.A.', 'GOIRDROP.', 'lg1738947677.png', '7777777', 'ZONA LOS OLIVOS C. 4 #333', '{\"host\": \"smtp.hostinger.com\", \"correo\": \"mensaje@emsytsrl.com\", \"driver\": \"smtp\", \"nombre\": \"unibienes\", \"puerto\": \"587\", \"password\": \"8Z@d>&kj^y\", \"encriptado\": \"tls\"}', '{\"abrev\": \"Bs\", \"moneda\": \"Bolivianos\"}', '{\"key\": \"Clave 1\", \"key2\": \"bbb\"}', '2025-02-07 15:22:56', '2025-02-07 17:08:18');
+(1, 'GOIRDROP S.A.', 'GOIRDROP.', 'lg1738947677.png', '7777777', 'ZONA LOS OLIVOS C. 4 #333', '{\"host\": \"smtp.hostinger.com\", \"correo\": \"mensaje@emsytsrl.com\", \"driver\": \"smtp\", \"nombre\": \"unibienes\", \"puerto\": \"587\", \"password\": \"8Z@d>&kj^y\", \"encriptado\": \"tls\"}', '{\"abrev\": \"Bs\", \"moneda\": \"Bolivianos\"}', '{\"claveSitio\": \"6LcigdYqAAAAAHKX2uVHDAJ2EgIuOECqEDCXH35b\", \"claveBackend\": \"6LcigdYqAAAAAHs6ugrV8GyzBXvNBIbL3Ab7kBIp\"}', '2025-02-07 15:22:56', '2025-02-13 20:21:35');
 
 -- --------------------------------------------------------
 
@@ -353,6 +353,7 @@ CREATE TABLE `notificacion_users` (
 CREATE TABLE `orden_ventas` (
   `id` bigint UNSIGNED NOT NULL,
   `codigo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nro` bigint NOT NULL,
   `cliente_id` bigint UNSIGNED NOT NULL,
   `nombre_cliente` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `apellidos_cliente` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -682,6 +683,7 @@ ALTER TABLE `notificacion_users`
 ALTER TABLE `orden_ventas`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `orden_ventas_codigo_unique` (`codigo`),
+  ADD UNIQUE KEY `nro` (`nro`),
   ADD KEY `orden_ventas_cliente_id_foreign` (`cliente_id`),
   ADD KEY `orden_ventas_configuracion_pago_id_foreign` (`configuracion_pago_id`);
 

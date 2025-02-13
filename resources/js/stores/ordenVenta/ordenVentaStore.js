@@ -57,7 +57,9 @@ export const useOrdenVentaStore = defineStore("ordenVenta", {
             localStorage.setItem("detalleVenta", JSON.stringify(this.carrito));
         },
         deleteProducto(index) {
-            this.carrito = this.carrito.slice(index, 1);
+            this.carrito.splice(index, 1);
+            localStorage.setItem("detalleVenta", JSON.stringify(this.carrito));
+            return this.carrito;
         },
         editQuantity(index, value) {
             if (value > 0) {

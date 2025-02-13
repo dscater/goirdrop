@@ -6,11 +6,12 @@ export default {
 </script>
 <script setup>
 import { usePage, Link } from "@inertiajs/vue3";
-import { onMounted, ref, inject, computed } from "vue";
+import { onMounted, ref, inject, computed, nextTick } from "vue";
 import { useOrdenVentaStore } from "@/stores/ordenVenta/ordenVentaStore";
 import LoginModal from "@/Components/LoginModal.vue";
 import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 import { useAxios } from "@/composables/axios/useAxios";
+import Vue3Recaptcha2 from "vue3-recaptcha2";
 const ordenVentaStore = useOrdenVentaStore();
 const { oConfiguracion } = useConfiguracion();
 const { axiosGet, axiosPostFormData } = useAxios();
@@ -21,9 +22,14 @@ const actualizarCantidad = (e, index) => {
     const value = e.target.value;
     carrito.value = ordenVentaStore.editQuantity(index, value);
 };
+
+const eliminarFila = (index) => {
+    carrito.value = ordenVentaStore.deleteProducto(index);
+};
+
 const listConfiguracionPagos = ref([]);
 const indexConfiguracionPago = ref(-1);
-const swIrPasos = ref(false);
+const swIrPasos = ref(true); //CAMBIAR A FALSE
 
 const actualizarPaso = (value) => {
     if (verificaInicioSesion()) {
@@ -82,14 +88,65 @@ const verificaInicioSesion = () => {
     return auth;
 };
 
-const comprobaten = ref(null);
-const registrarOrdenVenta = () => {
-    let formdata = new FormData();
-    formdata.append("prueba", "val");
-    // axiosPostFormData(route("orden_ventas.store"), formdata);
+const inputComprobante = ref(null);
+const comprobante = ref(null);
+const cargarComprobante = (e) => {
+    const target = e.target;
+    comprobante.value = null;
+    if (target) {
+        if (target.files[0]) {
+            comprobante.value = target.files[0];
+        }
+    }
 };
 
-onMounted(() => {
+const recaptchaRef = ref(null);
+const token = ref("");
+
+const onVerify = (response) => {
+    token.value = response;
+};
+
+const resetRecaptcha = () => {
+    recaptchaRef.value.reset(); // Reiniciar el captcha
+};
+
+const errors = ref(null);
+const registrarOrdenVenta = async () => {
+    errors.value = null;
+    if (verificaInicioSesion()) {
+        let formdata = new FormData();
+        formdata.append("cliente_id", auth.user.cliente.id);
+        formdata.append("token_captcha", token.value);
+        carrito.value.forEach((element) => {
+            formdata.append(
+                "carrito[]",
+                JSON.stringify({
+                    cantidad: element.cantidad,
+                    producto_id: element.producto_id,
+                    precio: element.precio,
+                    subtotal: element.subtotal,
+                })
+            );
+        });
+
+        formdata.append("comprobante", comprobante.value);
+        try {
+            const resp = await axiosPostFormData(
+                route("orden_ventas.store"),
+                formdata
+            );
+            inputComprobante.value.value = null;
+        } catch (error) {
+            if (error.response.data.errors) {
+                errors.value = error.response.data.errors;
+            }
+        }
+    }
+};
+
+onMounted(async () => {
+    oConfiguracion.value = await useConfiguracion().getConfiguracion();
     cargarConfiguracionPagos();
     ordenVentaStore.initCarrito();
     carrito.value = ordenVentaStore.getCarrito();
@@ -159,36 +216,57 @@ onMounted(() => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(item, index) in carrito">
-                                <td>{{ index + 1 }}</td>
-                                <td width="120">
-                                    <img
-                                        :src="item.url_imagen"
-                                        width="120"
-                                        alt=""
-                                    />
-                                </td>
-                                <td>{{ item.nombre_prod }}</td>
-                                <td class="text-right">
-                                    <input
-                                        type="number"
-                                        class="form-control text-center"
-                                        min="1"
-                                        v-model="item.cantidad"
-                                        @keyup="
-                                            actualizarCantidad($event, index)
-                                        "
-                                        @change="
-                                            actualizarCantidad($event, index)
-                                        "
-                                    />
-                                </td>
-                                <td class="text-right">{{ item.precio }}</td>
-                                <td class="text-right">{{ item.subtotal }}</td>
-                                <td class="text-right">
-                                    <button class="rounded">
-                                        <i class="fa fa-times"></i>
-                                    </button>
+                            <template v-if="carrito.length > 0">
+                                <tr v-for="(item, index) in carrito">
+                                    <td>{{ index + 1 }}</td>
+                                    <td width="120">
+                                        <img
+                                            :src="item.url_imagen"
+                                            width="120"
+                                            alt=""
+                                        />
+                                    </td>
+                                    <td>{{ item.nombre_prod }}</td>
+                                    <td class="text-right">
+                                        <input
+                                            type="number"
+                                            class="form-control text-center"
+                                            min="1"
+                                            v-model="item.cantidad"
+                                            @keyup="
+                                                actualizarCantidad(
+                                                    $event,
+                                                    index
+                                                )
+                                            "
+                                            @change="
+                                                actualizarCantidad(
+                                                    $event,
+                                                    index
+                                                )
+                                            "
+                                        />
+                                    </td>
+                                    <td class="text-right">
+                                        {{ item.precio }}
+                                    </td>
+                                    <td class="text-right">
+                                        {{ item.subtotal }}
+                                    </td>
+                                    <td class="text-right">
+                                        <button
+                                            type="button"
+                                            class="rounded"
+                                            @click="eliminarFila(index)"
+                                        >
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </template>
+                            <tr v-else>
+                                <td colspan="7" class="text-center text-muted">
+                                    NO SE AGREGARÓN PRODUCTOS
                                 </td>
                             </tr>
                         </tbody>
@@ -408,13 +486,43 @@ onMounted(() => {
                             </div>
                             <div class="col-12 form-group text-center mb-3">
                                 <label>Cargar comprobante de pago*</label><br />
-                                <input type="file" />
+                                <input
+                                    type="file"
+                                    :ref="inputComprobante"
+                                    @change="cargarComprobante($event)"
+                                />
+                                <span
+                                    class="text-danger font-weight-bold d-block"
+                                    v-if="errors && errors.comprobante"
+                                    >{{ errors.comprobante[0] }}</span
+                                >
+                            </div>
+                            <hr />
+                            <div class="col-12 form-group text-center mb-3">
+                                <Vue3Recaptcha2
+                                    class="d-flex justify-content-center w-100"
+                                    v-if="
+                                        oConfiguracion &&
+                                        oConfiguracion.conf_captcha &&
+                                        oConfiguracion.conf_captcha.claveSitio
+                                    "
+                                    ref="recaptchaRef"
+                                    :sitekey="
+                                        oConfiguracion?.conf_captcha?.claveSitio
+                                    "
+                                    @verify="onVerify"
+                                />
+                                <span
+                                    class="text-danger font-weight-bold d-block"
+                                    v-if="errors && errors.token_captcha"
+                                    >{{ errors.token_captcha[0] }}</span
+                                >
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" v-if="carrito.length > 0">
                 <div class="col-md-6">
                     <button
                         v-show="pasoActual > 1"
@@ -434,12 +542,21 @@ onMounted(() => {
                         Continuar <i class="fa fa-arrow-right"></i>
                     </button>
                     <button
-                        v-if="pasoActual == 4 && configuracionPagoId != 0"
+                        v-if="pasoActual == 4 && indexConfiguracionPago != -1"
+                        type="button"
+                        class="btn btn-dark btn-lg btn-theme w-250px"
+                        @click="registrarOrdenVenta"
+                        :disabled="token == ''"
+                    >
+                        Finalizar <i class="fa fa-check-circle"></i>
+                    </button>
+                    <button
+                        v-if="pasoActual == 4 && indexConfiguracionPago != -1"
                         type="button"
                         class="btn btn-dark btn-lg btn-theme w-250px"
                         @click="registrarOrdenVenta"
                     >
-                        Finalizar <i class="fa fa-check-circle"></i>
+                        Finalizar2 <i class="fa fa-check-circle"></i>
                     </button>
                 </div>
             </div>

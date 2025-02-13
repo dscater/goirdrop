@@ -31,7 +31,6 @@ import "./assets/css/form.css";
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
 
-
 // Default Layout
 import App from "@/Layouts/App.vue";
 

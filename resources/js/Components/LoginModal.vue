@@ -23,7 +23,6 @@ const muestra_password = ref(false);
 watch(
     () => props.openModal,
     (newVal) => {
-        console.log(newVal);
         open_modal.value = newVal;
     }
 );
@@ -57,9 +56,6 @@ const cerrarDialog = () => {
 };
 
 onMounted(() => {
-    console.log("asdasd");
-    url_assets = propsPage.url_assets;
-    url_principal = propsPage.url_principal;
 });
 </script>
 

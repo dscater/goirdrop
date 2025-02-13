@@ -42,8 +42,8 @@ if (props_page.configuracion != null) {
             moneda: "Bolivianos",
         },
         conf_captcha: {
-            key: "aaa",
-            key2: "bbb",
+            claveSitio: "AAAAAAA",
+            claveBackend: "BBBBBBB",
         },
     });
 }
@@ -291,25 +291,25 @@ onMounted(() => {});
                     <h4>Captcha</h4>
                     <template v-if="form.conf_captcha">
                         <div class="col-md-4 form-group mb-3">
-                            <label for="">Clave 1*</label>
+                            <label for="">Clave Sitio Web*</label>
                             <input
                                 class="form-control"
-                                v-model="form.conf_captcha.key"
+                                v-model="form.conf_captcha.claveSitio"
                             />
-                            <span class="text-danger" v-if="form.errors && form.errors['conf_captcha.key']">{{
-                                form.errors['conf_captcha.key']
+                            <span class="text-danger" v-if="form.errors && form.errors['conf_captcha.claveSitio']">{{
+                                form.errors['conf_captcha.claveSitio']
                             }}</span>
                         </div>
                         <div class="col-md-4 form-group mb-3">
-                            <label for="">Clave 1*</label>
+                            <label for="">Clave Backend*</label>
                             <input
                                 class="form-control"
-                                v-model="form.conf_captcha.key2"
+                                v-model="form.conf_captcha.claveBackend"
                             />
                             <span
                                 class="text-danger"
-                                v-if="form.errors && form.errors['conf_captcha.key2']"
-                                >{{ form.errors['conf_captcha.key2'] }}</span
+                                v-if="form.errors && form.errors['conf_captcha.claveBackend']"
+                                >{{ form.errors['conf_captcha.claveBackend'] }}</span
                             >
                         </div>
                     </template>
