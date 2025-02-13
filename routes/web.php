@@ -5,6 +5,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\ConfiguracionPagoController;
 use App\Http\Controllers\InicioController;
+use App\Http\Controllers\OrdenVentaController;
 use App\Http\Controllers\PortalController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
@@ -47,6 +48,9 @@ Route::get("productos", [PortalController::class, 'productos'])->name("portal.pr
 Route::get("productos/verProducto/{producto}", [PortalController::class, 'producto'])->name("portal.producto");
 
 Route::get("productos/miCarrito", [PortalController::class, 'miCarrito'])->name("portal.miCarrito");
+
+// configuracion pagos
+Route::get("configuracion_pagos/listadoPortal", [ConfiguracionPagoController::class, 'listadoPortal'])->name("portal.configuracionPagosLista");
 
 // productos
 Route::get("productos/inicioPortal", [ProductoController::class, 'productosInicioPortal'])->name("productos.productosInicioPortal");
@@ -132,6 +136,14 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("configuracion_pagos/listado", [ConfiguracionPagoController::class, 'listado'])->name("configuracion_pagos.listado");
     Route::post("configuracion_pagos/actualizaPermiso/{role}", [ConfiguracionPagoController::class, 'actualizaPermiso'])->name("configuracion_pagos.actualizaPermiso");
     Route::resource("configuracion_pagos", ConfiguracionPagoController::class)->only(
+        ["index", "store", "show", "update", "destroy"]
+    );
+
+    // ORDEN VENTAS
+    Route::get("orden_ventas/api", [OrdenVentaController::class, 'api'])->name("orden_ventas.api");
+    Route::get("orden_ventas/paginado", [OrdenVentaController::class, 'paginado'])->name("orden_ventas.paginado");
+    Route::get("orden_ventas/listado", [OrdenVentaController::class, 'listado'])->name("orden_ventas.listado");
+    Route::resource("orden_ventas", OrdenVentaController::class)->only(
         ["index", "store", "show", "update", "destroy"]
     );
 

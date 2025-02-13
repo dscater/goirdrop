@@ -41,6 +41,18 @@ class ConfiguracionPagoController extends Controller
     }
 
     /**
+     * Listado de configuracionPagos para el portal
+     *
+     * @return JsonResponse
+     */
+    public function listadoPortal(): JsonResponse
+    {
+        return response()->JSON([
+            "configuracionPagos" => $this->configuracionPagoService->listado()
+        ]);
+    }
+
+    /**
      * Endpoint para obtener la lista de configuracionPagos paginado para datatable
      *
      * @param Request $request

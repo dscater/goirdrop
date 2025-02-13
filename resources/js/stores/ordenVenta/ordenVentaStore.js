@@ -16,6 +16,14 @@ export const useOrdenVentaStore = defineStore("ordenVenta", {
         getTotalProductos() {
             return this.carrito.length;
         },
+        getSumaTotalCarrito() {
+            let sumaTotal = this.carrito.reduce(
+                (acum, current) => acum + current.subtotal,
+                0
+            );
+
+            return parseFloat(sumaTotal).toFixed(2);
+        },
         getCarrito() {
             return this.carrito;
         },
@@ -52,7 +60,17 @@ export const useOrdenVentaStore = defineStore("ordenVenta", {
             this.carrito = this.carrito.slice(index, 1);
         },
         editQuantity(index, value) {
-            this.carrito[index].cantidad = value;
+            if (value > 0) {
+                this.carrito[index].cantidad = parseInt(value);
+            } else {
+                this.carrito[index].cantidad = 1;
+            }
+            this.carrito[index].subtotal =
+                parseInt(this.carrito[index].cantidad) *
+                parseFloat(this.carrito[index].precio);
+
+            localStorage.setItem("detalleVenta", JSON.stringify(this.carrito));
+            return this.carrito;
         },
     },
 });

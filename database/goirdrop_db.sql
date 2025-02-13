@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 12-02-2025 a las 20:37:02
+-- Tiempo de generación: 13-02-2025 a las 16:34:31
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
