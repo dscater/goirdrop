@@ -75,7 +75,7 @@ const cargarConfiguracionPagos = async () => {
 const modalLogin = ref(false);
 
 const verificaInicioSesion = () => {
-    if (!auth) {
+    if (!auth.user) {
         modalLogin.value = true;
         return null;
     }
