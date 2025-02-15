@@ -5,9 +5,12 @@ namespace App\Services;
 use App\Models\Cliente;
 use App\Models\DetalleVenta;
 use App\Services\HistorialAccionService;
+use App\Services\EnviarCorreoService;
 use App\Models\OrdenVenta;
 use App\Models\OrdenVentaImagen;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Validation\ValidationException;
 
@@ -15,7 +18,7 @@ class OrdenVentaService
 {
     private $modulo = "ORDENES DE VENTA";
 
-    public function __construct(private HistorialAccionService $historialAccionService) {}
+    public function __construct(private HistorialAccionService $historialAccionService, private CargarArchivoService $cargarArchivoService, private EnviarCorreoService $enviarCorreoService) {}
 
     /**
      * Lista de todos los ordenVentas
@@ -85,6 +88,62 @@ class OrdenVentaService
     }
 
     /**
+     * Lista de ordenVentas paginado con filtros
+     *
+     * @param integer $length
+     * @param integer $page
+     * @param string $search
+     * @param array $columnsSerachLike
+     * @param array $columnsFilter
+     * @return LengthAwarePaginator
+     */
+    public function listadoPaginadoCliente(int $cliente_id, int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
+    {
+        $ordenVentas = OrdenVenta::with(["detalleVenta.producto.imagens", "cliente"])
+            ->select("orden_ventas.*");
+
+
+        $ordenVentas->where("cliente_id", $cliente_id);
+        if (!empty($columnsFilter)) {
+            foreach ($columnsFilter as $key => $value) {
+                if ($value) {
+                    $ordenVentas->where($key, $value);
+                }
+            }
+        }
+
+        if (!empty($columnsBetweenFilter)) {
+            foreach ($columnsBetweenFilter as $key => $value) {
+                if ($value[0] && $value[1]) {
+                    $ordenVentas->whereBetween($key, $value);
+                }
+            }
+        }
+
+        if ($search && trim($search) != '') {
+            if (!empty($columnsSerachLike)) {
+                foreach ($columnsSerachLike as $col) {
+                    $ordenVentas->orWhere($col, "LIKE", "%$search%");
+                }
+            }
+        }
+
+
+        $ordenVentas->where("status", 1);
+
+        if (!empty($orderBy)) {
+            foreach ($orderBy as $value) {
+                $ordenVentas->orderBy($value[0], $value[1]);
+            }
+        }
+
+
+        $ordenVentas = $ordenVentas->paginate($length, ['*'], 'page', $page);
+        return $ordenVentas;
+    }
+
+
+    /**
      * Crear ordenVenta
      *
      * @param array $datos
@@ -101,22 +160,23 @@ class OrdenVentaService
             "nombre_cliente" => $cliente->nombres,
             "apellidos_cliente" => $cliente->apellidos,
             "cel" => $cliente->cel,
-            "estado_orden" => "PENDIENTE",
-            "estado_pago" => "estado_pago",
-            "configuracion_pago_id" => "configuracion_pago_id",
-            "comprobante" => "comprobante",
-            "observacion" => "observacion",
-            "status" => "status",
-            "fecha_orden" => "fecha_orden",
-            "fecha_confirmacion" => "fecha_confirmacion",
-            "fecha_registro" => date("Y-m-d"),
+            "configuracion_pago_id" => $datos["configuracion_pago_id"],
+            "fecha_orden" => date("Y-m-d"),
         ]);
 
 
         // registrar accion
-        $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UNA ORDEN DE VENTA", $ordenVenta->load(["imagens"]));
+        $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UNA ORDEN DE VENTA", $ordenVenta);
 
         // registrar comprobante
+        $this->guardarComprobante($ordenVenta, $datos["comprobante"]);
+
+        // registrar Detalle(carrito)
+        $this->registrarCarrito($ordenVenta, $datos["carrito"]);
+
+
+        // enviar correo
+        $this->enviarCorreoService->nuevaOrdenVenta($ordenVenta);
 
         return $ordenVenta;
     }
@@ -223,5 +283,39 @@ class OrdenVentaService
         }
 
         return [$codigo . $nro, $nro];
+    }
+
+    /**
+     * Guardar comprobante
+     *
+     * @param Configuracion $ordenVenta
+     * @param UploadedFile $file
+     * @return void
+     */
+    private function guardarComprobante(OrdenVenta $ordenVenta, UploadedFile $file): void
+    {
+        $nombre = "ov" . $ordenVenta->id . time();
+        $ordenVenta->comprobante = $this->cargarArchivoService->cargarArchivo($file, public_path("imgs/ordenVentas"), $nombre);
+        $ordenVenta->save();
+    }
+
+    /**
+     * Guardar detalle de venta (carrito)
+     *
+     * @param OrdenVenta $ordenVenta
+     * @param array $carrito
+     * @return void
+     */
+    private function registrarCarrito(OrdenVenta $ordenVenta, array $carrito): void
+    {
+        foreach ($carrito as $item) {
+            $arraProd = json_decode($item, true);
+            $ordenVenta->detalleVenta()->create([
+                "producto_id" => $arraProd["producto_id"],
+                "cantidad" => $arraProd["cantidad"],
+                "precio" => $arraProd["precio"],
+                "subtotal" => $arraProd["subtotal"],
+            ]);
+        }
     }
 }

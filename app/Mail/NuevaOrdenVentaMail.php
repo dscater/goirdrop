@@ -9,15 +9,16 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class MensajeComprobanteMail extends Mailable
+class NuevaOrdenVentaMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $datos;
+
     /**
      * Create a new message instance.
      */
-    public function __construct($datos)
+    public function __construct(array $datos)
     {
         $this->datos = $datos;
     }
@@ -28,7 +29,7 @@ class MensajeComprobanteMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Verificación de garantía',
+            subject: 'Orden de venta',
         );
     }
 
@@ -38,9 +39,9 @@ class MensajeComprobanteMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.comprobante',
+            view: 'mail.ordenVenta',
             with: [
-                'datos' => $this->datos, // Asegúrate de que el mensaje esté en el formato correcto
+                "datos" => $this->datos
             ]
         );
     }

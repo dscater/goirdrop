@@ -43,7 +43,13 @@ export const useAxios = () => {
             Swal.fire({
                 icon: "success",
                 title: "Correcto",
-                text: `${flash.bien ? flash.bien : "Proceso realizado"}`,
+                html: `${
+                    flash.bien
+                        ? flash.bien
+                        : response.data.message
+                        ? response.data.message
+                        : "Proceso realizado"
+                }`,
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: `Aceptar`,
             });

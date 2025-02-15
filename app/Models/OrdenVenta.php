@@ -26,7 +26,12 @@ class OrdenVenta extends Model
         "fecha_confirmacion",
     ];
 
-    protected $appends = ["fecha_orden_t", "fecha_confirmacion_t"];
+    protected $appends = ["fecha_orden_t", "fecha_confirmacion_t", "total"];
+
+    public function getTotalAttribute()
+    {
+        return $this->detalleVenta->sum("subtotal");
+    }
 
     public function getFechaOrdenTAttribute()
     {
@@ -41,5 +46,10 @@ class OrdenVenta extends Model
     public function cliente()
     {
         return $this->belongsTo(Cliente::class, 'cliente_id');
+    }
+
+    public function detalleVenta()
+    {
+        return $this->hasMany(DetalleVenta::class, 'orden_venta_id');
     }
 }

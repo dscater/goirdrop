@@ -20,13 +20,13 @@ return new class extends Migration
             $table->string("apellidos_cliente");
             $table->string("cel");
             $table->string("estado_orden")->default("PENDIENTE"); //PENDIENTE,RECHAZADO,CONFIRMADO
-            $table->integer("estado_pago");
+            $table->integer("estado_pago")->default(0);
             $table->unsignedBigInteger("configuracion_pago_id");
-            $table->string("comprobante", 255);
+            $table->string("comprobante", 255)->nullable();
             $table->text("observacion")->nullable();
-            $table->integer("status");
+            $table->integer("status")->default(1);
             $table->date("fecha_orden");
-            $table->date("fecha_confirmacion");
+            $table->date("fecha_confirmacion")->nullable();
             $table->timestamps();
 
             $table->foreign("cliente_id")->on("clientes")->references("id");

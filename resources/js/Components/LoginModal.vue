@@ -120,7 +120,6 @@ onMounted(() => {
                             <div class="login-content">
                                 <div class="alert alert-info mt-3">
                                     Debes iniciar sesión para poder continuar
-                                    con la compra
                                 </div>
                                 <form @submit.prevent="submit()">
                                     <div class="form-floating mb-20px">

@@ -111,9 +111,11 @@ const resetRecaptcha = () => {
     recaptchaRef.value.reset(); // Reiniciar el captcha
 };
 
+const enviando = ref(false);
 const errors = ref(null);
 const registrarOrdenVenta = async () => {
     errors.value = null;
+    enviando.value = true;
     if (verificaInicioSesion()) {
         let formdata = new FormData();
         formdata.append("cliente_id", auth.user.cliente.id);
@@ -131,17 +133,36 @@ const registrarOrdenVenta = async () => {
         });
 
         formdata.append("comprobante", comprobante.value);
+        formdata.append(
+            "configuracion_pago_id",
+            listConfiguracionPagos.value[indexConfiguracionPago.value].id
+        );
         try {
             const resp = await axiosPostFormData(
                 route("orden_ventas.store"),
                 formdata
             );
-            inputComprobante.value.value = null;
+            reiniciarCarrito();
         } catch (error) {
-            if (error.response.data.errors) {
+            console.log(error);
+            if (error.response && error.response.data.errors) {
                 errors.value = error.response.data.errors;
             }
+        } finally {
+            enviando.value = false;
         }
+    }
+};
+
+const reiniciarCarrito = () => {
+    inputComprobante.value.value = null;
+    ordenVentaStore.limpiarCarrito();
+    carrito.value = [];
+    pasoActual.value = 1;
+    resetRecaptcha();
+    indexConfiguracionPago.value = -1;
+    if (listConfiguracionPagos.value.length > 0) {
+        indexConfiguracionPago.value = 0;
     }
 };
 
@@ -159,6 +180,11 @@ onMounted(async () => {
     ></LoginModal>
     <div id="carrito" class="section-container pt-20px">
         <div class="container">
+            <h4 class="section-title clearfix">
+                <span class="flex-1">
+                    Mi carrito
+                </span>
+            </h4>
             <div class="contenedor_pasos overflow-auto">
                 <button
                     class="item_paso"
@@ -488,7 +514,7 @@ onMounted(async () => {
                                 <label>Cargar comprobante de pago*</label><br />
                                 <input
                                     type="file"
-                                    :ref="inputComprobante"
+                                    ref="inputComprobante"
                                     @change="cargarComprobante($event)"
                                 />
                                 <span
@@ -526,7 +552,7 @@ onMounted(async () => {
                 <div class="col-md-6">
                     <button
                         v-show="pasoActual > 1"
-                        class="btn btn-white btn-lg me-auto btn-theme w-250px"
+                        class="btn btn-white btn-lg me-auto btn-theme w-100"
                         @click="actualizarPaso(-1)"
                     >
                         <i class="fa fa-arrow-left"></i> Volver
@@ -536,7 +562,7 @@ onMounted(async () => {
                     <button
                         v-if="pasoActual < 4"
                         type="button"
-                        class="btn btn-dark btn-lg btn-theme w-250px"
+                        class="btn btn-dark btn-lg btn-theme w-100"
                         @click="actualizarPaso(1)"
                     >
                         Continuar <i class="fa fa-arrow-right"></i>
@@ -544,20 +570,31 @@ onMounted(async () => {
                     <button
                         v-if="pasoActual == 4 && indexConfiguracionPago != -1"
                         type="button"
-                        class="btn btn-dark btn-lg btn-theme w-250px"
+                        class="btn btn-dark btn-lg btn-theme w-100"
                         @click="registrarOrdenVenta"
-                        :disabled="token == ''"
+                        :disabled="token == '' || enviando"
                     >
-                        Finalizar <i class="fa fa-check-circle"></i>
+                        <span
+                            v-text="enviando ? 'Registrando ' : 'Finalizar '"
+                        ></span>
+                        <i
+                            class="fa"
+                            :class="[
+                                enviando
+                                    ? 'fa-spinner fa-spin'
+                                    : 'fa-check-circle',
+                            ]"
+                        ></i>
                     </button>
-                    <button
-                        v-if="pasoActual == 4 && indexConfiguracionPago != -1"
-                        type="button"
-                        class="btn btn-dark btn-lg btn-theme w-250px"
-                        @click="registrarOrdenVenta"
+                </div>
+            </div>
+            <div class="row" v-else>
+                <div class="col-md-6">
+                    <Link
+                        :href="route('portal.productos')"
+                        class="btn btn-white btn-lg me-auto btn-theme w-100"
+                        ><i class="fa fa-table"></i> Ver productos</Link
                     >
-                        Finalizar2 <i class="fa fa-check-circle"></i>
-                    </button>
                 </div>
             </div>
         </div>

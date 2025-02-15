@@ -16,4 +16,9 @@ class DetalleVenta extends Model
         "precio",
         "subtotal",
     ];
+
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class, 'producto_id');
+    }
 }

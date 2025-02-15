@@ -25,6 +25,7 @@ class OrdenVentaStoreRequest extends FormRequest
     {
         return [
             "cliente_id" => "required",
+            "configuracion_pago_id" => "required",
             "token_captcha" => ["required", new OrdenVentaTokenCaptchaRule],
             'carrito' => ["required", "array", "min:1", new OrdenVentaCarritoRule],
             "comprobante" => ["required", "file", "mimes:pdf,png,jpg,jpeg,webp", "max:8192"]

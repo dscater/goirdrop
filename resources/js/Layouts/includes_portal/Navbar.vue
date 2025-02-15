@@ -125,12 +125,12 @@ onMounted(() => {
                             <li
                                 v-if="user && user.role_id == 2"
                                 :class="[
-                                    route_current == 'portal.index'
+                                    route_current == 'portal.misSolicitudes'
                                         ? 'active'
                                         : '',
                                 ]"
                             >
-                                <Link :href="route('portal.index')"
+                                <Link :href="route('portal.misSolicitudes')"
                                     ><i class="fa fa-clipboard fa-1x"></i>Mis
                                     solicitudes</Link
                                 >
@@ -157,19 +157,6 @@ onMounted(() => {
                                         ></i
                                     >Mi carrito
                                 </Link>
-                            </li>
-                            <li
-                                v-if="user && user.role_id == 2"
-                                :class="[
-                                    route_current == 'portal.index'
-                                        ? 'active'
-                                        : '',
-                                ]"
-                            >
-                                <Link :href="route('portal.index')"
-                                    ><i class="fa fa-table"></i>Ordenes de
-                                    venta</Link
-                                >
                             </li>
                         </ul>
                     </div>
@@ -281,7 +268,7 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
     width: 200px;
-    margin-right: 100px;
+    margin-right: 0px;
 }
 
 .header.header-fixed .header-logo {

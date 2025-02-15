@@ -74,5 +74,9 @@ export const useOrdenVentaStore = defineStore("ordenVenta", {
             localStorage.setItem("detalleVenta", JSON.stringify(this.carrito));
             return this.carrito;
         },
+        limpiarCarrito() {
+            this.carrito = [];
+            localStorage.removeItem("detalleVenta");
+        },
     },
 });

@@ -44,11 +44,21 @@ class PortalController extends Controller
     /**
      * Ver Mi Carrito
      *
-     * @param Producto $producto
      * @return InertiaResponse
      */
     public function miCarrito(): InertiaResponse
     {
         return Inertia::render("Portal/MiCarrito");
+    }
+
+
+    /**
+     * Ver Mis Solicitudes
+     *
+     * @return InertiaResponse
+     */
+    public function misSolicitudes(): InertiaResponse
+    {
+        return Inertia::render("Portal/MisSolicitudes");
     }
 }

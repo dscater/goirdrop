@@ -49,6 +49,8 @@ Route::get("productos/verProducto/{producto}", [PortalController::class, 'produc
 
 Route::get("productos/miCarrito", [PortalController::class, 'miCarrito'])->name("portal.miCarrito");
 
+Route::get("productos/misSolicitudes", [PortalController::class, 'misSolicitudes'])->name("portal.misSolicitudes");
+
 // configuracion pagos
 Route::get("configuracion_pagos/listadoPortal", [ConfiguracionPagoController::class, 'listadoPortal'])->name("portal.configuracionPagosLista");
 
@@ -140,6 +142,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     );
 
     // ORDEN VENTAS
+    Route::get("orden_ventas/misSolicitudes", [OrdenVentaController::class, 'ordenesCliente'])->name("orden_ventas.ordenesCliente");
     Route::get("orden_ventas/api", [OrdenVentaController::class, 'api'])->name("orden_ventas.api");
     Route::get("orden_ventas/paginado", [OrdenVentaController::class, 'paginado'])->name("orden_ventas.paginado");
     Route::get("orden_ventas/listado", [OrdenVentaController::class, 'listado'])->name("orden_ventas.listado");
