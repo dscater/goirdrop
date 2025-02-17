@@ -5,7 +5,7 @@ namespace App\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class OrdenVentaTokenCaptchaRule implements ValidationRule
+class TokenCaptchaRule implements ValidationRule
 {
     /**
      * Run the validation rule.

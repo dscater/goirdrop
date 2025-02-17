@@ -29,6 +29,10 @@ import Portal from "@/Layouts/Portal.vue";
 // Portal
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
 
+// ELEMENT-UI
+import ElementPlus from "element-plus";
+import "element-plus/dist/index.css";
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => {
@@ -46,6 +50,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(pinia)
+            .use(ElementPlus)
             .mount(el);
     },
     progress: {

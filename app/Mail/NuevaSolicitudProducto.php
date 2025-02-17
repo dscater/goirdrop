@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class MensajeGanadorMail extends Mailable
+class NuevaSolicitudProducto extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -17,11 +17,10 @@ class MensajeGanadorMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct($datos)
+    public function __construct(array $datos)
     {
         $this->datos = $datos;
     }
-
 
     /**
      * Get the message envelope.
@@ -29,7 +28,7 @@ class MensajeGanadorMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Subasta Concluida',
+            subject: 'Nueva Solicitud de Producto',
         );
     }
 
@@ -39,9 +38,9 @@ class MensajeGanadorMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.ganador',
+            view: 'mail.solicitudProducto',
             with: [
-                'datos' => $this->datos, // Asegúrate de que el mensaje esté en el formato correcto
+                "datos" => $this->datos
             ]
         );
     }

@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SedeController;
+use App\Http\Controllers\SolicitudProductoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
@@ -147,6 +148,15 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("orden_ventas/paginado", [OrdenVentaController::class, 'paginado'])->name("orden_ventas.paginado");
     Route::get("orden_ventas/listado", [OrdenVentaController::class, 'listado'])->name("orden_ventas.listado");
     Route::resource("orden_ventas", OrdenVentaController::class)->only(
+        ["index", "store", "show", "update", "destroy"]
+    );
+
+    // SOLICITUD PRODUCTOS
+    Route::get("solicitud_productos/misSolicitudes", [SolicitudProductoController::class, 'solicitudesCliente'])->name("solicitud_productos.solicitudesCliente");
+    Route::get("solicitud_productos/api", [SolicitudProductoController::class, 'api'])->name("solicitud_productos.api");
+    Route::get("solicitud_productos/paginado", [SolicitudProductoController::class, 'paginado'])->name("solicitud_productos.paginado");
+    Route::get("solicitud_productos/listado", [SolicitudProductoController::class, 'listado'])->name("solicitud_productos.listado");
+    Route::resource("solicitud_productos", SolicitudProductoController::class)->only(
         ["index", "store", "show", "update", "destroy"]
     );
 

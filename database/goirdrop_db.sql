@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 15-02-2025 a las 16:21:56
+-- Tiempo de generación: 17-02-2025 a las 21:35:21
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -230,7 +230,8 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (51, 3, 'CREACIÓN', 'EL USUARIO mario@gmail.com REGISTRO UNA ORDEN DE VENTA', '{\"id\": 1, \"cel\": \"78787878\", \"nro\": 1, \"codigo\": \"ORD.1\", \"cliente_id\": 1, \"created_at\": \"2025-02-15T14:25:31.000000Z\", \"updated_at\": \"2025-02-15T14:25:31.000000Z\", \"fecha_orden\": \"2025-02-15\", \"nombre_cliente\": \"MARIO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"configuracion_pago_id\": \"1\"}', NULL, 'ORDENES DE VENTA', '2025-02-15', '10:25:31', '2025-02-15 14:25:31', '2025-02-15 14:25:31'),
 (52, 3, 'CREACIÓN', 'EL USUARIO mario@gmail.com REGISTRO UNA ORDEN DE VENTA', '{\"id\": 1, \"cel\": \"78787878\", \"nro\": 1, \"codigo\": \"ORD.1\", \"cliente_id\": 1, \"created_at\": \"2025-02-15T14:43:07.000000Z\", \"updated_at\": \"2025-02-15T14:43:07.000000Z\", \"fecha_orden\": \"2025-02-15\", \"nombre_cliente\": \"MARIO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"configuracion_pago_id\": \"1\"}', NULL, 'ORDENES DE VENTA', '2025-02-15', '10:43:07', '2025-02-15 14:43:07', '2025-02-15 14:43:07'),
 (53, 3, 'CREACIÓN', 'EL USUARIO mario@gmail.com REGISTRO UNA ORDEN DE VENTA', '{\"id\": 1, \"cel\": \"78787878\", \"nro\": 1, \"codigo\": \"ORD.1\", \"cliente_id\": 1, \"created_at\": \"2025-02-15T14:45:44.000000Z\", \"updated_at\": \"2025-02-15T14:45:44.000000Z\", \"fecha_orden\": \"2025-02-15\", \"nombre_cliente\": \"MARIO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"configuracion_pago_id\": \"1\"}', NULL, 'ORDENES DE VENTA', '2025-02-15', '10:45:44', '2025-02-15 14:45:44', '2025-02-15 14:45:44'),
-(54, 3, 'CREACIÓN', 'EL USUARIO mario@gmail.com REGISTRO UNA ORDEN DE VENTA', '{\"id\": 2, \"cel\": \"78787878\", \"nro\": 2, \"codigo\": \"ORD.2\", \"cliente_id\": 1, \"created_at\": \"2025-02-15T14:49:07.000000Z\", \"updated_at\": \"2025-02-15T14:49:07.000000Z\", \"fecha_orden\": \"2025-02-15\", \"nombre_cliente\": \"MARIO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"configuracion_pago_id\": \"1\"}', NULL, 'ORDENES DE VENTA', '2025-02-15', '10:49:07', '2025-02-15 14:49:07', '2025-02-15 14:49:07');
+(54, 3, 'CREACIÓN', 'EL USUARIO mario@gmail.com REGISTRO UNA ORDEN DE VENTA', '{\"id\": 2, \"cel\": \"78787878\", \"nro\": 2, \"codigo\": \"ORD.2\", \"cliente_id\": 1, \"created_at\": \"2025-02-15T14:49:07.000000Z\", \"updated_at\": \"2025-02-15T14:49:07.000000Z\", \"fecha_orden\": \"2025-02-15\", \"nombre_cliente\": \"MARIO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"configuracion_pago_id\": \"1\"}', NULL, 'ORDENES DE VENTA', '2025-02-15', '10:49:07', '2025-02-15 14:49:07', '2025-02-15 14:49:07'),
+(57, 3, 'CREACIÓN', 'EL USUARIO mario@gmail.com REGISTRO UNA SOLICITUD DE PRODUCTO', '{\"id\": 3, \"cel\": \"78787878\", \"nro\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-02-17T21:34:19.000000Z\", \"updated_at\": \"2025-02-17T21:34:19.000000Z\", \"nombre_cliente\": \"MARIO\", \"fecha_solicitud\": \"2025-02-17\", \"codigo_solicitud\": \"SOL.1\", \"apellidos_cliente\": \"GONZALES PAREDES\"}', NULL, 'SOLICITUD DE PRODUCTO', '2025-02-17', '17:34:19', '2025-02-17 21:34:19', '2025-02-17 21:34:19');
 
 -- --------------------------------------------------------
 
@@ -578,6 +579,13 @@ CREATE TABLE `solicitud_detalles` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `solicitud_detalles`
+--
+
+INSERT INTO `solicitud_detalles` (`id`, `solicitud_producto_id`, `nombre_producto`, `detalle_producto`, `links_referencia`, `created_at`, `updated_at`) VALUES
+(1, 3, 'producto sol 1', 'detatalle prod solicitado 1', 'http://producto1.com', '2025-02-17 21:34:19', '2025-02-17 21:34:19');
+
 -- --------------------------------------------------------
 
 --
@@ -587,20 +595,28 @@ CREATE TABLE `solicitud_detalles` (
 CREATE TABLE `solicitud_productos` (
   `id` bigint UNSIGNED NOT NULL,
   `codigo_solicitud` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nro` bigint UNSIGNED NOT NULL,
   `sede_id` bigint UNSIGNED NOT NULL,
   `cliente_id` bigint UNSIGNED NOT NULL,
   `nombre_cliente` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `apellidos_cliente` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `cel` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `estado_solicitud` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PENDIENTE',
-  `estado_seguimiento` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `estado_seguimiento` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `observacion` text COLLATE utf8mb4_unicode_ci,
-  `status` int NOT NULL,
+  `status` int NOT NULL DEFAULT '1',
   `fecha_solicitud` date NOT NULL,
-  `fecha_verificacion` date NOT NULL,
+  `fecha_verificacion` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `solicitud_productos`
+--
+
+INSERT INTO `solicitud_productos` (`id`, `codigo_solicitud`, `nro`, `sede_id`, `cliente_id`, `nombre_cliente`, `apellidos_cliente`, `cel`, `estado_solicitud`, `estado_seguimiento`, `observacion`, `status`, `fecha_solicitud`, `fecha_verificacion`, `created_at`, `updated_at`) VALUES
+(3, 'SOL.1', 1, 1, 1, 'MARIO', 'GONZALES PAREDES', '78787878', 'PENDIENTE', NULL, NULL, 1, '2025-02-17', NULL, '2025-02-17 21:34:19', '2025-02-17 21:34:19');
 
 -- --------------------------------------------------------
 
@@ -818,7 +834,7 @@ ALTER TABLE `detalle_ventas`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT de la tabla `migrations`
@@ -878,13 +894,13 @@ ALTER TABLE `sedes`
 -- AUTO_INCREMENT de la tabla `solicitud_detalles`
 --
 ALTER TABLE `solicitud_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `solicitud_productos`
 --
 ALTER TABLE `solicitud_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `users`

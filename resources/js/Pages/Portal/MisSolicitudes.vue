@@ -10,11 +10,13 @@ import { Link, usePage, router } from "@inertiajs/vue3";
 import { useAxios } from "@/composables/axios/useAxios";
 import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 import MiPaginacion from "@/Components/MiPaginacion.vue";
+import SolicitudProducto from "@/Components/SolicitudProducto.vue";
 import infoOrdenVenta from "@/Components/infoOrdenVenta.vue";
 const { oConfiguracion } = useConfiguracion();
 const { props: props_page } = usePage();
+const { auth } = props_page;
 const { axiosGet } = useAxios();
-const nroNav = ref(1);
+const nroTab = ref(1);
 const listOrdenesVenta = ref([]);
 const paramsOrdenesVenta = ref({
     perPage: 9,
@@ -57,8 +59,27 @@ const verInfoOrdenVenta = (item) => {
     modalInfoOrdenVenta.value = true;
 };
 
+const modalSolicitudProducto = ref(false);
+const nuevaSolicitudProducto = () => {
+    if (verificaInicioSesion()) {
+        modalSolicitudProducto.value = true;
+    }
+};
+
 const cargarListas = () => {
     obtenerOrdenesVenta();
+};
+
+const irTab = (value) => {
+    nroTab.value = value;
+};
+
+const verificaInicioSesion = () => {
+    if (!auth.user) {
+        modalLogin.value = true;
+        return null;
+    }
+    return auth;
 };
 
 onMounted(() => {
@@ -71,6 +92,10 @@ onMounted(() => {
         :open_dialog="modalInfoOrdenVenta"
         @cerrar-dialog="modalInfoOrdenVenta = false"
     ></infoOrdenVenta>
+
+    <SolicitudProducto
+        :open_dialog="modalSolicitudProducto"
+    ></SolicitudProducto>
 
     <!-- BEGIN #productos -->
     <div id="misSolicitudes" class="productos pt-5 pb-5 mb-5">
@@ -88,19 +113,27 @@ onMounted(() => {
                         <div class="navs">
                             <div
                                 class="item-nav"
-                                :class="[nroNav == 1 ? 'active' : '']"
+                                :class="[nroTab == 1 ? 'active' : '']"
+                                @click="irTab(1)"
                             >
                                 Mis compras
                             </div>
                             <div
                                 class="item-nav"
-                                :class="[nroNav == 2 ? 'active' : '']"
+                                :class="[nroTab == 2 ? 'active' : '']"
+                                @click.stop="irTab(2)"
                             >
-                                Solicitud de productos
+                                <span>Solicitud de productos</span>
+                                <button
+                                    class="btn btn-white ml-1 btn-sm"
+                                    @click.stop="nuevaSolicitudProducto"
+                                >
+                                    <i class="fa fa-plus"></i>
+                                </button>
                             </div>
                         </div>
                         <!-- COMPRAS -->
-                        <div class="contenedor-nav bg-white" v-if="nroNav == 1">
+                        <div class="contenedor-nav bg-white" v-if="nroTab == 1">
                             <div class="row">
                                 <div
                                     class="col-md-4 mb-2"
@@ -198,7 +231,7 @@ onMounted(() => {
                             </div>
                         </div>
                         <!-- SOLICITUD PRODUCTOS -->
-                        <div class="contenedor-nav bg-white" v-if="nroNav == 2">
+                        <div class="contenedor-nav bg-white" v-if="nroTab == 2">
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="card">
