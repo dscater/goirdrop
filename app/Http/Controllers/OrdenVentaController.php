@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OrdenVentaStoreRequest;
+use App\Http\Requests\OrdenVentaUpdateEstadoRequest;
 use App\Http\Requests\OrdenVentaUpdateRequest;
 use App\Models\OrdenVenta;
 use App\Services\OrdenVentaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -97,13 +99,57 @@ class OrdenVentaController extends Controller
         $page = (int)(($start / $length) + 1); // Cálculo de la página actual
         $search = (string)$request->input('search', '');
 
-        $usuarios = $this->ordenVentaService->listadoDataTable($length, $start, $page, $search);
+        $usuarios = $this->ordenVentaService->listadoPaginado($length, $page, $search);
 
         return response()->JSON([
             'data' => $usuarios->items(),
             'recordsTotal' => $usuarios->total(),
             'recordsFiltered' => $usuarios->total(),
             'draw' => intval($request->input('draw')),
+        ]);
+    }
+
+    /**
+     * Endpoint para obtener la lista de ordenVentas paginado
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function paginado(Request $request): JsonResponse
+    {
+
+        $perPage = $request->perPage;
+        $page = (int)($request->input("page", 1));
+        $search = (string)$request->input("search", "");
+        $orderByCol = $request->orderByCol;
+        $desc = $request->desc;
+        $estado_orden = $request->estado_orden;
+        $fecha_orden = $request->fecha;
+
+        $columnsSerachLike = ["codigo"];
+        $columnsFilter = [];
+
+        if ($estado_orden) {
+            $columnsFilter["estado_orden"]  = $estado_orden;
+        }
+
+        if ($fecha_orden) {
+            $columnsFilter["fecha_orden"]  = $fecha_orden;
+        }
+
+        $arrayOrderBy = [];
+        if ($orderByCol && $desc) {
+            $arrayOrderBy = [
+                [$orderByCol, $desc]
+            ];
+        }
+
+        $ordenVentas =  $this->ordenVentaService->listadoPaginado($perPage, $page, $search, $columnsSerachLike, $columnsFilter, [], $arrayOrderBy);
+
+        return response()->JSON([
+            "total" => $ordenVentas->total(),
+            "ordenVentas" => $ordenVentas->items(),
+            "lastPage" => $ordenVentas->lastPage()
         ]);
     }
 
@@ -158,6 +204,33 @@ class OrdenVentaController extends Controller
             $this->ordenVentaService->actualizar($request->validated(), $ordenVenta);
             DB::commit();
             return redirect()->route("ordenVentas.index")->with("bien", "Registro actualizado");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Log::debug($e->getMessage());
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Actualizar estado de orden de venta
+     *
+     * @param OrdenVenta $ordenVenta
+     * @param OrdenVentaUpdateEstadoRequest $request
+     * @return JsonResponse|Response
+     */
+    public function update_estado(OrdenVenta $ordenVenta, OrdenVentaUpdateEstadoRequest $request): JsonResponse|Response
+    {
+        DB::beginTransaction();
+        try {
+            // actualizar ordenVenta
+            $this->ordenVentaService->actualizarEstado($ordenVenta, $request->validated());
+            DB::commit();
+            session()->flash("bien", "Registro actualizado correctamente");
+            return response()->JSON([
+                "message" => "Registro actualizado correctamente"
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             // Log::debug($e->getMessage());

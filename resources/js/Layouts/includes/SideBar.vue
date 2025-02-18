@@ -524,6 +524,52 @@ const logout = () => {
                     class="menu-header"
                     v-if="
                         user_logeado.permisos == '*' ||
+                        user_logeado.permisos.includes('orden_ventas.index') ||
+                        user_logeado.permisos.includes(
+                            'solicitud_productos.index'
+                        )
+                    "
+                >
+                    SOLICITUDES
+                </div>
+                <div
+                    v-if="
+                        user_logeado.permisos == '*' ||
+                        user_logeado.permisos.includes('orden_ventas.index')
+                    "
+                    class="menu-item"
+                    :class="[
+                        route_current == 'orden_ventas.index' ? 'active' : 'none',
+                    ]"
+                >
+                    <Link :href="route('orden_ventas.index')" class="menu-link">
+                        <div class="menu-icon">
+                            <i class="fa fa-list-alt"></i>
+                        </div>
+                        <div class="menu-text">Ordenes de venta</div>
+                    </Link>
+                </div>
+                <div
+                    v-if="
+                        user_logeado.permisos == '*' ||
+                        user_logeado.permisos.includes('solicitud_productos.index')
+                    "
+                    class="menu-item"
+                    :class="[
+                        route_current == 'solicitud_productos.index' ? 'active' : 'none',
+                    ]"
+                >
+                    <Link :href="route('solicitud_productos.index')" class="menu-link">
+                        <div class="menu-icon">
+                            <i class="fa fa-clipboard-list"></i>
+                        </div>
+                        <div class="menu-text">Solicitud de Productos</div>
+                    </Link>
+                </div>
+                <div
+                    class="menu-header"
+                    v-if="
+                        user_logeado.permisos == '*' ||
                         user_logeado.permisos.includes('productos.index')
                     "
                 >
@@ -539,7 +585,7 @@ const logout = () => {
                 >
                     <Link :href="route('productos.index')" class="menu-link">
                         <div class="menu-icon">
-                            <i class="fa fa-list"></i>
+                            <i class="fa fa-table"></i>
                         </div>
                         <div class="menu-text">Productos</div>
                     </Link>
@@ -681,11 +727,15 @@ const logout = () => {
                 <div
                     v-if="
                         user_logeado.permisos == '*' ||
-                        user_logeado.permisos.includes('configuracion_pagos.index')
+                        user_logeado.permisos.includes(
+                            'configuracion_pagos.index'
+                        )
                     "
                     class="menu-item"
                     :class="[
-                        route_current == 'configuracion_pagos.index' ? 'active' : '',
+                        route_current == 'configuracion_pagos.index'
+                            ? 'active'
+                            : '',
                     ]"
                 >
                     <Link

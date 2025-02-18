@@ -147,15 +147,18 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("orden_ventas/api", [OrdenVentaController::class, 'api'])->name("orden_ventas.api");
     Route::get("orden_ventas/paginado", [OrdenVentaController::class, 'paginado'])->name("orden_ventas.paginado");
     Route::get("orden_ventas/listado", [OrdenVentaController::class, 'listado'])->name("orden_ventas.listado");
+    Route::patch("orden_ventas/update_estado/{ordenVenta}", [OrdenVentaController::class, 'update_estado'])->name("orden_ventas.update_estado");
     Route::resource("orden_ventas", OrdenVentaController::class)->only(
         ["index", "store", "show", "update", "destroy"]
     );
 
     // SOLICITUD PRODUCTOS
-    Route::get("solicitud_productos/misSolicitudes", [SolicitudProductoController::class, 'solicitudesCliente'])->name("solicitud_productos.solicitudesCliente");
+    Route::get("solicitud_productos/misSolicitudes", [SolicitudProductoController::class, 'solicitudProductosCliente'])->name("solicitud_productos.solicitudProductosCliente");
     Route::get("solicitud_productos/api", [SolicitudProductoController::class, 'api'])->name("solicitud_productos.api");
     Route::get("solicitud_productos/paginado", [SolicitudProductoController::class, 'paginado'])->name("solicitud_productos.paginado");
     Route::get("solicitud_productos/listado", [SolicitudProductoController::class, 'listado'])->name("solicitud_productos.listado");
+    Route::patch("solicitud_productos/update_estado_verificacion/{solicitudProducto}", [SolicitudProductoController::class, 'update_estado_verificacion'])->name("solicitud_productos.update_estado_verificacion");
+    Route::patch("solicitud_productos/update_estado_seguimiento/{solicitudProducto}", [SolicitudProductoController::class, 'update_estado_seguimiento'])->name("solicitud_productos.update_estado_seguimiento");
     Route::resource("solicitud_productos", SolicitudProductoController::class)->only(
         ["index", "store", "show", "update", "destroy"]
     );

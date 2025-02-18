@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string("apellidos_cliente");
             $table->string("cel");
             $table->string("estado_solicitud")->default("PENDIENTE"); //PENDIENTE,RECHAZADO,CONFIRMADO
+            $table->decimal("precio_compra", 24, 2)->nullable();
+            $table->decimal("margen_ganancia", 24, 2)->nullable();
             $table->string("estado_seguimiento")->nullable()->default(NULL); //NULL, PENDIENTE, EN PROCESO, EN ALMACÉN, ENTREGADO
             $table->text("observacion")->nullable();
             $table->integer("status")->default(1);

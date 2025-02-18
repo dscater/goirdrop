@@ -26,7 +26,12 @@ class OrdenVenta extends Model
         "fecha_confirmacion",
     ];
 
-    protected $appends = ["fecha_orden_t", "fecha_confirmacion_t", "total"];
+    protected $appends = ["fecha_orden_t", "fecha_confirmacion_t", "total", "url_comprobante"];
+
+    public function getUrlComprobanteAttribute()
+    {
+        return asset("imgs/ordenVentas/" . $this->comprobante);
+    }
 
     public function getTotalAttribute()
     {

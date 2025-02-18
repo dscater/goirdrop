@@ -72,7 +72,6 @@ const txtBotonEnviar = computed(() => {
 const cerrarDialog = () => {
     dialog.value = false;
     enviando.value = false;
-    input_file.value = null;
     document.getElementsByTagName("body")[0].classList.remove("modal-open");
 };
 

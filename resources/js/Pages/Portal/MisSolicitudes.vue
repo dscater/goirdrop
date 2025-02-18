@@ -12,11 +12,13 @@ import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 import MiPaginacion from "@/Components/MiPaginacion.vue";
 import SolicitudProducto from "@/Components/SolicitudProducto.vue";
 import infoOrdenVenta from "@/Components/infoOrdenVenta.vue";
+import InfoSolicitudProducto from "@/Components/InfoSolicitudProducto.vue";
 const { oConfiguracion } = useConfiguracion();
 const { props: props_page } = usePage();
 const { auth } = props_page;
 const { axiosGet } = useAxios();
 const nroTab = ref(1);
+
 const listOrdenesVenta = ref([]);
 const paramsOrdenesVenta = ref({
     perPage: 9,
@@ -32,7 +34,19 @@ const paginacionOrdenVentas = ref({
     lastPage: 0,
 });
 const listSolicitudProductos = ref([]);
-const paramsSolicitudProductos = ref({});
+const paramsSolicitudProductos = ref({
+    perPage: 9,
+    page: 1,
+    search: "",
+    orderByCol: "id",
+    desc: "desc",
+});
+const paginacionSolicitudProductos = ref({
+    totalData: 0,
+    perPage: paramsSolicitudProductos.value.perPage,
+    currentPage: paramsSolicitudProductos.value.page,
+    lastPage: 0,
+});
 
 const obtenerOrdenesVenta = async () => {
     const data = await axiosGet(
@@ -59,6 +73,31 @@ const verInfoOrdenVenta = (item) => {
     modalInfoOrdenVenta.value = true;
 };
 
+const obtenerSolicitudProductos = async () => {
+    const data = await axiosGet(
+        route("solicitud_productos.solicitudProductosCliente"),
+        paramsSolicitudProductos.value
+    );
+    listSolicitudProductos.value = data.solicitudProductos;
+    paginacionSolicitudProductos.value.totalData = data.total;
+    paginacionSolicitudProductos.value.currentPage =
+        paramsSolicitudProductos.value.page;
+    paginacionSolicitudProductos.value.lastPage = data.lastPage;
+};
+
+const updatePageSolicitudProducto = (value) => {
+    paramsSolicitudProductos.value.page = value;
+    if (paramsSolicitudProductos.value.page < 0)
+        paramsSolicitudProductos.value.page = 1;
+    if (
+        paramsSolicitudProductos.value.page >
+        paginacionSolicitudProductos.value.totalData
+    )
+        paramsSolicitudProductos.value.page =
+            paginacionSolicitudProductos.value.lastPage;
+    obtenerSolicitudProductos();
+};
+
 const modalSolicitudProducto = ref(false);
 const nuevaSolicitudProducto = () => {
     if (verificaInicioSesion()) {
@@ -66,8 +105,16 @@ const nuevaSolicitudProducto = () => {
     }
 };
 
+const modalInfoSolicitudProducto = ref(false);
+const oSolicitudProducto = ref(null);
+const verInfoSolicitud = (item) => {
+    oSolicitudProducto.value = item;
+    modalInfoSolicitudProducto.value = true;
+};
+
 const cargarListas = () => {
     obtenerOrdenesVenta();
+    obtenerSolicitudProductos();
 };
 
 const irTab = (value) => {
@@ -92,9 +139,16 @@ onMounted(() => {
         :open_dialog="modalInfoOrdenVenta"
         @cerrar-dialog="modalInfoOrdenVenta = false"
     ></infoOrdenVenta>
+    <InfoSolicitudProducto
+        :solicitudProducto="oSolicitudProducto"
+        :open_dialog="modalInfoSolicitudProducto"
+        @cerrar-dialog="modalInfoSolicitudProducto = false"
+    ></InfoSolicitudProducto>
 
     <SolicitudProducto
         :open_dialog="modalSolicitudProducto"
+        @cerrar-dialog="modalSolicitudProducto = false"
+        @envio-formulario="obtenerSolicitudProductos"
     ></SolicitudProducto>
 
     <!-- BEGIN #productos -->
@@ -104,7 +158,10 @@ onMounted(() => {
             <h4 class="section-title clearfix">
                 <span class="flex-1">
                     Mis solicitudes
-                    <small>Realiza el seguimiento de tus solicitudes</small>
+                    <small
+                        >Realiza el seguimiento de tus compras y
+                        solicitudes</small
+                    >
                 </span>
             </h4>
             <div class="row">
@@ -233,20 +290,128 @@ onMounted(() => {
                         <!-- SOLICITUD PRODUCTOS -->
                         <div class="contenedor-nav bg-white" v-if="nroTab == 2">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div
+                                    v-for="item in listSolicitudProductos"
+                                    class="col-md-4 mb-2"
+                                >
                                     <div class="card">
-                                        <div class="card-body">4</div>
+                                        <div class="card-body cont_orden">
+                                            <small
+                                                class="font-weight-bold cod_solicitud"
+                                                >{{
+                                                    item.codigo_solicitud
+                                                }}</small
+                                            >
+                                            <div class="row">
+                                                <div class="col-4 text-right">
+                                                    Fecha:
+                                                </div>
+                                                <div class="col-8 text-left">
+                                                    {{ item.fecha_solicitud_t }}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-4 text-right">
+                                                    Dpto.:
+                                                </div>
+                                                <div class="col-8 text-left">
+                                                    {{ item?.sede.nombre }}
+                                                </div>
+                                            </div>
+                                            <div class="row my-2">
+                                                <div class="col-4 text-right">
+                                                    Solicitud:
+                                                </div>
+                                                <div class="col-8 text-left">
+                                                    <span
+                                                        class="badge"
+                                                        :class="{
+                                                            'bg-secondary':
+                                                                item.estado_solicitud ==
+                                                                'PENDIENTE',
+                                                            'bg-success':
+                                                                item.estado_solicitud ==
+                                                                'APROBADO',
+                                                            'bg-danger':
+                                                                item.estado_solicitud ==
+                                                                'RECHAZADO',
+                                                        }"
+                                                        >{{
+                                                            item.estado_solicitud
+                                                        }}</span
+                                                    >
+                                                </div>
+                                            </div>
+                                            <div class="row my-2">
+                                                <div class="col-4 text-right">
+                                                    Estado Entrega:
+                                                </div>
+                                                <div class="col-8 text-left">
+                                                    <span
+                                                        class="badge"
+                                                        :class="{
+                                                            'bg-secondary':
+                                                                item.estado_seguimiento ==
+                                                                    'PENDIENTE' ||
+                                                                !item.estado_seguimiento,
+                                                            'bg-primary':
+                                                                item.estado_seguimiento ==
+                                                                'EN PROCESO',
+                                                            'bg-info':
+                                                                item.estado_seguimiento ==
+                                                                'EN ALMACÉN',
+                                                            'bg-success':
+                                                                item.estado_seguimiento ==
+                                                                'ENTREGADO',
+                                                        }"
+                                                        >{{
+                                                            item.estado_seguimiento
+                                                        }}</span
+                                                    >
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-white">
+                                            <div class="row">
+                                                <div
+                                                    class="col-md-12 d-flex justify-content-end"
+                                                >
+                                                    <button
+                                                        type="button"
+                                                        class="btn bg-dark text-white btn-sm"
+                                                        @click.prevent="
+                                                            verInfoSolicitud(
+                                                                item
+                                                            )
+                                                        "
+                                                    >
+                                                        <i
+                                                            class="fa fa-list"
+                                                        ></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="card">
-                                        <div class="card-body">5</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card">
-                                        <div class="card-body">6</div>
-                                    </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <MiPaginacion
+                                        class="justify-content-center mb-0"
+                                        :totalData="
+                                            paginacionSolicitudProductos.totalData
+                                        "
+                                        :currentPage="
+                                            paginacionSolicitudProductos.currentPage
+                                        "
+                                        :perPage="
+                                            paginacionSolicitudProductos.perPage
+                                        "
+                                        @updatePage="
+                                            updatePageSolicitudProducto
+                                        "
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -286,20 +451,27 @@ onMounted(() => {
     color: white;
 }
 
-/* ORDENES */
+/* ORDENES y SOLICITUDES */
 .cont_orden {
     position: relative;
     padding-top: 19px;
     font-size: 0.86rem;
 }
 
+.cod_solicitud,
 .cod_orden {
     position: absolute;
     top: 0;
     right: 0;
     padding: 1px;
+    border-radius: 0px 0px 0px 10px;
+}
+.cod_orden {
     background-color: var(--principal-portal2);
     color: white;
-    border-radius: 0px 0px 0px 10px;
+}
+.cod_solicitud {
+    background-color: var(--bg4);
+    color: white;
 }
 </style>

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SolicitudProductoStoreRequest;
 use App\Http\Requests\SolicitudProductoUpdateRequest;
+use App\Http\Requests\UpdateSolicitudProductoSeguimientoRequest;
+use App\Http\Requests\UpdateSolicitudProductoVerificacionRequest;
 use App\Models\SolicitudProducto;
 use App\Services\SolicitudProductoService;
 use Illuminate\Http\JsonResponse;
@@ -55,7 +57,7 @@ class SolicitudProductoController extends Controller
     }
 
 
-    public function ordenesCliente(Request $request): JsonResponse
+    public function solicitudProductosCliente(Request $request): JsonResponse
     {
         $perPage = $request->perPage;
         $page = (int)($request->input("page", 1));
@@ -108,6 +110,54 @@ class SolicitudProductoController extends Controller
     }
 
     /**
+     * Endpoint para obtener la lista de ordenVentas paginado
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function paginado(Request $request): JsonResponse
+    {
+
+        $perPage = $request->perPage;
+        $page = (int)($request->input("page", 1));
+        $search = (string)$request->input("search", "");
+        $orderByCol = $request->orderByCol;
+        $desc = $request->desc;
+        $estado_solicitud = $request->estado_solicitud;
+        $estado_seguimiento = $request->estado_seguimiento;
+        $fecha_solicitud = $request->fecha;
+
+        $columnsSerachLike = ["codigo_solicitud"];
+        $columnsFilter = [];
+
+        if ($estado_solicitud) {
+            $columnsFilter["estado_solicitud"]  = $estado_solicitud;
+        }
+        if ($estado_seguimiento) {
+            $columnsFilter["estado_seguimiento"]  = $estado_seguimiento;
+        }
+
+        if ($fecha_solicitud) {
+            $columnsFilter["fecha_solicitud"]  = $fecha_solicitud;
+        }
+
+        $arrayOrderBy = [];
+        if ($orderByCol && $desc) {
+            $arrayOrderBy = [
+                [$orderByCol, $desc]
+            ];
+        }
+
+        $solicitudProductos =  $this->solicitudProductoService->listadoPaginado($perPage, $page, $search, $columnsSerachLike, $columnsFilter, [], $arrayOrderBy);
+
+        return response()->JSON([
+            "total" => $solicitudProductos->total(),
+            "solicitudProductos" => $solicitudProductos->items(),
+            "lastPage" => $solicitudProductos->lastPage()
+        ]);
+    }
+
+    /**
      * Registrar un nuevo solicitudProducto
      *
      * @param SolicitudProductoStoreRequest $request
@@ -148,6 +198,63 @@ class SolicitudProductoController extends Controller
     public function show(SolicitudProducto $solicitudProducto): JsonResponse
     {
         return response()->JSON($solicitudProducto);
+    }
+
+
+    /**
+     *  Actualizar estado de solicitud de producto por verificacion
+     *
+     * @param SolicitudProducto $solicitudProducto
+     * @param UpdateSolicitudProductoVerificacionRequest $request
+     * @return JsonResponse|Response
+     */
+    public function update_estado_verificacion(SolicitudProducto $solicitudProducto, UpdateSolicitudProductoVerificacionRequest $request): JsonResponse|Response
+    {
+        DB::beginTransaction();
+        try {
+            // actualizar solicitudProducto
+            $this->solicitudProductoService->actualizarEstadoVerificacion($solicitudProducto, $request->validated());
+            DB::commit();
+            session()->flash("bien", "Registro actualizado correctamente");
+            return response()->JSON([
+                "message" => "Registro actualizado correctamente"
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Log::debug($e->getMessage());
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
+
+
+    /**
+     *  Actualizar estado de seguimiento solicitud producto
+     *
+     * @param SolicitudProducto $solicitudProducto
+     * @param UpdateSolicitudProductoVerificacionRequest $request
+     * @return JsonResponse|Response
+     */
+    public function update_estado_seguimiento(SolicitudProducto $solicitudProducto, UpdateSolicitudProductoSeguimientoRequest $request): JsonResponse|Response
+    {
+        DB::beginTransaction();
+        try {
+            // actualizar solicitudProducto
+            $this->solicitudProductoService->actualizarEstadoSeguimiento($solicitudProducto, $request->validated());
+            DB::commit();
+            session()->flash("bien", "Registro actualizado correctamente");
+            return response()->JSON([
+                "message" => "Registro actualizado correctamente"
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Log::debug($e->getMessage());
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
     }
 
     public function update(SolicitudProducto $solicitudProducto, SolicitudProductoUpdateRequest $request)

@@ -7,8 +7,6 @@ use App\Models\DetalleVenta;
 use App\Services\HistorialAccionService;
 use App\Services\EnviarCorreoService;
 use App\Models\OrdenVenta;
-use App\Models\OrdenVentaImagen;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -18,7 +16,12 @@ class OrdenVentaService
 {
     private $modulo = "ORDENES DE VENTA";
 
-    public function __construct(private HistorialAccionService $historialAccionService, private CargarArchivoService $cargarArchivoService, private EnviarCorreoService $enviarCorreoService) {}
+    public function __construct(
+        private HistorialAccionService $historialAccionService,
+        private CargarArchivoService $cargarArchivoService,
+        private EnviarCorreoService $enviarCorreoService,
+        private DetalleVentaService $detalleVentaService
+    ) {}
 
     /**
      * Lista de todos los ordenVentas
@@ -39,53 +42,58 @@ class OrdenVentaService
      * @param string $search
      * @param array $columnsSerachLike
      * @param array $columnsFilter
+     * @param array $columnsBetweenFilter
+     * @param array $orderBy
      * @return LengthAwarePaginator
      */
-    public function listadoPaginado(int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
-    {
-        $ordenVentas = OrdenVenta::with(["imagens", "categoria"])
-            ->select("ordenVentas.*")
-            ->leftJoin("detalle_ventas", "ordenVentas.id", "=", "detalle_ventas.ordenVenta_id")
-            ->selectRaw("SUM(detalle_ventas.cantidad) as total_vendido")
-            ->groupBy("ordenVentas.id");
+    public function listadoPaginado(
+        int $length,
+        int $page,
+        string $search = '',
+        array $columnsSerachLike = [],
+        array $columnsFilter = [],
+        array $columnsBetweenFilter = [],
+        array $orderBy = []
+    ): LengthAwarePaginator {
+        $ordenVentas = OrdenVenta::with(["cliente", "detalleVenta.producto.imagens"])
+            ->select("orden_ventas.*", \DB::raw("SUM(detalle_ventas.cantidad) AS total_vendido"))
+            ->leftJoin("detalle_ventas", "orden_ventas.id", "=", "detalle_ventas.orden_venta_id")
+            ->groupBy("orden_ventas.id")
+            ->where("orden_ventas.status", 1);
 
-        if (!empty($columnsFilter)) {
-            foreach ($columnsFilter as $key => $value) {
-                if ($value) {
-                    $ordenVentas->where($key, $value);
-                }
+        // Filtros exactos
+        foreach ($columnsFilter as $key => $value) {
+            if (!is_null($value)) {
+                $ordenVentas->where("orden_ventas.$key", $value);
             }
         }
 
-        if (!empty($columnsBetweenFilter)) {
-            foreach ($columnsBetweenFilter as $key => $value) {
-                if ($value[0] && $value[1]) {
-                    $ordenVentas->whereBetween($key, $value);
-                }
+        // Filtros por rango
+        foreach ($columnsBetweenFilter as $key => $value) {
+            if (isset($value[0], $value[1])) {
+                $ordenVentas->whereBetween("orden_ventas.$key", $value);
             }
         }
 
-        if ($search && trim($search) != '') {
-            if (!empty($columnsSerachLike)) {
+        // Búsqueda en múltiples columnas con LIKE
+        if (!empty($search) && !empty($columnsSerachLike)) {
+            $ordenVentas->where(function ($query) use ($search, $columnsSerachLike) {
                 foreach ($columnsSerachLike as $col) {
-                    $ordenVentas->orWhere($col, "LIKE", "%$search%");
+                    $query->orWhere("orden_ventas.$col", "LIKE", "%$search%");
                 }
-            }
+            });
         }
 
-
-        $ordenVentas->where("status", 1);
-
-        if (!empty($orderBy)) {
-            foreach ($orderBy as $value) {
+        // Ordenamiento
+        foreach ($orderBy as $value) {
+            if (isset($value[0], $value[1])) {
                 $ordenVentas->orderBy($value[0], $value[1]);
             }
         }
 
-
-        $ordenVentas = $ordenVentas->paginate($length, ['*'], 'page', $page);
-        return $ordenVentas;
+        return $ordenVentas->paginate($length, ['*'], 'page', $page);
     }
+
 
     /**
      * Lista de ordenVentas paginado con filtros
@@ -182,6 +190,44 @@ class OrdenVentaService
     }
 
     /**
+     * Actualizar estado Orden Venta
+     *
+     * @param OrdenVenta $ordenVenta
+     * @param array $datos
+     * @return OrdenVenta
+     */
+    public function actualizarEstado(OrdenVenta $ordenVenta, array $datos): OrdenVenta
+    {
+        if ($ordenVenta->estado_orden != $datos["estado_orden"]) {
+            $old_ordenVenta = OrdenVenta::find($ordenVenta->id);
+
+            $estado_pago = 0;
+            if ($datos["estado_orden"] == 'CONFIRMADO') {
+                $estado_pago = 1;
+            }
+
+            $ordenVenta->update([
+                "estado_orden" => $datos["estado_orden"],
+                "observacion" => mb_strtoupper($datos["observacion"]),
+                "estado_pago" => $estado_pago,
+                "fecha_confirmacion" => date("Y-m-d"),
+            ]);
+
+            if ($datos["estado_orden"] == 'CONFIRMADO') {
+                $this->detalleVentaService->descuentaStockProductos($ordenVenta->detalleVenta);
+            }
+
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "MODIFICÓ EL ESTADO DE UNA ORDEN DE VENTA", $old_ordenVenta, $ordenVenta);
+
+            // enviar correo
+            $this->enviarCorreoService->updateEstadoOrdenVenta($ordenVenta);
+        }
+
+        return $ordenVenta;
+    }
+
+    /**
      * Actualizar ordenVenta
      *
      * @param array $datos
@@ -216,28 +262,7 @@ class OrdenVentaService
             }
         }
 
-        // imagenes eliminadas
-        if (!empty($datos["eliminados_imagens"])) {
-            foreach ($datos["eliminados_imagens"] as $key => $eliminado) {
-                $ordenVentaImagen = OrdenVentaImagen::find($eliminado);
-                if ($ordenVentaImagen) {
-                    $this->ordenVentaImagenService->eliminarImagenOrdenVenta($ordenVentaImagen);
-                    $existe_cambios = true;
-                }
-            }
-        }
 
-        if ($existe_cambios) {
-            // registrar imagens asignadas
-            $datos_original = $ordenVenta->imagens->map(function ($imagen) {
-                return $imagen->makeHidden($imagen->getAppends())->toArray();
-            });
-
-            $datos_nuevo = $ordenVenta->imagens->map(function ($imagen) {
-                return $imagen->makeHidden($imagen->getAppends())->toArray();
-            });
-            $this->historialAccionService->registrarAccionRelaciones($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ LAS IMAGENES DEL PRODUCTO " . $ordenVenta->nombre, $datos_original, $datos_nuevo);
-        }
         return $ordenVenta;
     }
 

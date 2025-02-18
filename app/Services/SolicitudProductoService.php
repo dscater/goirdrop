@@ -43,48 +43,40 @@ class SolicitudProductoService
      */
     public function listadoPaginado(int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
     {
-        $solicitudProductos = SolicitudProducto::with(["imagens", "categoria"])
-            ->select("solicitudProductos.*")
-            ->leftJoin("detalle_ventas", "solicitudProductos.id", "=", "detalle_ventas.solicitudProducto_id")
-            ->selectRaw("SUM(detalle_ventas.cantidad) as total_vendido")
-            ->groupBy("solicitudProductos.id");
-
-        if (!empty($columnsFilter)) {
-            foreach ($columnsFilter as $key => $value) {
-                if ($value) {
-                    $solicitudProductos->where($key, $value);
-                }
+        $solicitudProductos = SolicitudProducto::with(["cliente", "solicitudDetalles"])
+            ->select("solicitud_productos.*")
+            ->join("solicitud_detalles", "solicitud_productos.id", "=", "solicitud_detalles.solicitud_producto_id");
+        // Filtros exactos
+        foreach ($columnsFilter as $key => $value) {
+            if (!is_null($value)) {
+                $solicitudProductos->where("solicitud_productos.$key", $value);
             }
         }
 
-        if (!empty($columnsBetweenFilter)) {
-            foreach ($columnsBetweenFilter as $key => $value) {
-                if ($value[0] && $value[1]) {
-                    $solicitudProductos->whereBetween($key, $value);
-                }
+        // Filtros por rango
+        foreach ($columnsBetweenFilter as $key => $value) {
+            if (isset($value[0], $value[1])) {
+                $solicitudProductos->whereBetween("solicitud_productos.$key", $value);
             }
         }
 
-        if ($search && trim($search) != '') {
-            if (!empty($columnsSerachLike)) {
+        // Búsqueda en múltiples columnas con LIKE
+        if (!empty($search) && !empty($columnsSerachLike)) {
+            $solicitudProductos->where(function ($query) use ($search, $columnsSerachLike) {
                 foreach ($columnsSerachLike as $col) {
-                    $solicitudProductos->orWhere($col, "LIKE", "%$search%");
+                    $query->orWhere("solicitud_productos.$col", "LIKE", "%$search%");
                 }
+            });
+        }
+
+        // Ordenamiento
+        foreach ($orderBy as $value) {
+            if (isset($value[0], $value[1])) {
+                $solicitudProductos->orderBy("solicitud_productos.{$value[0]}", $value[1]);
             }
         }
 
-
-        $solicitudProductos->where("status", 1);
-
-        if (!empty($orderBy)) {
-            foreach ($orderBy as $value) {
-                $solicitudProductos->orderBy($value[0], $value[1]);
-            }
-        }
-
-
-        $solicitudProductos = $solicitudProductos->paginate($length, ['*'], 'page', $page);
-        return $solicitudProductos;
+        return $solicitudProductos->paginate($length, ['*'], 'page', $page);
     }
 
     /**
@@ -99,9 +91,8 @@ class SolicitudProductoService
      */
     public function listadoPaginadoCliente(int $cliente_id, int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
     {
-        $solicitudProductos = SolicitudProducto::with(["detalleVenta.producto.imagens", "cliente"])
+        $solicitudProductos = SolicitudProducto::with(["solicitudDetalles", "cliente", "sede"])
             ->select("solicitud_productos.*");
-
 
         $solicitudProductos->where("cliente_id", $cliente_id);
         if (!empty($columnsFilter)) {
@@ -127,7 +118,6 @@ class SolicitudProductoService
                 }
             }
         }
-
 
         $solicitudProductos->where("status", 1);
 
@@ -172,6 +162,62 @@ class SolicitudProductoService
 
         // enviar correo
         $this->enviarCorreoService->nuevaSolicitudProducto($solicitudProducto);
+
+        return $solicitudProducto;
+    }
+
+    /**
+     * Actualizar estado verificacion solicitud producto
+     *
+     * @param SolicitudProducto $solicitudProducto
+     * @param array $datos
+     * @return SolicitudProducto
+     */
+    public function actualizarEstadoVerificacion(SolicitudProducto $solicitudProducto, array $datos): SolicitudProducto
+    {
+        if ($solicitudProducto->estado_solicitud != $datos["estado_solicitud"]) {
+            $old_solicitudProducto = SolicitudProducto::find($solicitudProducto->id);
+
+            $solicitudProducto->update([
+                "estado_solicitud" => $datos["estado_solicitud"],
+                "observacion" => mb_strtoupper(nl2br($datos["observacion"])),
+                "precio_compra" => $datos["estado_solicitud"] == 'APROBADO' ? $datos["precio_compra"] : null,
+                "margen_ganancia" => $datos["estado_solicitud"] == 'APROBADO' ? $datos["margen_ganancia"] : null,
+                "fecha_verificacion" => date("Y-m-d"),
+            ]);
+
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO", $old_solicitudProducto, $solicitudProducto);
+
+            // enviar correo
+            $this->enviarCorreoService->updateSolicitudProductoVerificacion($solicitudProducto);
+        }
+
+        return $solicitudProducto;
+    }
+
+    /**
+     * Actualizar estado seguimiento solicitud producto
+     *
+     * @param SolicitudProducto $solicitudProducto
+     * @param array $datos
+     * @return SolicitudProducto
+     */
+    public function actualizarEstadoSeguimiento(SolicitudProducto $solicitudProducto, array $datos): SolicitudProducto
+    {
+        if ($solicitudProducto->estado_seguimiento != $datos["estado_seguimiento"]) {
+            $old_solicitudProducto = SolicitudProducto::find($solicitudProducto->id);
+            $solicitudProducto->update([
+                "estado_seguimiento" => $datos["estado_seguimiento"],
+                "observacion" => mb_strtoupper($datos["observacion"]),
+            ]);
+
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO", $old_solicitudProducto, $solicitudProducto);
+
+            // enviar correo
+            $this->enviarCorreoService->updateSolicitudProductoSeguimiento($solicitudProducto);
+        }
 
         return $solicitudProducto;
     }
@@ -293,7 +339,7 @@ class SolicitudProductoService
             $solicitudProducto->solicitudDetalles()->create([
                 "nombre_producto" => $item["nombre_producto"],
                 "detalle_producto" => $item["detalle_producto"],
-                "links_referencia" => $item["links_referencia"],
+                "links_referencia" => nl2br($item["links_referencia"]),
             ]);
         }
     }

@@ -104,14 +104,27 @@ export const useAxios = () => {
             return response.data;
         } catch (err) {
             flash = usePage().props.flash;
+            const errors = err.response.data.errors;
+            let mensaje_error = flash.error;
+            if (errors) {
+                mensaje_error = "<ul>";
+                for (const key in errors) {
+                    if (errors.hasOwnProperty(key)) {
+                        // Mostrar el primer error de cada clave
+                        if (errors[key][0]) {
+                            mensaje_error += `<li class="text-left">${errors[key][0]}</li>`;
+                        }
+                    }
+                }
+                mensaje_error += "</ul>";
+            }
+
             Swal.fire({
                 icon: "error",
                 title: "Error",
-                text: `${
-                    flash.error
-                        ? flash.error
-                        : err.response?.data
-                        ? err.response?.data?.message
+                html: `${
+                    mensaje_error
+                        ? mensaje_error
                         : "Hay errores en el formulario"
                 }`,
                 confirmButtonColor: "#3085d6",

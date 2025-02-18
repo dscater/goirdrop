@@ -1,19 +1,3 @@
-<script>
-const breadbrums = [
-    {
-        title: "Inicio",
-        disabled: false,
-        url: route("inicio"),
-        name_url: "inicio",
-    },
-    {
-        title: "Categorias",
-        disabled: false,
-        url: "",
-        name_url: "",
-    },
-];
-</script>
 <script setup>
 import { useApp } from "@/composables/useApp";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
@@ -163,16 +147,16 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-    <Head title="Categorias"></Head>
+    <Head title="Categorías"></Head>
 
     <!-- BEGIN breadcrumb -->
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="javascript:;">Inicio</a></li>
-        <li class="breadcrumb-item active">Categorias</li>
+        <li class="breadcrumb-item active">Categorías</li>
     </ol>
     <!-- END breadcrumb -->
     <!-- BEGIN page-header -->
-    <h1 class="page-header">Categorias</h1>
+    <h1 class="page-header">Categorías</h1>
     <!-- END page-header -->
 
     <div class="row">

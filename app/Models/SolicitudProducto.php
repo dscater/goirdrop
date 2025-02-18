@@ -18,6 +18,8 @@ class SolicitudProducto extends Model
         "apellidos_cliente",
         "cel",
         "estado_solicitud",
+        "precio_compra",
+        "margen_ganancia",
         "estado_seguimiento",
         "observacion",
         "status",
@@ -25,9 +27,14 @@ class SolicitudProducto extends Model
         "fecha_verificacion",
     ];
 
-    protected $appends = ["fecha_solicitud_t", "fecha_verificacion_t"];
+    protected $appends = ["fecha_solicitud_t", "fecha_verificacion_t", "total_precio"];
 
     // appends
+    public function getTotalPrecioAttribute()
+    {
+        return (float)$this->precio_compra ?? 0 + (float)$this->margen_ganancia ?? 0;
+    }
+
     public function getFechaSolicitudTAttribute()
     {
         return date("d/m/Y", strtotime($this->fecha_solicitud));

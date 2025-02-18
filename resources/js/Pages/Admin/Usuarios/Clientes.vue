@@ -55,12 +55,16 @@ const columns = [
         },
     },
     {
-        title: "USUARIO",
-        data: "usuario",
-    },
-    {
         title: "NOMBRE COMPLETO",
         data: "full_name",
+    },
+    {
+        title: "CORREO",
+        data: "correo",
+    },
+    {
+        title: "CELULAR",
+        data: "cliente.cel",
     },
     {
         title: "ACCESO",
@@ -75,20 +79,22 @@ const columns = [
         },
     },
     {
+        title: "FECHA DE REGISTRO",
+        data: "fecha_registro_t",
+    },
+    {
         title: "ACCIONES",
         sortable: false,
         data: null,
         render: function (data, type, row) {
             let buttons = ``;
 
-            buttons += `<button class="mx-0 rounded-0 btn btn-primary infoCliente" data-id="${row.id}"><i class="fa fa-id-card"></i></button> `;
-
-            if (
-                props_page.auth?.user.permisos == "*" ||
-                props_page.auth?.user.permisos.includes("clientes.edit")
-            ) {
-                buttons += `<button class="mx-0 rounded-0 btn btn-warning edit" data-id="${row.id}"><i class="fa fa-edit"></i></button> `;
-            }
+            // if (
+            //     props_page.auth?.user.permisos == "*" ||
+            //     props_page.auth?.user.permisos.includes("clientes.edit")
+            // ) {
+            //     buttons += `<button class="mx-0 rounded-0 btn btn-warning edit" data-id="${row.id}"><i class="fa fa-edit"></i></button> `;
+            // }
             if (
                 props_page.auth?.user.permisos == "*" ||
                 props_page.auth?.user.permisos.includes("clientes.edit")
@@ -129,25 +135,25 @@ const agregarRegistro = () => {
 
 const accionesRow = () => {
     // edit
-    $("#table-usuario").on("click", "button.edit", function (e) {
-        e.preventDefault();
-        let id = $(this).attr("data-id");
-        axios.get(route("usuarios.show", id)).then((response) => {
-            setUsuario(response.data, true);
-            accion_dialog_edit.value = 1;
-            open_dialog_edit.value = true;
-        });
-    });
+    // $("#table-usuario").on("click", "button.edit", function (e) {
+    //     e.preventDefault();
+    //     let id = $(this).attr("data-id");
+    //     axios.get(route("usuarios.show", id)).then((response) => {
+    //         setUsuario(response.data, true);
+    //         accion_dialog_edit.value = 1;
+    //         open_dialog_edit.value = true;
+    //     });
+    // });
     // infoCliente
-    $("#table-usuario").on("click", "button.infoCliente", function (e) {
-        e.preventDefault();
-        let id = $(this).attr("data-id");
-        axios.get(route("usuarios.show", id)).then((response) => {
-            setUsuario(response.data, true);
-            accion_dialog.value = 1;
-            open_dialog.value = true;
-        });
-    });
+    // $("#table-usuario").on("click", "button.infoCliente", function (e) {
+    //     e.preventDefault();
+    //     let id = $(this).attr("data-id");
+    //     axios.get(route("usuarios.show", id)).then((response) => {
+    //         setUsuario(response.data, true);
+    //         accion_dialog.value = 1;
+    //         open_dialog.value = true;
+    //     });
+    // });
     // eliminar
     $("#table-usuario").on("click", "button.eliminar", function (e) {
         e.preventDefault();

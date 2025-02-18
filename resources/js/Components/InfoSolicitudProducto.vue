@@ -10,20 +10,20 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
-    ordenVenta: {
+    solicitudProducto: {
         type: Object,
         default: {},
     },
 });
 
-const oOrdenVenta = ref(props.ordenVenta);
+const oSolicitudProducto = ref(props.solicitudProducto);
 const dialog = ref(props.open_dialog);
 const emits = defineEmits(["cerrar-dialog"]);
 
 watch(
-    () => props.ordenVenta,
+    () => props.solicitudProducto,
     (newVal) => {
-        oOrdenVenta.value = newVal;
+        oSolicitudProducto.value = newVal;
     }
 );
 
@@ -53,7 +53,7 @@ const cerrarDialog = () => {
 };
 
 const tituloDialog = computed(() => {
-    return `<i class="fa fa-info-circle"></i> Orden de venta: ${oOrdenVenta.value?.codigo}`;
+    return `<i class="fa fa-info-circle"></i> Solicitud de Producto: ${oSolicitudProducto.value?.codigo_solicitud}`;
 });
 
 onMounted(() => {});
@@ -80,7 +80,10 @@ onMounted(() => {});
                         @click="cerrarDialog()"
                     ></button>
                 </div>
-                <div class="modal-body" v-if="oOrdenVenta">
+                <div
+                    class="modal-body"
+                    v-if="oSolicitudProducto && oSolicitudProducto.cliente"
+                >
                     <div class="row">
                         <div class="col-12 border-bottom">
                             <div class="row pt-3">
@@ -88,7 +91,7 @@ onMounted(() => {});
                                     <strong>Cliente:</strong>
                                 </div>
                                 <div class="col-8">
-                                    {{ oOrdenVenta.cliente.full_name }}
+                                    {{ oSolicitudProducto.cliente.full_name }}
                                 </div>
                             </div>
                             <div class="row">
@@ -96,7 +99,7 @@ onMounted(() => {});
                                     <strong>Correo:</strong>
                                 </div>
                                 <div class="col-8">
-                                    {{ oOrdenVenta.cliente.correo }}
+                                    {{ oSolicitudProducto.cliente.correo }}
                                 </div>
                             </div>
                             <div class="row">
@@ -104,28 +107,58 @@ onMounted(() => {});
                                     <strong>Celular:</strong>
                                 </div>
                                 <div class="col-8">
-                                    {{ oOrdenVenta.cliente.cel }}
+                                    {{ oSolicitudProducto.cliente.cel }}
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row my-2">
                                 <div class="col-4 text-right">
-                                    <strong>Estado:</strong>
+                                    <strong>Solicitud:</strong>
                                 </div>
                                 <div class="col-8 text-left">
                                     <span
                                         class="badge"
                                         :class="{
                                             'bg-secondary':
-                                                oOrdenVenta.estado_orden ==
+                                                oSolicitudProducto.estado_solicitud ==
                                                 'PENDIENTE',
                                             'bg-success':
-                                                oOrdenVenta.estado_orden ==
-                                                'CONFIRMADO',
+                                                oSolicitudProducto.estado_solicitud ==
+                                                'APROBADO',
                                             'bg-danger':
-                                                oOrdenVenta.estado_orden ==
+                                                oSolicitudProducto.estado_solicitud ==
                                                 'RECHAZADO',
                                         }"
-                                        >{{ oOrdenVenta.estado_orden }}</span
+                                        >{{
+                                            oSolicitudProducto.estado_solicitud
+                                        }}</span
+                                    >
+                                </div>
+                            </div>
+                            <div class="row my-2">
+                                <div class="col-4 text-right">
+                                    <strong>Estado Entrega:</strong>
+                                </div>
+                                <div class="col-8 text-left">
+                                    <span
+                                        class="badge"
+                                        :class="{
+                                            'bg-secondary':
+                                                oSolicitudProducto.estado_seguimiento ==
+                                                    'PENDIENTE' ||
+                                                !oSolicitudProducto.estado_seguimiento,
+                                            'bg-primary':
+                                                oSolicitudProducto.estado_seguimiento ==
+                                                'EN PROCESO',
+                                            'bg-info':
+                                                oSolicitudProducto.estado_seguimiento ==
+                                                'EN ALMACÉN',
+                                            'bg-success':
+                                                oSolicitudProducto.estado_seguimiento ==
+                                                'ENTREGADO',
+                                        }"
+                                        >{{
+                                            oSolicitudProducto.estado_seguimiento
+                                        }}</span
                                     >
                                 </div>
                             </div>
@@ -134,59 +167,38 @@ onMounted(() => {});
                                     <strong>Fecha:</strong>
                                 </div>
                                 <div class="col-8">
-                                    {{ oOrdenVenta.fecha_orden_t }}
+                                    {{ oSolicitudProducto.fecha_solicitud_t }}
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div
                                     class="col-4 text-right"
-                                    v-if="oOrdenVenta.observacion"
+                                    v-if="oSolicitudProducto.observacion"
                                 >
                                     <strong>Observaciones:</strong>
                                 </div>
                                 <div
                                     class="col-4"
-                                    v-if="oOrdenVenta.observacion"
-                                    v-html="oOrdenVenta.observacion"
+                                    v-if="oSolicitudProducto.observacion"
+                                    v-html="oSolicitudProducto.observacion"
                                 ></div>
                             </div>
                         </div>
                     </div>
                     <div class="row mt-3">
-                        <h5 class="w-100 text-center">Detalle</h5>
+                        <h5 class="w-100 text-center">Producto Solicitado</h5>
                         <div class="col-12 overflow-auto">
                             <table class="table table-striped">
                                 <thead class="bg-dark">
                                     <tr>
-                                        <th class="text-white text-sm">#</th>
-                                        <th
-                                            class="text-white text-sm"
-                                            colspan="2"
-                                        >
-                                            Producto
+                                        <th class="text-white text-sm">
+                                            Nombre Producto
                                         </th>
-                                        <th
-                                            class="text-white text-sm text-center"
-                                        >
-                                            Cantidad
+                                        <th class="text-white text-sm">
+                                            Detalle del producto
                                         </th>
-                                        <th
-                                            class="text-white text-sm text-right"
-                                        >
-                                            Precio
-                                            {{
-                                                oConfiguracion?.conf_moneda
-                                                    ?.abrev
-                                            }}
-                                        </th>
-                                        <th
-                                            class="text-white text-sm text-right"
-                                        >
-                                            Subtotal
-                                            {{
-                                                oConfiguracion?.conf_moneda
-                                                    ?.abrev
-                                            }}
+                                        <th class="text-white text-sm">
+                                            Links de referencia
                                         </th>
                                     </tr>
                                 </thead>
@@ -194,39 +206,13 @@ onMounted(() => {});
                                     <tr
                                         v-for="(
                                             item, index
-                                        ) in oOrdenVenta.detalle_venta"
+                                        ) in oSolicitudProducto.solicitud_detalles"
                                     >
-                                        <td>{{ index + 1 }}</td>
-                                        <td>
-                                            <img
-                                                :src="
-                                                    item.producto.imagens[0]
-                                                        .url_imagen
-                                                "
-                                                width="90px"
-                                            />
-                                        </td>
-                                        <td>{{ item.producto.nombre }}</td>
-                                        <td class="text-center">
-                                            {{ item.cantidad }}
-                                        </td>
-                                        <td>{{ item.precio }}</td>
-                                        <td>{{ item.subtotal }}</td>
+                                        <td>{{ item.nombre_producto }}</td>
+                                        <td>{{ item.detalle_producto }}</td>
+                                        <td v-html="item.links_referencia"></td>
                                     </tr>
                                 </tbody>
-                                <tfoot class="bg-dark">
-                                    <tr>
-                                        <th
-                                            colspan="5"
-                                            class="text-right text-white"
-                                        >
-                                            TOTAL
-                                        </th>
-                                        <th class="text-white text-right">
-                                            {{ oOrdenVenta.total }}
-                                        </th>
-                                    </tr>
-                                </tfoot>
                             </table>
                         </div>
                     </div>

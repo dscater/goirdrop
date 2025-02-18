@@ -45,35 +45,32 @@ class ProductoService
             ->selectRaw("SUM(detalle_ventas.cantidad) as total_vendido")
             ->groupBy("productos.id");
 
-        if (!empty($columnsFilter)) {
-            foreach ($columnsFilter as $key => $value) {
-                if ($value) {
-                    $productos->where($key, $value);
-                }
+        // Filtros exactos
+        foreach ($columnsFilter as $key => $value) {
+            if (!is_null($value)) {
+                $productos->where("productos.$key", $value);
             }
         }
 
-        if (!empty($columnsBetweenFilter)) {
-            foreach ($columnsBetweenFilter as $key => $value) {
-                if ($value[0] && $value[1]) {
-                    $productos->whereBetween($key, $value);
-                }
+        // Filtros por rango
+        foreach ($columnsBetweenFilter as $key => $value) {
+            if (isset($value[0], $value[1])) {
+                $productos->whereBetween("productos.$key", $value);
             }
         }
 
-        if ($search && trim($search) != '') {
-            if (!empty($columnsSerachLike)) {
+        // Búsqueda en múltiples columnas con LIKE
+        if (!empty($search) && !empty($columnsSerachLike)) {
+            $productos->where(function ($query) use ($search, $columnsSerachLike) {
                 foreach ($columnsSerachLike as $col) {
-                    $productos->orWhere($col, "LIKE", "%$search%");
+                    $query->orWhere("productos.$col", "LIKE", "%$search%");
                 }
-            }
+            });
         }
 
-
-        $productos->where("status", 1);
-
-        if (!empty($orderBy)) {
-            foreach ($orderBy as $value) {
+        // Ordenamiento
+        foreach ($orderBy as $value) {
+            if (isset($value[0], $value[1])) {
                 $productos->orderBy($value[0], $value[1]);
             }
         }
