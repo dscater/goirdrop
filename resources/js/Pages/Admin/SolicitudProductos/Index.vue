@@ -8,6 +8,12 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import MiPaginacion from "@/Components/MiPaginacion.vue";
 import VerificacionSolicitudProducto from "@/Components/VerificacionSolicitudProducto.vue";
 import SeguimientoSolicitudProducto from "@/Components/SeguimientoSolicitudProducto.vue";
+const props = defineProps({
+    codigo: {
+        type: String,
+        default: "",
+    },
+});
 const { props: props_page } = usePage();
 const { setLoading } = useApp();
 onMounted(() => {});
@@ -19,7 +25,7 @@ const oSolicitudProducto = ref(null);
 const paramsSolicitudProductos = ref({
     perPage: 9,
     page: 1,
-    search: "",
+    search: props.codigo,
     estado_solicitud: "PENDIENTE",
     estado_seguimiento: "",
     fecha: "",
@@ -214,6 +220,12 @@ onBeforeUnmount(() => {});
                             <strong>Celular:</strong>
                         </div>
                         <div class="col-8">{{ item.cliente.cel }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 text-right">
+                            <strong>Dpto.:</strong>
+                        </div>
+                        <div class="col-8">{{ item.sede.nombre }}</div>
                     </div>
                     <div class="row">
                         <div class="col-4 text-right">

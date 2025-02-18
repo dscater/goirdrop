@@ -20,11 +20,8 @@ const user = {
 
 const listNotificacions = ref([]);
 const sin_ver = ref(0);
-const ultimo = ref(0);
-
 const { oConfiguracion } = useConfiguracion();
 const appOption = useAppOptionStore();
-
 const logout = () => {
     router.post(route("logout"));
 };
@@ -39,24 +36,10 @@ const open_menu_mobile = () => {
 };
 
 const getNotificacions = () => {
-    axios
-        .get(route("notificacions.listadoPorUsuario", props.auth.user.id), {
-            params: {
-                id: ultimo.value,
-            },
-        })
-        .then((response) => {
-            let res = [
-                ...response.data.notificacion_users,
-                ...listNotificacions.value,
-            ];
-            listNotificacions.value = res;
-            ultimo.value = response.data.ultimo;
-            sin_ver.value = response.data.sin_ver;
-            // console.log(listNotificacions.value);
-            // console.log(ultimo.value);
-            // console.log(sin_ver.value);
-        });
+    axios.get(route("notificacions.listadoPorUsuario")).then((response) => {
+        listNotificacions.value = response.data.notificacion_users;
+        sin_ver.value = response.data.sin_ver;
+    });
 };
 
 const muestra_notificacions = ref(false);
@@ -67,8 +50,9 @@ const intervalNotificaciones = ref(null);
 
 onMounted(() => {
     if (
-        props.auth.user.permisos.includes("publicacions.index") &&
-        !props.auth.user.permisos.includes("publicacions.todos")
+        props.auth.user.permisos == "*" ||
+        props.auth.user.permisos.includes("orden_ventas.todos") ||
+        props.auth.user.permisos.includes("solicitud_productos.todos")
     ) {
         intervalNotificaciones.value = setInterval(() => {
             getNotificacions();
@@ -109,8 +93,11 @@ onBeforeUnmount(() => {
             <div
                 class="navbar-item dropdown"
                 v-if="
-                    props.auth.user.permisos.includes('publicacions.index') &&
-                    !props.auth.user.permisos.includes('publicacions.todos')
+                    props.auth.user.permisos == '*' ||
+                    props.auth.user.permisos.includes('orden_ventas.todos') ||
+                    !props.auth.user.permisos.includes(
+                        'solicitud_productos.todos'
+                    )
                 "
             >
                 <a
@@ -139,10 +126,7 @@ onBeforeUnmount(() => {
                     <Link
                         class="dropdown-item media"
                         v-for="item in listNotificacions"
-                        :href="`${route(
-                            'subasta_clientes.show',
-                            item.notificacion.registro_id
-                        )}?notificacion_user_id=${item.id}`"
+                        :href="item.url_modulo"
                     >
                         <div class="media-left">
                             <i
@@ -151,13 +135,10 @@ onBeforeUnmount(() => {
                         </div>
                         <div class="media-body">
                             <p class="media-heading">
-                                {{ item.notificacion.descripcion }}
-                                <i
-                                    class="fa fa-exclamation-circle text-danger"
-                                ></i>
+                                <span v-html="item.descripcion"></span>
                             </p>
                             <div class="text-muted fs-10px">
-                                {{ item.notificacion.hace }}
+                                {{ item.hace }}
                             </div>
                         </div>
                     </Link>

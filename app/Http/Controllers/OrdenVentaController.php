@@ -6,6 +6,7 @@ use App\Http\Requests\OrdenVentaStoreRequest;
 use App\Http\Requests\OrdenVentaUpdateEstadoRequest;
 use App\Http\Requests\OrdenVentaUpdateRequest;
 use App\Models\OrdenVenta;
+use App\Services\NotificacionUserService;
 use App\Services\OrdenVentaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -20,16 +21,25 @@ use Inertia\Response as InertiaResponse;
 
 class OrdenVentaController extends Controller
 {
-    public function __construct(private OrdenVentaService $ordenVentaService) {}
+    public function __construct(
+        private OrdenVentaService $ordenVentaService,
+        private NotificacionUserService $notificacionUserService
+    ) {}
 
     /**
      * Página index
      *
      * @return Response
      */
-    public function index(): InertiaResponse
+    public function index(Request $request): InertiaResponse
     {
-        return Inertia::render("Admin/OrdenVentas/Index");
+        $codigo = $request->cod;
+
+        if (trim($codigo) != '') {
+            $this->notificacionUserService->verificarNotificacionUser(trim($codigo), "OrdenVenta");
+        }
+
+        return Inertia::render("Admin/OrdenVentas/Index", compact("codigo"));
     }
 
     /**

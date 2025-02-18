@@ -7,6 +7,7 @@ use App\Http\Requests\SolicitudProductoUpdateRequest;
 use App\Http\Requests\UpdateSolicitudProductoSeguimientoRequest;
 use App\Http\Requests\UpdateSolicitudProductoVerificacionRequest;
 use App\Models\SolicitudProducto;
+use App\Services\NotificacionUserService;
 use App\Services\SolicitudProductoService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -20,16 +21,25 @@ use Inertia\Response as InertiaResponse;
 
 class SolicitudProductoController extends Controller
 {
-    public function __construct(private SolicitudProductoService $solicitudProductoService) {}
+    public function __construct(
+        private SolicitudProductoService $solicitudProductoService,
+        private NotificacionUserService $notificacionUserService
+    ) {}
 
     /**
      * Página index
      *
      * @return Response
      */
-    public function index(): InertiaResponse
+    public function index(Request $request): InertiaResponse
     {
-        return Inertia::render("Admin/SolicitudProductos/Index");
+        $codigo = $request->cod;
+
+        if (trim($codigo) != '') {
+            $this->notificacionUserService->verificarNotificacionUser(trim($codigo), "SolicitudProducto");
+        }
+
+        return Inertia::render("Admin/SolicitudProductos/Index", compact("codigo"));
     }
 
     /**

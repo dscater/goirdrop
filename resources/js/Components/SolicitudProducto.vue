@@ -93,6 +93,8 @@ const enviarFormulario = () => {
         .post(route("solicitud_productos.store"), form.value)
         .then((response) => {
             dialog.value = false;
+            errors.value = null;
+            resetRecaptcha();
             Swal.fire({
                 icon: "success",
                 title: "Correcto",

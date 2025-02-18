@@ -7,6 +7,14 @@ import { initDataTable } from "@/composables/datatable.js";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import MiPaginacion from "@/Components/MiPaginacion.vue";
 import VerificacionOrdenVenta from "@/Components/VerificacionOrdenVenta.vue";
+
+const props = defineProps({
+    codigo: {
+        type: String,
+        default: "",
+    },
+});
+
 const { props: props_page } = usePage();
 const { setLoading } = useApp();
 onMounted(() => {});
@@ -17,7 +25,7 @@ const oOrdenVenta = ref(null);
 const paramsOrdenesVenta = ref({
     perPage: 9,
     page: 1,
-    search: "",
+    search: props.codigo,
     estado_orden: "PENDIENTE",
     fecha: "",
     orderByCol: "id",

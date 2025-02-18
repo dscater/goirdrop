@@ -12,13 +12,20 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class SolicitudProductoService
 {
     private $modulo = "SOLICITUD DE PRODUCTO";
 
-    public function __construct(private HistorialAccionService $historialAccionService, private CargarArchivoService $cargarArchivoService, private EnviarCorreoService $enviarCorreoService) {}
+    public function __construct(
+        private HistorialAccionService $historialAccionService,
+        private CargarArchivoService $cargarArchivoService,
+        private EnviarCorreoService $enviarCorreoService,
+        private NotificacionService $notificacionService,
+        private SedeUserService $sedeUserService
+    ) {}
 
     /**
      * Lista de todos los solicitudProductos
@@ -27,7 +34,17 @@ class SolicitudProductoService
      */
     public function listado(): Collection
     {
-        $solicitudProductos = SolicitudProducto::select("solicitudProductos.*")->where("status", 1)->get();
+        $solicitudProductos = SolicitudProducto::select("solicitudProductos.*");
+        
+        // Filtro por usuario
+        $user = Auth::user();
+        if ($user->sedes_todo != 1) {
+            $sedes_id = $this->sedeUserService->getArraySedesIdUser();
+            $solicitudProductos->whereIn("solicitud_productos.sede_id", $sedes_id);
+        }
+
+        $solicitudProductos = $solicitudProductos->where("status", 1)->get();
+
         return $solicitudProductos;
     }
 
@@ -43,9 +60,17 @@ class SolicitudProductoService
      */
     public function listadoPaginado(int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
     {
-        $solicitudProductos = SolicitudProducto::with(["cliente", "solicitudDetalles"])
+        $solicitudProductos = SolicitudProducto::with(["cliente", "solicitudDetalles", "sede"])
             ->select("solicitud_productos.*")
             ->join("solicitud_detalles", "solicitud_productos.id", "=", "solicitud_detalles.solicitud_producto_id");
+
+        // Filtro por usuario
+        $user = Auth::user();
+        if ($user->sedes_todo != 1) {
+            $sedes_id = $this->sedeUserService->getArraySedesIdUser();
+            $solicitudProductos->whereIn("solicitud_productos.sede_id", $sedes_id);
+        }
+
         // Filtros exactos
         foreach ($columnsFilter as $key => $value) {
             if (!is_null($value)) {
@@ -162,6 +187,9 @@ class SolicitudProductoService
 
         // enviar correo
         $this->enviarCorreoService->nuevaSolicitudProducto($solicitudProducto);
+
+        // registrar notificacion
+        $this->notificacionService->crearNotificacionSolicitudProducto($solicitudProducto);
 
         return $solicitudProducto;
     }

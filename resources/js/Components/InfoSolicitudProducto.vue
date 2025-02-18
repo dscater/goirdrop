@@ -110,6 +110,14 @@ onMounted(() => {});
                                     {{ oSolicitudProducto.cliente.cel }}
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-4 text-right">
+                                    <strong>Dpto.:</strong>
+                                </div>
+                                <div class="col-8">
+                                    {{ oSolicitudProducto.sede.nombre }}
+                                </div>
+                            </div>
                             <div class="row my-2">
                                 <div class="col-4 text-right">
                                     <strong>Solicitud:</strong>

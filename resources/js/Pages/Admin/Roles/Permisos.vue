@@ -30,15 +30,35 @@ const props = defineProps({
 
 const listPermisos = ref(props.array_permisos);
 
+const verificaDisabled = (modulo, accion) => {
+    let disabled = false;
+    if (props.role.id == 1 || props.role.id == 2) {
+        disabled = true;
+    }
+    if (props.role.id != 2) {
+        if (modulo == "Solicitud de productos") {
+            if (accion == "CREAR") {
+                disabled = true;
+            }
+        }
+        if (modulo == "Orden de venta") {
+            if (accion == "CREAR") {
+                disabled = true;
+            }
+        }
+    }
+    return disabled;
+};
+
 const verificaPermiso = (modulo, accion) => {
     if (props.role.id == 1) {
         if (modulo == "Solicitud de productos") {
-            if (accion == "CREAR" || accion == "EDITAR") {
+            if (accion == "CREAR") {
                 return false;
             }
         }
         if (modulo == "Orden de venta") {
-            if (accion == "CREAR" || accion == "EDITAR") {
+            if (accion == "CREAR") {
                 return false;
             }
         }
@@ -47,12 +67,12 @@ const verificaPermiso = (modulo, accion) => {
 
     if (props.role.id == 2) {
         if (modulo == "Solicitud de productos") {
-            if (accion == "CREAR" || accion == "EDITAR"|| accion == "VER") {
+            if (accion == "CREAR" || accion == "VER") {
                 return true;
             }
         }
         if (modulo == "Orden de venta") {
-            if (accion == "CREAR" || accion == "EDITAR"|| accion == "VER") {
+            if (accion == "CREAR" || accion == "VER") {
                 return true;
             }
         }
@@ -84,8 +104,8 @@ const actualizaPermiso = (e, modulo, accion) => {
                 title: "Registro correcto",
                 text: "",
                 image: url_assets + "imgs/check.png",
-                sticky: true,
-                time: "",
+                sticky: false,
+                time: 1500,
                 class_name: "my-sticky-class",
             });
             listPermisos.value[modulo] = response.data.array_permisos;
@@ -182,11 +202,12 @@ onBeforeUnmount(() => {});
                                                 )
                                             "
                                             :disabled="
-                                                props.role.id == 1 ||
-                                                props.role.id == 2
-                                                    ? true
-                                                    : false
+                                                verificaDisabled(
+                                                    item,
+                                                    item_permiso.accion
+                                                )
                                             "
+                                            verificaPermiso
                                         />
                                     </label>
                                 </div>
@@ -219,5 +240,9 @@ onBeforeUnmount(() => {});
     height: 18px;
     width: 18px;
     margin-bottom: 3px;
+}
+
+input:disabled {
+    cursor: not-allowed;
 }
 </style>

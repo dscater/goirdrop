@@ -20,7 +20,8 @@ class OrdenVentaService
         private HistorialAccionService $historialAccionService,
         private CargarArchivoService $cargarArchivoService,
         private EnviarCorreoService $enviarCorreoService,
-        private DetalleVentaService $detalleVentaService
+        private DetalleVentaService $detalleVentaService,
+        private NotificacionService $notificacionService
     ) {}
 
     /**
@@ -105,8 +106,16 @@ class OrdenVentaService
      * @param array $columnsFilter
      * @return LengthAwarePaginator
      */
-    public function listadoPaginadoCliente(int $cliente_id, int $length, int $page, string $search, array $columnsSerachLike = [], array $columnsFilter = [], array $columnsBetweenFilter = [], array $orderBy = []): LengthAwarePaginator
-    {
+    public function listadoPaginadoCliente(
+        int $cliente_id,
+        int $length,
+        int $page,
+        string $search,
+        array $columnsSerachLike = [],
+        array $columnsFilter = [],
+        array $columnsBetweenFilter = [],
+        array $orderBy = []
+    ): LengthAwarePaginator {
         $ordenVentas = OrdenVenta::with(["detalleVenta.producto.imagens", "cliente"])
             ->select("orden_ventas.*");
 
@@ -182,6 +191,8 @@ class OrdenVentaService
         // registrar Detalle(carrito)
         $this->registrarCarrito($ordenVenta, $datos["carrito"]);
 
+        // registrar notificacion
+        $this->notificacionService->crearNotificacionOrdenVenta($ordenVenta);
 
         // enviar correo
         $this->enviarCorreoService->nuevaOrdenVenta($ordenVenta);

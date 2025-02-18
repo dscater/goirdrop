@@ -154,6 +154,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Sede::class, 'sede_users', 'user_id', 'sede_id')->withTimestamps();
     }
 
+    public function notificacions()
+    {
+        return $this->belongsToMany(Notificacion::class, 'notificacion_users', "user_id", "notificacion_id")->withTimestamps()->withPivot(["visto"]);
+    }
+
     // FUNCIONES
     /**
      * Obtener permisos de usuario logeado

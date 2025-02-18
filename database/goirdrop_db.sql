@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 18-02-2025 a las 17:12:15
+-- Tiempo de generación: 18-02-2025 a las 21:41:38
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -66,7 +66,8 @@ CREATE TABLE `clientes` (
 --
 
 INSERT INTO `clientes` (`id`, `user_id`, `nombres`, `apellidos`, `cel`, `correo`, `fecha_registro`, `created_at`, `updated_at`) VALUES
-(1, 3, 'MARIO', 'GONZALES PAREDES', '78787878', 'victorgonzalo.as@gmail.com', '2025-02-11', '2025-02-11 14:59:54', '2025-02-11 14:59:54');
+(1, 3, 'MARIO', 'GONZALES PAREDES', '78787878', 'victorgonzalo.as@gmail.com', '2025-02-11', '2025-02-11 14:59:54', '2025-02-11 14:59:54'),
+(2, 4, 'MARIA', 'FERNANDEZ', '78787878', 'maria@gmail.com', '2025-02-18', '2025-02-18 20:26:41', '2025-02-18 20:26:41');
 
 -- --------------------------------------------------------
 
@@ -144,7 +145,11 @@ CREATE TABLE `detalle_ventas` (
 INSERT INTO `detalle_ventas` (`id`, `orden_venta_id`, `producto_id`, `cantidad`, `precio`, `subtotal`, `created_at`, `updated_at`) VALUES
 (1, 1, 5, 3, 100.00, 300.00, '2025-02-15 14:45:44', '2025-02-15 14:45:44'),
 (2, 1, 3, 2, 499.99, 999.98, '2025-02-15 14:45:44', '2025-02-15 14:45:44'),
-(3, 2, 9, 1, 299.99, 299.99, '2025-02-15 14:49:07', '2025-02-15 14:49:07');
+(3, 2, 9, 1, 299.99, 299.99, '2025-02-15 14:49:07', '2025-02-15 14:49:07'),
+(6, 4, 1, 1, 250.00, 250.00, '2025-02-18 20:56:46', '2025-02-18 20:56:46'),
+(7, 4, 4, 2, 199.00, 398.00, '2025-02-18 20:56:46', '2025-02-18 20:56:46'),
+(10, 6, 6, 1, 450.00, 450.00, '2025-02-18 21:05:03', '2025-02-18 21:05:03'),
+(11, 6, 7, 1, 379.99, 379.99, '2025-02-18 21:05:03', '2025-02-18 21:05:03');
 
 -- --------------------------------------------------------
 
@@ -241,7 +246,14 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (64, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO', '{\"id\": 5, \"cel\": \"78787878\", \"nro\": 3, \"status\": 1, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-02-18T13:28:48.000000Z\", \"updated_at\": \"2025-02-18T16:34:01.000000Z\", \"observacion\": \"OBSERVACION DE SOLICITUD VERIFICACION\", \"precio_compra\": \"300.00\", \"nombre_cliente\": \"MARIO\", \"fecha_solicitud\": \"2025-02-18\", \"margen_ganancia\": \"100.00\", \"codigo_solicitud\": \"SOL.3\", \"estado_solicitud\": \"PENDIENTE\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": null, \"fecha_verificacion\": \"2025-02-18\"}', '{\"id\": 5, \"cel\": \"78787878\", \"nro\": 3, \"status\": 1, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-02-18T13:28:48.000000Z\", \"updated_at\": \"2025-02-18T16:35:47.000000Z\", \"observacion\": \"OBSERVACION DE SOLICITUD VERIFICACION\", \"precio_compra\": \"300\", \"nombre_cliente\": \"MARIO\", \"fecha_solicitud\": \"2025-02-18\", \"margen_ganancia\": \"100\", \"codigo_solicitud\": \"SOL.3\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": null, \"fecha_verificacion\": \"2025-02-18\"}', 'SOLICITUD DE PRODUCTO', '2025-02-18', '12:35:47', '2025-02-18 16:35:47', '2025-02-18 16:35:47'),
 (65, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO', '{\"id\": 5, \"cel\": \"78787878\", \"nro\": 3, \"status\": 1, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-02-18T13:28:48.000000Z\", \"updated_at\": \"2025-02-18T16:35:47.000000Z\", \"observacion\": \"OBSERVACION DE SOLICITUD VERIFICACION\", \"precio_compra\": \"300.00\", \"nombre_cliente\": \"MARIO\", \"fecha_solicitud\": \"2025-02-18\", \"margen_ganancia\": \"100.00\", \"codigo_solicitud\": \"SOL.3\", \"estado_solicitud\": \"PENDIENTE\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": null, \"fecha_verificacion\": \"2025-02-18\"}', '{\"id\": 5, \"cel\": \"78787878\", \"nro\": 3, \"status\": 1, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-02-18T13:28:48.000000Z\", \"updated_at\": \"2025-02-18T16:43:16.000000Z\", \"observacion\": \"OBSERVACION DE SOLICITUD VERIFICACION\", \"precio_compra\": \"300\", \"nombre_cliente\": \"MARIO\", \"fecha_solicitud\": \"2025-02-18\", \"margen_ganancia\": \"100\", \"codigo_solicitud\": \"SOL.3\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": null, \"fecha_verificacion\": \"2025-02-18\"}', 'SOLICITUD DE PRODUCTO', '2025-02-18', '12:43:16', '2025-02-18 16:43:17', '2025-02-18 16:43:17'),
 (66, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO', '{\"id\": 5, \"cel\": \"78787878\", \"nro\": 3, \"status\": 1, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-02-18T13:28:48.000000Z\", \"updated_at\": \"2025-02-18T16:43:16.000000Z\", \"observacion\": \"OBSERVACION DE SOLICITUD VERIFICACION\", \"precio_compra\": \"300.00\", \"nombre_cliente\": \"MARIO\", \"fecha_solicitud\": \"2025-02-18\", \"margen_ganancia\": \"100.00\", \"codigo_solicitud\": \"SOL.3\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": null, \"fecha_verificacion\": \"2025-02-18\"}', '{\"id\": 5, \"cel\": \"78787878\", \"nro\": 3, \"status\": 1, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-02-18T13:28:48.000000Z\", \"updated_at\": \"2025-02-18T17:01:23.000000Z\", \"observacion\": \"OBSERVACION DE SOLICITUD VERIFICACION\", \"precio_compra\": \"300.00\", \"nombre_cliente\": \"MARIO\", \"fecha_solicitud\": \"2025-02-18\", \"margen_ganancia\": \"100.00\", \"codigo_solicitud\": \"SOL.3\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"EN PROCESO\", \"fecha_verificacion\": \"2025-02-18\"}', 'SOLICITUD DE PRODUCTO', '2025-02-18', '13:01:23', '2025-02-18 17:01:23', '2025-02-18 17:01:23'),
-(67, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO', '{\"id\": 5, \"cel\": \"78787878\", \"nro\": 3, \"status\": 1, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-02-18T13:28:48.000000Z\", \"updated_at\": \"2025-02-18T17:01:23.000000Z\", \"observacion\": \"OBSERVACION DE SOLICITUD VERIFICACION\", \"precio_compra\": \"300.00\", \"nombre_cliente\": \"MARIO\", \"fecha_solicitud\": \"2025-02-18\", \"margen_ganancia\": \"100.00\", \"codigo_solicitud\": \"SOL.3\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"EN PROCESO\", \"fecha_verificacion\": \"2025-02-18\"}', '{\"id\": 5, \"cel\": \"78787878\", \"nro\": 3, \"status\": 1, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-02-18T13:28:48.000000Z\", \"updated_at\": \"2025-02-18T17:03:36.000000Z\", \"observacion\": \"OBSERVACION DE SOLICITUD VERIFICACION\", \"precio_compra\": \"300.00\", \"nombre_cliente\": \"MARIO\", \"fecha_solicitud\": \"2025-02-18\", \"margen_ganancia\": \"100.00\", \"codigo_solicitud\": \"SOL.3\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"EN ALMACÉN\", \"fecha_verificacion\": \"2025-02-18\"}', 'SOLICITUD DE PRODUCTO', '2025-02-18', '13:03:36', '2025-02-18 17:03:36', '2025-02-18 17:03:36');
+(67, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO', '{\"id\": 5, \"cel\": \"78787878\", \"nro\": 3, \"status\": 1, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-02-18T13:28:48.000000Z\", \"updated_at\": \"2025-02-18T17:01:23.000000Z\", \"observacion\": \"OBSERVACION DE SOLICITUD VERIFICACION\", \"precio_compra\": \"300.00\", \"nombre_cliente\": \"MARIO\", \"fecha_solicitud\": \"2025-02-18\", \"margen_ganancia\": \"100.00\", \"codigo_solicitud\": \"SOL.3\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"EN PROCESO\", \"fecha_verificacion\": \"2025-02-18\"}', '{\"id\": 5, \"cel\": \"78787878\", \"nro\": 3, \"status\": 1, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-02-18T13:28:48.000000Z\", \"updated_at\": \"2025-02-18T17:03:36.000000Z\", \"observacion\": \"OBSERVACION DE SOLICITUD VERIFICACION\", \"precio_compra\": \"300.00\", \"nombre_cliente\": \"MARIO\", \"fecha_solicitud\": \"2025-02-18\", \"margen_ganancia\": \"100.00\", \"codigo_solicitud\": \"SOL.3\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"EN ALMACÉN\", \"fecha_verificacion\": \"2025-02-18\"}', 'SOLICITUD DE PRODUCTO', '2025-02-18', '13:03:36', '2025-02-18 17:03:36', '2025-02-18 17:03:36'),
+(69, 4, 'CREACIÓN', 'EL USUARIO maria@gmail.com REGISTRO UNA ORDEN DE VENTA', '{\"id\": 4, \"cel\": \"78787878\", \"nro\": 3, \"codigo\": \"ORD.3\", \"cliente_id\": 2, \"created_at\": \"2025-02-18T20:32:43.000000Z\", \"updated_at\": \"2025-02-18T20:32:43.000000Z\", \"fecha_orden\": \"2025-02-18\", \"nombre_cliente\": \"MARIA\", \"apellidos_cliente\": \"FERNANDEZ\", \"configuracion_pago_id\": \"4\"}', NULL, 'ORDENES DE VENTA', '2025-02-18', '16:32:43', '2025-02-18 20:32:43', '2025-02-18 20:32:43'),
+(71, 4, 'CREACIÓN', 'EL USUARIO maria@gmail.com REGISTRO UNA ORDEN DE VENTA', '{\"id\": 4, \"cel\": \"78787878\", \"nro\": 3, \"codigo\": \"ORD.3\", \"cliente_id\": 2, \"created_at\": \"2025-02-18T20:56:46.000000Z\", \"updated_at\": \"2025-02-18T20:56:46.000000Z\", \"fecha_orden\": \"2025-02-18\", \"nombre_cliente\": \"MARIA\", \"apellidos_cliente\": \"FERNANDEZ\", \"configuracion_pago_id\": \"4\"}', NULL, 'ORDENES DE VENTA', '2025-02-18', '16:56:46', '2025-02-18 20:56:46', '2025-02-18 20:56:46'),
+(73, 4, 'CREACIÓN', 'EL USUARIO maria@gmail.com REGISTRO UNA ORDEN DE VENTA', '{\"id\": 6, \"cel\": \"78787878\", \"nro\": 4, \"codigo\": \"ORD.4\", \"cliente_id\": 2, \"created_at\": \"2025-02-18T21:05:03.000000Z\", \"updated_at\": \"2025-02-18T21:05:03.000000Z\", \"fecha_orden\": \"2025-02-18\", \"nombre_cliente\": \"MARIA\", \"apellidos_cliente\": \"FERNANDEZ\", \"configuracion_pago_id\": \"1\"}', NULL, 'ORDENES DE VENTA', '2025-02-18', '17:05:03', '2025-02-18 21:05:03', '2025-02-18 21:05:03'),
+(74, 4, 'CREACIÓN', 'EL USUARIO maria@gmail.com REGISTRO UNA SOLICITUD DE PRODUCTO', '{\"id\": 6, \"cel\": \"78787878\", \"nro\": 4, \"sede_id\": 3, \"cliente_id\": 2, \"created_at\": \"2025-02-18T21:09:33.000000Z\", \"updated_at\": \"2025-02-18T21:09:33.000000Z\", \"nombre_cliente\": \"MARIA\", \"fecha_solicitud\": \"2025-02-18\", \"codigo_solicitud\": \"SOL.4\", \"apellidos_cliente\": \"FERNANDEZ\"}', NULL, 'SOLICITUD DE PRODUCTO', '2025-02-18', '17:09:33', '2025-02-18 21:09:33', '2025-02-18 21:09:33'),
+(75, 1, 'MODIFICACIÓN', 'admin ACTUALIZO LAS SEDES DEL USUARIO juan@gmail.com', '{\"sedes\": [1, 2, 3, 8]}', '{\"updated\": [], \"attached\": [], \"detached\": {\"2\": 3, \"3\": 8}}', 'USUARIOS', '2025-02-18', '17:23:55', '2025-02-18 21:23:55', '2025-02-18 21:23:55'),
+(76, 1, 'MODIFICACIÓN', 'admin ACTUALIZO LAS SEDES DEL USUARIO juan@gmail.comadmin ACTUALIZÓ UN USUARIO', '{\"ci\": \"222222\", \"id\": 2, \"foto\": \"1739213656_2.jpg\", \"acceso\": 1, \"ci_exp\": \"LP\", \"correo\": \"juan@gmail.com\", \"status\": 1, \"nombres\": \"JUAN\", \"role_id\": 3, \"usuario\": \"juan@gmail.com\", \"apellidos\": \"PERES\", \"created_at\": \"2025-02-09T16:28:14.000000Z\", \"sedes_todo\": 0, \"updated_at\": \"2025-02-10T18:54:16.000000Z\", \"fecha_registro\": \"2025-02-09\"}', '{\"ci\": \"222222\", \"id\": 2, \"foto\": \"1739213656_2.jpg\", \"acceso\": \"1\", \"ci_exp\": \"LP\", \"correo\": \"juan@gmail.com\", \"status\": 1, \"nombres\": \"JUAN\", \"role_id\": \"3\", \"usuario\": \"juan@gmail.com\", \"apellidos\": \"PERES\", \"created_at\": \"2025-02-09T16:28:14.000000Z\", \"sedes_todo\": 0, \"updated_at\": \"2025-02-18T21:23:55.000000Z\", \"fecha_registro\": \"2025-02-18\"}', 'USUARIOS', '2025-02-18', '17:23:55', '2025-02-18 21:23:55', '2025-02-18 21:23:55'),
+(77, 4, 'CREACIÓN', 'EL USUARIO maria@gmail.com REGISTRO UNA SOLICITUD DE PRODUCTO', '{\"id\": 7, \"cel\": \"78787878\", \"nro\": 5, \"sede_id\": 3, \"cliente_id\": 2, \"created_at\": \"2025-02-18T21:28:09.000000Z\", \"updated_at\": \"2025-02-18T21:28:09.000000Z\", \"nombre_cliente\": \"MARIA\", \"fecha_solicitud\": \"2025-02-18\", \"codigo_solicitud\": \"SOL.5\", \"apellidos_cliente\": \"FERNANDEZ\"}', NULL, 'SOLICITUD DE PRODUCTO', '2025-02-18', '17:28:09', '2025-02-18 21:28:09', '2025-02-18 21:28:09');
 
 -- --------------------------------------------------------
 
@@ -353,13 +365,24 @@ INSERT INTO `modulos` (`id`, `modulo`, `nombre`, `accion`, `descripcion`, `creat
 
 CREATE TABLE `notificacions` (
   `id` bigint UNSIGNED NOT NULL,
-  `tipo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `descripcion` varchar(900) COLLATE utf8mb4_unicode_ci NOT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
+  `modulo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `registro_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `notificacions`
+--
+
+INSERT INTO `notificacions` (`id`, `descripcion`, `fecha`, `hora`, `modulo`, `registro_id`, `created_at`, `updated_at`) VALUES
+(2, 'Nueva orden de venta <b>ORD.3</b>', '2025-02-18', '16:56:00', 'OrdenVenta', 4, '2025-02-18 20:56:46', '2025-02-18 20:56:46'),
+(4, 'Nueva orden de venta <b>ORD.4</b>', '2025-02-18', '17:05:00', 'OrdenVenta', 6, '2025-02-18 21:05:03', '2025-02-18 21:05:03'),
+(5, 'Nueva solicitud de producto <b>SOL.4</b>', '2025-02-18', '17:09:00', 'SolicitudProducto', 6, '2025-02-18 21:09:36', '2025-02-18 21:09:36'),
+(6, 'Nueva solicitud de producto <b>SOL.5</b>', '2025-02-18', '17:28:00', 'SolicitudProducto', 7, '2025-02-18 21:28:13', '2025-02-18 21:28:13');
 
 -- --------------------------------------------------------
 
@@ -374,6 +397,18 @@ CREATE TABLE `notificacion_users` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `notificacion_users`
+--
+
+INSERT INTO `notificacion_users` (`notificacion_id`, `user_id`, `visto`, `created_at`, `updated_at`) VALUES
+(2, 1, 1, '2025-02-18 20:56:46', '2025-02-18 21:18:10'),
+(4, 1, 1, '2025-02-18 21:05:03', '2025-02-18 21:18:15'),
+(4, 2, 1, '2025-02-18 21:05:03', '2025-02-18 21:21:30'),
+(5, 1, 1, '2025-02-18 21:09:36', '2025-02-18 21:19:33'),
+(5, 2, 1, '2025-02-18 21:09:36', '2025-02-18 21:39:02'),
+(6, 1, 0, '2025-02-18 21:28:13', '2025-02-18 21:28:13');
 
 -- --------------------------------------------------------
 
@@ -407,7 +442,9 @@ CREATE TABLE `orden_ventas` (
 
 INSERT INTO `orden_ventas` (`id`, `codigo`, `nro`, `cliente_id`, `nombre_cliente`, `apellidos_cliente`, `cel`, `estado_orden`, `estado_pago`, `configuracion_pago_id`, `comprobante`, `observacion`, `status`, `fecha_orden`, `fecha_confirmacion`, `created_at`, `updated_at`) VALUES
 (1, 'ORD.1', 1, 1, 'MARIO', 'GONZALES PAREDES', '78787878', 'PENDIENTE', 0, 1, 'ov11739630744.pdf', NULL, 1, '2025-02-15', NULL, '2025-02-15 14:45:44', '2025-02-15 14:45:44'),
-(2, 'ORD.2', 2, 1, 'MARIO', 'GONZALES PAREDES', '78787878', 'CONFIRMADO', 1, 1, 'ov21739630947.png', 'OBSERVACION DE CAMBIO', 1, '2025-02-15', '2025-02-18', '2025-02-15 14:49:07', '2025-02-18 14:58:46');
+(2, 'ORD.2', 2, 1, 'MARIO', 'GONZALES PAREDES', '78787878', 'CONFIRMADO', 1, 1, 'ov21739630947.png', 'OBSERVACION DE CAMBIO', 1, '2025-02-15', '2025-02-18', '2025-02-15 14:49:07', '2025-02-18 14:58:46'),
+(4, 'ORD.3', 3, 2, 'MARIA', 'FERNANDEZ', '78787878', 'PENDIENTE', 0, 4, 'ov41739912206.png', NULL, 1, '2025-02-18', NULL, '2025-02-18 20:56:46', '2025-02-18 20:56:46'),
+(6, 'ORD.4', 4, 2, 'MARIA', 'FERNANDEZ', '78787878', 'PENDIENTE', 0, 1, 'ov61739912703.pdf', NULL, 1, '2025-02-18', NULL, '2025-02-18 21:05:03', '2025-02-18 21:05:03');
 
 -- --------------------------------------------------------
 
@@ -422,6 +459,37 @@ CREATE TABLE `permisos` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `permisos`
+--
+
+INSERT INTO `permisos` (`id`, `role_id`, `modulo_id`, `created_at`, `updated_at`) VALUES
+(2, 3, 1, '2025-02-18 20:37:08', '2025-02-18 20:37:08'),
+(3, 3, 2, '2025-02-18 20:37:09', '2025-02-18 20:37:09'),
+(4, 3, 9, '2025-02-18 20:37:14', '2025-02-18 20:37:14'),
+(5, 3, 10, '2025-02-18 20:37:16', '2025-02-18 20:37:16'),
+(6, 3, 11, '2025-02-18 20:37:17', '2025-02-18 20:37:17'),
+(7, 3, 12, '2025-02-18 20:37:19', '2025-02-18 20:37:19'),
+(8, 3, 15, '2025-02-18 20:37:20', '2025-02-18 20:37:20'),
+(9, 3, 16, '2025-02-18 20:37:21', '2025-02-18 20:37:21'),
+(10, 3, 17, '2025-02-18 20:37:22', '2025-02-18 20:37:22'),
+(11, 3, 18, '2025-02-18 20:37:32', '2025-02-18 20:37:32'),
+(12, 3, 19, '2025-02-18 20:38:20', '2025-02-18 20:38:20'),
+(13, 3, 20, '2025-02-18 20:38:21', '2025-02-18 20:38:21'),
+(14, 3, 21, '2025-02-18 20:38:21', '2025-02-18 20:38:21'),
+(15, 3, 23, '2025-02-18 20:38:45', '2025-02-18 20:38:45'),
+(16, 3, 24, '2025-02-18 20:38:46', '2025-02-18 20:38:46'),
+(17, 3, 29, '2025-02-18 20:40:10', '2025-02-18 20:40:10'),
+(18, 3, 30, '2025-02-18 20:40:11', '2025-02-18 20:40:11'),
+(19, 3, 36, '2025-02-18 20:40:15', '2025-02-18 20:40:15'),
+(20, 3, 37, '2025-02-18 20:40:16', '2025-02-18 20:40:16'),
+(21, 3, 38, '2025-02-18 20:40:16', '2025-02-18 20:40:16'),
+(22, 3, 39, '2025-02-18 20:40:17', '2025-02-18 20:40:17'),
+(23, 3, 40, '2025-02-18 20:40:17', '2025-02-18 20:40:17'),
+(24, 3, 42, '2025-02-18 20:40:18', '2025-02-18 20:40:18'),
+(25, 3, 43, '2025-02-18 20:40:18', '2025-02-18 20:40:18'),
+(26, 3, 41, '2025-02-18 20:45:16', '2025-02-18 20:45:16');
 
 -- --------------------------------------------------------
 
@@ -569,9 +637,7 @@ CREATE TABLE `sede_users` (
 
 INSERT INTO `sede_users` (`sede_id`, `user_id`, `created_at`, `updated_at`) VALUES
 (1, 2, '2025-02-09 16:28:14', '2025-02-09 16:28:14'),
-(2, 2, '2025-02-09 16:28:14', '2025-02-09 16:28:14'),
-(3, 2, '2025-02-09 16:28:14', '2025-02-09 16:28:14'),
-(8, 2, '2025-02-09 16:28:27', '2025-02-09 16:28:27');
+(2, 2, '2025-02-09 16:28:14', '2025-02-09 16:28:14');
 
 -- --------------------------------------------------------
 
@@ -596,7 +662,9 @@ CREATE TABLE `solicitud_detalles` (
 INSERT INTO `solicitud_detalles` (`id`, `solicitud_producto_id`, `nombre_producto`, `detalle_producto`, `links_referencia`, `created_at`, `updated_at`) VALUES
 (1, 3, 'producto sol 1', 'detatalle prod solicitado 1', 'http://producto1.com', '2025-02-17 21:34:19', '2025-02-17 21:34:19'),
 (2, 4, 'Producto soli 2', 'detalle prod solicitado 2', 'http://prod2.com<br/>\nhttp://producto2.org', '2025-02-18 13:26:48', '2025-02-18 13:26:48'),
-(3, 5, 'Producto sol 3', 'detalle de producto solicitado numero 3', 'https://productosol3.com<br />\nhttps://prod3sol.es', '2025-02-18 13:28:48', '2025-02-18 13:28:48');
+(3, 5, 'Producto sol 3', 'detalle de producto solicitado numero 3', 'https://productosol3.com<br />\nhttps://prod3sol.es', '2025-02-18 13:28:48', '2025-02-18 13:28:48'),
+(4, 6, 'producto maria', 'detalle producto de maria fernandez', 'linkreferencia1<br />\nlinkreferencia2', '2025-02-18 21:09:33', '2025-02-18 21:09:33'),
+(5, 7, 'producto 2 maria', 'detalle del producto de solicitud de la cliente maria', 'link1<br />\nlink2', '2025-02-18 21:28:09', '2025-02-18 21:28:09');
 
 -- --------------------------------------------------------
 
@@ -632,7 +700,9 @@ CREATE TABLE `solicitud_productos` (
 INSERT INTO `solicitud_productos` (`id`, `codigo_solicitud`, `nro`, `sede_id`, `cliente_id`, `nombre_cliente`, `apellidos_cliente`, `cel`, `estado_solicitud`, `estado_seguimiento`, `observacion`, `status`, `fecha_solicitud`, `precio_compra`, `margen_ganancia`, `fecha_verificacion`, `created_at`, `updated_at`) VALUES
 (3, 'SOL.1', 1, 1, 1, 'MARIO', 'GONZALES PAREDES', '78787878', 'PENDIENTE', NULL, NULL, 1, '2025-02-17', NULL, NULL, NULL, '2025-02-17 21:34:19', '2025-02-17 21:34:19'),
 (4, 'SOL.2', 2, 1, 1, 'MARIO', 'GONZALES PAREDES', '78787878', 'PENDIENTE', NULL, NULL, 1, '2025-02-18', NULL, NULL, NULL, '2025-02-18 13:26:48', '2025-02-18 13:26:48'),
-(5, 'SOL.3', 3, 2, 1, 'MARIO', 'GONZALES PAREDES', '78787878', 'APROBADO', 'EN ALMACÉN', 'OBSERVACION DE SOLICITUD VERIFICACION', 1, '2025-02-18', 300.00, 100.00, '2025-02-18', '2025-02-18 13:28:48', '2025-02-18 17:03:36');
+(5, 'SOL.3', 3, 2, 1, 'MARIO', 'GONZALES PAREDES', '78787878', 'APROBADO', 'EN ALMACÉN', 'OBSERVACION DE SOLICITUD VERIFICACION', 1, '2025-02-18', 300.00, 100.00, '2025-02-18', '2025-02-18 13:28:48', '2025-02-18 17:03:36'),
+(6, 'SOL.4', 4, 3, 2, 'MARIA', 'FERNANDEZ', '78787878', 'PENDIENTE', NULL, NULL, 1, '2025-02-18', NULL, NULL, NULL, '2025-02-18 21:09:33', '2025-02-18 21:09:33'),
+(7, 'SOL.5', 5, 3, 2, 'MARIA', 'FERNANDEZ', '78787878', 'PENDIENTE', NULL, NULL, 1, '2025-02-18', NULL, NULL, NULL, '2025-02-18 21:28:09', '2025-02-18 21:28:09');
 
 -- --------------------------------------------------------
 
@@ -665,8 +735,9 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `usuario`, `nombres`, `apellidos`, `ci`, `ci_exp`, `correo`, `password`, `role_id`, `sedes_todo`, `foto`, `fecha_registro`, `acceso`, `status`, `created_at`, `updated_at`) VALUES
 (1, 'admin', 'admin', 'admin', '0', '', 'admin@admin.com', '$2y$12$65d4fgZsvBV5Lc/AxNKh4eoUdbGyaczQ4sSco20feSQANshNLuxSC', 1, 1, NULL, '2025-02-07', 1, 1, '2025-02-07 15:17:42', '2025-02-07 15:17:42'),
-(2, 'juan@gmail.com', 'JUAN', 'PERES', '222222', 'LP', 'juan@gmail.com', '$2y$12$itLoRKn93EgasFLYaz3kIevAfQTctoaq6Vd6O4a9hwRh8M42gavkm', 3, 0, '1739213656_2.jpg', '2025-02-09', 1, 1, '2025-02-09 16:28:14', '2025-02-10 18:54:16'),
-(3, 'mario@gmail.com', 'MARIO', 'GONZALES PAREDES', NULL, NULL, 'mario@gmail.com', '$2y$12$mv2fV.NPQ4snrQAb9Fy/zuPnbSXbIJZXG8JvL4QbfzZNd1XjIpgRa', 2, 0, NULL, '2025-02-11', 1, 1, '2025-02-11 14:59:54', '2025-02-11 14:59:54');
+(2, 'juan@gmail.com', 'JUAN', 'PERES', '222222', 'LP', 'juan@gmail.com', '$2y$12$itLoRKn93EgasFLYaz3kIevAfQTctoaq6Vd6O4a9hwRh8M42gavkm', 3, 0, '1739213656_2.jpg', '2025-02-18', 1, 1, '2025-02-09 16:28:14', '2025-02-18 21:23:55'),
+(3, 'mario@gmail.com', 'MARIO', 'GONZALES PAREDES', NULL, NULL, 'mario@gmail.com', '$2y$12$mv2fV.NPQ4snrQAb9Fy/zuPnbSXbIJZXG8JvL4QbfzZNd1XjIpgRa', 2, 0, NULL, '2025-02-11', 1, 1, '2025-02-11 14:59:54', '2025-02-11 14:59:54'),
+(4, 'maria@gmail.com', 'MARIA', 'FERNANDEZ', NULL, NULL, 'maria@gmail.com', '$2y$12$oCVIJK04rZqSR8JliGYxReW0A.IFNS60Bc8XJpzG7Dl9MiYCM5hGy', 2, 0, NULL, '2025-02-18', 1, 1, '2025-02-18 20:26:41', '2025-02-18 20:26:41');
 
 --
 -- Índices para tablas volcadas
@@ -826,7 +897,7 @@ ALTER TABLE `categorias`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `configuracions`
@@ -844,13 +915,13 @@ ALTER TABLE `configuracion_pagos`
 -- AUTO_INCREMENT de la tabla `detalle_ventas`
 --
 ALTER TABLE `detalle_ventas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT de la tabla `migrations`
@@ -868,19 +939,19 @@ ALTER TABLE `modulos`
 -- AUTO_INCREMENT de la tabla `notificacions`
 --
 ALTER TABLE `notificacions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `orden_ventas`
 --
 ALTER TABLE `orden_ventas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `permisos`
 --
 ALTER TABLE `permisos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -910,19 +981,19 @@ ALTER TABLE `sedes`
 -- AUTO_INCREMENT de la tabla `solicitud_detalles`
 --
 ALTER TABLE `solicitud_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `solicitud_productos`
 --
 ALTER TABLE `solicitud_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas

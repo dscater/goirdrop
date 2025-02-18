@@ -17,7 +17,22 @@ class Notificacion extends Model
         "registro_id",
     ];
 
-    protected $appends = ["fecha_t", "fecha_hora_t", "hace"];
+    protected $appends = ["fecha_t", "fecha_hora_t", "hace", "url_modulo"];
+
+    public function getUrlModuloAttribute()
+    {
+        $url = "";
+        if ($this->modulo == 'OrdenVenta') {
+            $ordenVenta = OrdenVenta::find($this->registro_id);
+            $url = route("orden_ventas.index") . "?cod=" . $ordenVenta->codigo;
+        }
+        if ($this->modulo == 'SolicitudProducto') {
+            $solicitudProducto = SolicitudProducto::find($this->registro_id);
+            $url = route("solicitud_productos.index") . "?cod=" . $solicitudProducto->codigo_solicitud;
+        }
+
+        return $url;
+    }
 
     public function getFechaTAttribute()
     {

@@ -5,6 +5,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\ConfiguracionPagoController;
 use App\Http\Controllers\InicioController;
+use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\OrdenVentaController;
 use App\Http\Controllers\PortalController;
 use App\Http\Controllers\ProductoController;
@@ -162,6 +163,9 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::resource("solicitud_productos", SolicitudProductoController::class)->only(
         ["index", "store", "show", "update", "destroy"]
     );
+
+    // NOTIFICACIONS
+    Route::get("notificacions/listadoPorUsuario", [NotificacionController::class, "listadoPorUsuario"])->name("notificacions.listadoPorUsuario");
 
     // REPORTES
     Route::get('reportes/usuarios', [ReporteController::class, 'usuarios'])->name("reportes.usuarios");
