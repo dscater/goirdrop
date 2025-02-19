@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Publicaciones</title>
+    <title>OrdenVentas</title>
     <style type="text/css">
         * {
             font-family: sans-serif;
@@ -11,9 +11,9 @@
 
         @page {
             margin-top: 1.5cm;
-            margin-bottom: 0.5cm;
-            margin-left: 0.5cm;
-            margin-right: 0.5cm;
+            margin-bottom: 1cm;
+            margin-left: 1cm;
+            margin-right: 1cm;
         }
 
         table {
@@ -45,7 +45,7 @@
 
         .logo img {
             position: absolute;
-            height: 100px;
+            height: 70px;
             top: -20px;
             left: 0px;
         }
@@ -60,7 +60,7 @@
         }
 
         .texto {
-            width: 250px;
+            width: 400px;
             text-align: center;
             margin: auto;
             margin-top: 15px;
@@ -69,7 +69,7 @@
         }
 
         .fecha {
-            width: 250px;
+            width: 400px;
             text-align: center;
             margin: auto;
             margin-top: 15px;
@@ -104,7 +104,7 @@
             margin-left: 15px;
             border-top: solid 1px;
             border-collapse: collapse;
-            width: 250px;
+            width: 400px;
         }
 
         .txt {
@@ -138,7 +138,9 @@
             color: white;
         }
 
-        .txt_rojo {}
+        .page_break {
+            page-break-after: always;
+        }
 
         .img_celda img {
             width: 45px;
@@ -146,6 +148,18 @@
 
         .lista {
             padding-left: 8px;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .text-md {
+            font-size: 1.2em;
+        }
+
+        .bg-ganador {
+            background-color: #e7ffe7;
         }
     </style>
 </head>
@@ -157,60 +171,40 @@
             <img src="{{ $configuracion->first()->logo_b64 }}">
         </div>
         <h2 class="titulo">
-            {{ $configuracion->first()->razon_social }}
+            {{ $configuracion->first()->nombre_sistema }}
         </h2>
-        <h4 class="texto">LISTA DE PUBLICACIONES</h4>
+        <h4 class="texto">LISTA DE ORDENES DE VENTAS</h4>
         <h4 class="fecha">Expedido: {{ date('d-m-Y') }}</h4>
     </div>
+
+    @php
+        $contador = 0;
+    @endphp
+
     <table border="1">
-        <thead class="bg-principal">
+        <thead>
             <tr>
-                <th width="3%">N°</th>
-                <th width="5%">NRO. DEL BIEN</th>
-                <th>USUARIO</th>
-                <th>CATEGORÍA</th>
-                <th>MONEDA</th>
-                <th>OFERTA INCIAL</th>
-                <th>UBICACIÓN</th>
-                <th>OBSERVACIONES</th>
-                <th>FECHA Y HORA DE PUBLICACIÓN</th>
-                <th>FECHA Y HORA LIMITE</th>
-                <th>MONTO DE GARANTÍA</th>
-                <th>CARACTERISTICAS-DETALLES</th>
-                <th>ESTADO</th>
+                <th width="8%">CÓDIGO</th>
+                <th>CLIENTE</th>
+                <th>CELULAR</th>
+                <th>CORREO</th>
+                <th>ESTADO DE ORDEN</th>
+                <th>COMPROBANTE</th>
+                <th>OBSERVACIÓN</th>
+                <th width="9%">FECHA DE ORDEN</th>
             </tr>
         </thead>
         <tbody>
-            @php
-                $cont = 1;
-            @endphp
-            @foreach ($publicacions as $publicacion)
-                @php
-                    $detalles = App\Models\PublicacionDetalle::where('publicacion_id', $publicacion->id)
-                        ->get()
-                        ->take(3);
-                @endphp
-
+            @foreach ($orden_ventas as $orden_venta)
                 <tr>
-                    <td class="centreado">{{ $cont++ }}</td>
-                    <td class="centreado">{{ $publicacion->nro }}</td>
-                    <td>{{ $publicacion->user->full_name }}</td>
-                    <td class="">{{ $publicacion->categoria }}</td>
-                    <td class="">{{ $publicacion->moneda }}</td>
-                    <td class="">{{ number_format($publicacion->oferta_inicial, 2, '.', ',') }}</td>
-                    <td class="">{{ $publicacion->ubicacion }}</td>
-                    <td class="">{{ $publicacion->observaciones }}</td>
-                    <td class="">{{ $publicacion->subasta ? $publicacion->subasta->fecha_hora_pub_am : 'S/P' }}</td>
-                    <td class="">{{ $publicacion->fecha_hora_limite_am }}</td>
-                    <td class="">{{ number_format($publicacion->monto_garantia, 2, '.', ',') }}</td>
-                    <td class="">
-                        <ul class="lista">
-                            @foreach ($detalles as $item)
-                                <li><strong>{{ $item->caracteristica }}:</strong> {{ $item->detalle }}</li>
-                            @endforeach
-                        </ul>
-                    </td>
-                    <td class="">{{ $publicacion->estado_txt }}</td>
+                    <td>{{ $orden_venta->codigo }}</td>
+                    <td>{{ $orden_venta->cliente->full_name }}</td>
+                    <td>{{ $orden_venta->cliente->cel }}</td>
+                    <td>{{ $orden_venta->cliente->correo }}</td>
+                    <td>{{ $orden_venta->estado_orden }}</td>
+                    <td>{{ $orden_venta->comprobante ? 'SI' : 'NO' }}</td>
+                    <td>{{ $orden_venta->observacion }}</td>
+                    <td>{{ $orden_venta->fecha_orden_t }}</td>
                 </tr>
             @endforeach
         </tbody>

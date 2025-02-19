@@ -16,11 +16,12 @@ const oUsuario = ref({
     fecha_registro: "",
     acceso: 0 + "",
     status: "",
+    origen: "admin",
     _method: "POST",
 });
 
 export const useUsuarios = () => {
-    const setUsuario = (item = null) => {
+    const setUsuario = (item = null, cliente = false, origen = "") => {
         if (item) {
             oUsuario.value.id = item.id;
             oUsuario.value.usuario = item.usuario;
@@ -37,6 +38,13 @@ export const useUsuarios = () => {
             oUsuario.value.fecha_registro = item.fecha_registro;
             oUsuario.value.acceso = item.acceso;
             oUsuario.value.status = item.status;
+            if (cliente) {
+                oUsuario.value.cliente = item.cliente;
+            }
+
+            if (origen) {
+                oUsuario.value.origen = origen;
+            }
             oUsuario.value._method = "PUT";
             return oUsuario;
         }
@@ -59,6 +67,7 @@ export const useUsuarios = () => {
         oUsuario.value.fecha_registro = "";
         oUsuario.value.acceso = 0 + "";
         oUsuario.value.status = "";
+        oUsuario.value.origen = "admin";
         oUsuario.value._method = "POST";
     };
 

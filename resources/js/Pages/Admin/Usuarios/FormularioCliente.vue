@@ -17,11 +17,19 @@ const { oUsuario, limpiarUsuario } = useUsuarios();
 const accion = ref(props.accion_dialog);
 const dialog = ref(props.open_dialog);
 let form = useForm(oUsuario.value);
+let switcheryInstanceCliente = null;
 watch(
     () => props.open_dialog,
     async (newValue) => {
         dialog.value = newValue;
         if (dialog.value) {
+            const accesoCheckbox = $("#accesoCliente");
+            if (oUsuario.value.acceso == 1) {
+                accesoCheckbox.prop("checked", false).trigger("click");
+            } else {
+                accesoCheckbox.prop("checked", true).trigger("click");
+            }
+
             document
                 .getElementsByTagName("body")[0]
                 .classList.add("modal-open");
@@ -49,8 +57,6 @@ const listExpedido = [
     { value: "PD", label: "Pando" },
     { value: "BN", label: "Beni" },
 ];
-const foto_ci_anverso = ref(null);
-const foto_ci_reverso = ref(null);
 
 function cargaArchivo(e, key) {
     form.cliente[key] = null;
@@ -62,6 +68,17 @@ const tituloDialog = computed(() => {
         ? `<i class="fa fa-plus"></i> Nuevo Usuario`
         : `<i class="fa fa-edit"></i> Editar Usuario`;
 });
+
+const initializeSwitcher = () => {
+    const accesoCheckbox = document.getElementById("accesoCliente");
+    if (accesoCheckbox) {
+        // Destruye la instancia previa si existe
+        // Inicializa Switchery
+        switcheryInstanceCliente = new Switchery(accesoCheckbox, {
+            color: "#0078ff",
+        });
+    }
+};
 
 const enviarFormulario = () => {
     let url =
@@ -82,8 +99,6 @@ const enviarFormulario = () => {
                 confirmButtonText: `Aceptar`,
             });
             limpiarUsuario();
-            foto_ci_anverso.value.value = null;
-            foto_ci_reverso.value.value = null;
             emits("envio-formulario");
         },
         onError: (err) => {
@@ -118,7 +133,9 @@ const cerrarDialog = () => {
     document.getElementsByTagName("body")[0].classList.remove("modal-open");
 };
 
-onMounted(() => {});
+onMounted(() => {
+    initializeSwitcher();
+});
 </script>
 
 <template>
@@ -145,7 +162,7 @@ onMounted(() => {});
                 <div class="modal-body" v-if="form.cliente">
                     <form @submit.prevent="enviarFormulario()">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-4 mt-2">
                                 <label>Nombre(s)*</label>
                                 <input
                                     type="text"
@@ -153,226 +170,120 @@ onMounted(() => {});
                                     :class="{
                                         'parsley-error':
                                             form.errors &&
-                                            form.errors['cliente.nombre'],
+                                            form.errors['cliente.nombres'],
                                     }"
-                                    v-model="form.cliente.nombre"
+                                    v-model="form.cliente.nombres"
                                 />
                                 <ul
                                     v-if="
                                         form.errors &&
-                                        form.errors['cliente.nombre']
+                                        form.errors['cliente.nombres']
                                     "
                                     class="parsley-errors-list filled"
                                 >
                                     <li class="parsley-required">
-                                        {{ form.errors["cliente.nombre"] }}
+                                        {{ form.errors["cliente.nombres"] }}
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-md-4 mt-2">
-                                <label>Ap. Paterno*</label>
+                                <label>Apellidos*</label>
                                 <input
                                     type="text"
                                     class="form-control"
                                     :class="{
                                         'parsley-error':
                                             form.errors &&
-                                            form.errors['cliente.paterno'],
+                                            form.errors['cliente.apellidos'],
                                     }"
-                                    v-model="form.cliente.paterno"
+                                    v-model="form.cliente.apellidos"
                                 />
 
                                 <ul
                                     v-if="
                                         form.errors &&
-                                        form.errors['cliente.paterno']
+                                        form.errors['cliente.apellidos']
                                     "
                                     class="parsley-errors-list filled"
                                 >
                                     <li class="parsley-required">
-                                        {{ form.errors["cliente.paterno"] }}
+                                        {{ form.errors["cliente.apellidos"] }}
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-md-4 mt-2">
-                                <label>Ap. Materno</label>
+                                <label>Correo*</label>
                                 <input
-                                    type="text"
+                                    type="email"
                                     class="form-control"
                                     :class="{
                                         'parsley-error':
                                             form.errors &&
-                                            form.errors['cliente.materno'],
+                                            form.errors['cliente.correo'],
                                     }"
-                                    v-model="form.cliente.materno"
+                                    v-model="form.cliente.correo"
                                 />
 
                                 <ul
                                     v-if="
                                         form.errors &&
-                                        form.errors['cliente.materno']
+                                        form.errors['cliente.correo']
                                     "
                                     class="parsley-errors-list filled"
                                 >
                                     <li class="parsley-required">
-                                        {{ form.errors["cliente.materno"] }}
+                                        {{ form.errors["cliente.correo"] }}
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-md-4 mt-2">
-                                <label>C.I.*</label>
+                                <label>Celular*</label>
                                 <input
-                                    type="text"
+                                    type="email"
                                     class="form-control"
                                     :class="{
                                         'parsley-error':
                                             form.errors &&
-                                            form.errors['cliente.ci'],
+                                            form.errors['cliente.cel'],
                                     }"
-                                    v-model="form.cliente.ci"
+                                    v-model="form.cliente.cel"
                                 />
 
                                 <ul
                                     v-if="
-                                        form.errors && form.errors['cliente.ci']
+                                        form.errors &&
+                                        form.errors['cliente.cel']
                                     "
                                     class="parsley-errors-list filled"
                                 >
                                     <li class="parsley-required">
-                                        {{ form.errors["cliente.ci"] }}
+                                        {{ form.errors["cliente.cel"] }}
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-md-4 mt-2">
-                                <label>Expedición*</label>
-                                <select
-                                    class="form-select"
-                                    :class="{
-                                        'parsley-error':
-                                            form.errors &&
-                                            form.errors['cliente.ci_exp'],
-                                    }"
-                                    v-model="form.cliente.ci_exp"
-                                >
-                                    <option value="">- Seleccione -</option>
-                                    <option
-                                        v-for="item in listExpedido"
-                                        :value="item.value"
-                                    >
-                                        {{ item.label }}
-                                    </option>
-                                </select>
-
-                                <ul
-                                    v-if="
-                                        form.errors &&
-                                        form.errors['cliente.ci_exp']
-                                    "
-                                    class="parsley-errors-list filled"
-                                >
-                                    <li class="parsley-required">
-                                        {{ form.errors["cliente.ci_exp"] }}
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-md-4 mt-2">
-                                <label>Complemento</label>
+                                <label for="flexSwitchCheckChecked"
+                                    >Acceso*</label
+                                ><br />
                                 <input
-                                    type="text"
-                                    class="form-control"
+                                    type="checkbox"
                                     :class="{
-                                        'parsley-error':
-                                            form.errors &&
-                                            form.errors['cliente.complemento'],
+                                        'parsley-error': form.errors?.acceso,
                                     }"
-                                    v-model="form.cliente.complemento"
+                                    data-render="switchery"
+                                    data-theme="blue"
+                                    :true-value="'1'"
+                                    :false-value="'0'"
+                                    v-model="form.acceso"
+                                    id="accesoCliente"
                                 />
 
                                 <ul
-                                    v-if="
-                                        form.errors &&
-                                        form.errors['cliente.complemento']
-                                    "
+                                    v-if="form.errors?.acceso"
                                     class="parsley-errors-list filled"
                                 >
                                     <li class="parsley-required">
-                                        {{ form.errors["cliente.complemento"] }}
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="col-12 mt-3">
-                                <h4>Datos complementarios</h4>
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <label
-                                    >Foto del C.I. anverso(PDF o Imagen)*</label
-                                >
-                                <input
-                                    type="file"
-                                    class="form-control"
-                                    :class="{
-                                        'parsley-error':
-                                            form.errors &&
-                                            form.errors[
-                                                'cliente.foto_ci_anverso'
-                                            ],
-                                    }"
-                                    ref="foto_ci_anverso"
-                                    @change="
-                                        cargaArchivo($event, 'foto_ci_anverso')
-                                    "
-                                />
-
-                                <ul
-                                    v-if="
-                                        form.errors &&
-                                        form.errors['cliente.foto_ci_anverso']
-                                    "
-                                    class="parsley-errors-list filled"
-                                >
-                                    <li class="parsley-required">
-                                        {{
-                                            form.errors[
-                                                "cliente.foto_ci_anverso"
-                                            ]
-                                        }}
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-md-4 mb-2">
-                                <label
-                                    >Foto del C.I. reverso(PDF o Imagen)*</label
-                                >
-                                <input
-                                    type="file"
-                                    class="form-control"
-                                    :class="{
-                                        'parsley-error':
-                                            form.errors &&
-                                            form.errors[
-                                                'cliente.foto_ci_reverso'
-                                            ],
-                                    }"
-                                    ref="foto_ci_reverso"
-                                    @change="
-                                        cargaArchivo($event, 'foto_ci_reverso')
-                                    "
-                                />
-
-                                <ul
-                                    v-if="
-                                        form.errors &&
-                                        form.errors['cliente.foto_ci_reverso']
-                                    "
-                                    class="parsley-errors-list filled"
-                                >
-                                    <li class="parsley-required">
-                                        {{
-                                            form.errors[
-                                                "cliente.foto_ci_reverso"
-                                            ]
-                                        }}
+                                        {{ form.errors?.acceso }}
                                     </li>
                                 </ul>
                             </div>

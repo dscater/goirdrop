@@ -170,5 +170,26 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // REPORTES
     Route::get('reportes/usuarios', [ReporteController::class, 'usuarios'])->name("reportes.usuarios");
     Route::get('reportes/r_usuarios', [ReporteController::class, 'r_usuarios'])->name("reportes.r_usuarios");
+
+    Route::get('reportes/productos', [ReporteController::class, 'productos'])->name("reportes.productos");
+    Route::get('reportes/r_productos', [ReporteController::class, 'r_productos'])->name("reportes.r_productos");
+
+    Route::get('reportes/orden_ventas', [ReporteController::class, 'orden_ventas'])->name("reportes.orden_ventas");
+    Route::get('reportes/r_orden_ventas', [ReporteController::class, 'r_orden_ventas'])->name("reportes.r_orden_ventas");
+
+    Route::get('reportes/solicitud_productos', [ReporteController::class, 'solicitud_productos'])->name("reportes.solicitud_productos");
+    Route::get('reportes/r_solicitud_productos', [ReporteController::class, 'r_solicitud_productos'])->name("reportes.r_solicitud_productos");
+
+    Route::get('reportes/seguimiento_solicituds', [ReporteController::class, 'seguimiento_solicituds'])->name("reportes.seguimiento_solicituds");
+    Route::get('reportes/r_seguimiento_solicituds', [ReporteController::class, 'r_seguimiento_solicituds'])->name("reportes.r_seguimiento_solicituds");
+
+    Route::get('reportes/g_orden_ventas', [ReporteController::class, 'g_orden_ventas'])->name("reportes.g_orden_ventas");
+    Route::get('reportes/r_g_orden_ventas', [ReporteController::class, 'r_g_orden_ventas'])->name("reportes.r_g_orden_ventas");
+
+    Route::get('reportes/g_solicitud_productos', [ReporteController::class, 'g_solicitud_productos'])->name("reportes.g_solicitud_productos");
+    Route::get('reportes/r_g_solicitud_productos', [ReporteController::class, 'r_g_solicitud_productos'])->name("reportes.r_g_solicitud_productos");
+
+    Route::get('reportes/g_seguimiento_productos', [ReporteController::class, 'g_seguimiento_productos'])->name("reportes.g_seguimiento_productos");
+    Route::get('reportes/r_g_seguimiento_productos', [ReporteController::class, 'r_g_seguimiento_productos'])->name("reportes.r_g_seguimiento_productos");
 });
 require __DIR__ . '/auth.php';

@@ -236,7 +236,7 @@ class UsuarioController extends Controller
             $this->userService->actualizarPassword($request->validated(), $user);
             DB::commit();
             if ($user->role_id == 2) {
-                return redirect()->route("clientes.index")->with("bien", "Registro actualizado");
+                return redirect()->route("usuarios.clientes")->with("bien", "Registro actualizado");
             }
             return redirect()->route("usuarios.index")->with("bien", "Registro actualizado");
         } catch (\Exception $e) {

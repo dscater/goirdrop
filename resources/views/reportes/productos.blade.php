@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Usuarios</title>
+    <title>productos</title>
     <style type="text/css">
         * {
             font-family: sans-serif;
@@ -11,9 +11,9 @@
 
         @page {
             margin-top: 1.5cm;
-            margin-bottom: 0.3cm;
-            margin-left: 0.3cm;
-            margin-right: 0.3cm;
+            margin-bottom: 0.5cm;
+            margin-left: 0.5cm;
+            margin-right: 0.5cm;
         }
 
         table {
@@ -45,7 +45,7 @@
 
         .logo img {
             position: absolute;
-            height: 100px;
+            height: 70px;
             top: -20px;
             left: 0px;
         }
@@ -143,6 +143,10 @@
         .img_celda img {
             width: 45px;
         }
+
+        .lista {
+            padding-left: 8px;
+        }
     </style>
 </head>
 
@@ -155,44 +159,40 @@
         <h2 class="titulo">
             {{ $configuracion->first()->nombre_sistema }}
         </h2>
-        <h4 class="texto">LISTA DE USUARIOS</h4>
+        <h4 class="texto">LISTA DE PRODUCTOS</h4>
         <h4 class="fecha">Expedido: {{ date('d-m-Y') }}</h4>
     </div>
     <table border="1">
         <thead class="bg-principal">
             <tr>
                 <th width="3%">N°</th>
-                <th width="5%">FOTO</th>
-                <th>APELLIDOS</th>
-                <th>NOMBRES</th>
-                <th>C.I.</th>
-                <th>CORREO</th>
-                <th>TELÉFONO/CELULAR</th>
-                <th>SEDE(S)</th>
-                <th>ROLE</th>
-                <th>ACCESO</th>
-                <th width="9%">FECHA DE REGISTRO</th>
+                <th>NOMBRE</th>
+                <th>CATEGORÍA</th>
+                <th>DESCRIPCIÓN</th>
+                <th>STOCK ACTUAL</th>
+                <th>PRECIO COMPRA <br/>{{ $configuracion->first()->conf_moneda['abrev'] }}</th>
+                <th>PRECIO VENTA <br/>{{ $configuracion->first()->conf_moneda['abrev'] }}</th>
+                <th>OBSERVACIONES</th>
+                <th>PÚBLICO</th>
+                <th>FECHA DE REGISTRO</th>
             </tr>
         </thead>
         <tbody>
             @php
                 $cont = 1;
             @endphp
-            @foreach ($usuarios as $user)
+            @foreach ($productos as $producto)
                 <tr>
                     <td class="centreado">{{ $cont++ }}</td>
-                    <td class="img_celda centreado">
-                        <img src="{{ $user->foto_b64 }}" alt="Foto">
-                    </td>
-                    <td class="">{{ $user->apellidos }}</td>
-                    <td class="">{{ $user->nombres }}</td>
-                    <td class="">{{ $user->full_ci }}</td>
-                    <td class="">{{ $user->correo }}</td>
-                    <td class="">{{ $user->cliente? $user->cliente->cel:'' }}</td>
-                    <td class="">{{ $user->nom_sedes }}</td>
-                    <td class="">{{ $user->role->nombre }}</td>
-                    <td class="centreado">{{ $user->acceso == 1 ? 'HABILITADO' : 'DENEGADO' }}</td>
-                    <td class="centreado">{{ $user->fecha_registro_t }}</td>
+                    <td>{{ $producto->nombre }}</td>
+                    <td>{{ $producto->categoria->nombre }}</td>
+                    <td>{{ $producto->descripcion }}</td>
+                    <td>{{ $producto->stock_actual }}</td>
+                    <td>{{ $producto->precio_compra }}</td>
+                    <td>{{ $producto->precio_venta }}</td>
+                    <td>{{ $producto->observaciones }}</td>
+                    <td>{{ $producto->publico }}</td>
+                    <td>{{ $producto->fecha_registro_t }}</td>
                 </tr>
             @endforeach
         </tbody>

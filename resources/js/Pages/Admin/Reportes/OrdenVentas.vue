@@ -7,7 +7,7 @@ const breadbrums = [
         name_url: "inicio",
     },
     {
-        title: "Reporte Publicaciones",
+        title: "Reporte Ordenes de Venta",
         disabled: false,
         url: "",
         name_url: "",
@@ -19,17 +19,11 @@ const breadbrums = [
 import { useApp } from "@/composables/useApp";
 import { computed, onMounted, ref } from "vue";
 import { Head, usePage } from "@inertiajs/vue3";
+import { useAxios } from "@/composables/axios/useAxios";
 
 const { setLoading } = useApp();
-
+const { axiosGet } = useAxios();
 const cargarListas = () => {};
-
-onMounted(() => {
-    setTimeout(() => {
-        setLoading(false);
-    }, 300);
-});
-
 const obtenerFechaActual = () => {
     const fecha = new Date();
     const anio = fecha.getFullYear();
@@ -40,9 +34,9 @@ const obtenerFechaActual = () => {
 
 const form = ref({
     formato: "pdf",
+    estado: "todos",
     fecha_ini: obtenerFechaActual(),
     fecha_fin: obtenerFechaActual(),
-    categoria: "todos",
 });
 
 const generando = ref(false);
@@ -58,32 +52,46 @@ const listFormato = ref([
     { value: "excel", label: "EXCEL" },
 ]);
 
-const listCategorias = ref([
+const listCategorias = ref([]);
+const listEstados = ref([
     { value: "todos", label: "TODOS" },
-    { value: "VEHÍCULOS", label: "VEHÍCULOS" },
-    { value: "OTROS BIENES", label: "OTROS BIENES" },
-    { value: "ECOLÓGICO", label: "ECOLÓGICO" },
+    { value: "PENDIENTE", label: "PENDIENTE" },
+    { value: "RECHAZADO", label: "RECHAZADO" },
+    { value: "CONFIRMADO", label: "CONFIRMADO" },
 ]);
 
 const generarReporte = () => {
     generando.value = true;
-    const url = route("reportes.r_publicacions", form.value);
+    const url = route("reportes.r_orden_ventas", form.value);
     window.open(url, "_blank");
     setTimeout(() => {
         generando.value = false;
     }, 500);
 };
+
+const cargarCategorias = async () => {
+    const resp = await axiosGet(route("categorias.listado"));
+    listCategorias.value = resp.categorias;
+    listCategorias.value.unshift({ id: "todos", nombre: "TODOS" });
+};
+
+onMounted(() => {
+    // cargarCategorias();
+    setTimeout(() => {
+        setLoading(false);
+    }, 300);
+});
 </script>
 <template>
-    <Head title="Reporte Publicaciones"></Head>
+    <Head title="Reporte Ordenes de Venta"></Head>
     <!-- BEGIN breadcrumb -->
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="javascript:;">Inicio</a></li>
-        <li class="breadcrumb-item active">Reportes > Publicaciones</li>
+        <li class="breadcrumb-item active">Reportes > Ordenes de Venta</li>
     </ol>
     <!-- END breadcrumb -->
     <!-- BEGIN page-header -->
-    <h1 class="page-header">Reportes > Publicaciones</h1>
+    <h1 class="page-header">Reportes > Ordenes de Venta</h1>
     <!-- END page-header -->
     <div class="row">
         <div class="col-md-6 mx-auto">
@@ -92,39 +100,40 @@ const generarReporte = () => {
                     <form @submit.prevent="generarReporte">
                         <div class="row">
                             <div class="col-12">
-                                <label>Rango de fechas</label>
                                 <div class="row">
                                     <div class="col-md-6">
+                                        <label>Fecha inicio*</label>
                                         <input
                                             type="date"
-                                            class="form-control"
                                             v-model="form.fecha_ini"
+                                            class="form-control"
                                         />
                                     </div>
                                     <div class="col-md-6">
+                                        <label>Fecha final*</label>
                                         <input
                                             type="date"
-                                            class="form-control"
                                             v-model="form.fecha_fin"
+                                            class="form-control"
                                         />
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <label>Seleccionar categoría*</label>
+                            <div class="col-md-12 mt-2">
+                                <label>Estado de orden*</label>
                                 <select
-                                    v-model="form.categoria"
+                                    v-model="form.estado"
                                     class="form-control"
                                 >
                                     <option
-                                        v-for="item in listCategorias"
+                                        v-for="item in listEstados"
                                         :value="item.value"
                                     >
                                         {{ item.label }}
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12 mt-2">
                                 <label>Seleccionar formato*</label>
                                 <select
                                     :hide-details="

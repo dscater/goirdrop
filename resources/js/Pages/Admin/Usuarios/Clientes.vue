@@ -18,6 +18,7 @@ const breadbrums = [
 import { useApp } from "@/composables/useApp";
 import { Head, Link, usePage } from "@inertiajs/vue3";
 import { useUsuarios } from "@/composables/usuarios/useUsuarios";
+import { useAxios } from "@/composables/axios/useAxios";
 import { initDataTable } from "@/composables/datatable.js";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import PanelToolbar from "@/Components/PanelToolbar.vue";
@@ -28,14 +29,14 @@ import FormularioCliente from "./FormularioCliente.vue";
 // const { mobile, identificaDispositivo } = useMenu();
 const { props: props_page } = usePage();
 const { setLoading } = useApp();
+const { axiosDelete } = useAxios();
 onMounted(() => {
     setTimeout(() => {
         setLoading(false);
     }, 300);
 });
 
-const { getUsuarios, setUsuario, limpiarUsuario, deleteUsuario } =
-    useUsuarios();
+const { setUsuario, limpiarUsuario } = useUsuarios();
 
 const columns = [
     {
@@ -89,22 +90,22 @@ const columns = [
         render: function (data, type, row) {
             let buttons = ``;
 
-            // if (
-            //     props_page.auth?.user.permisos == "*" ||
-            //     props_page.auth?.user.permisos.includes("clientes.edit")
-            // ) {
-            //     buttons += `<button class="mx-0 rounded-0 btn btn-warning edit" data-id="${row.id}"><i class="fa fa-edit"></i></button> `;
-            // }
             if (
                 props_page.auth?.user.permisos == "*" ||
-                props_page.auth?.user.permisos.includes("clientes.edit")
+                props_page.auth?.user.permisos.includes("usuarios.edit")
+            ) {
+                buttons += `<button class="mx-0 rounded-0 btn btn-warning edit" data-id="${row.id}"><i class="fa fa-edit"></i></button> `;
+            }
+            if (
+                props_page.auth?.user.permisos == "*" ||
+                props_page.auth?.user.permisos.includes("usuarios.edit")
             ) {
                 buttons += `<button class="mx-0 rounded-0 btn btn-info password" data-id="${row.id}"><i class="fa fa-key"></i></button>`;
             }
 
             if (
                 props_page.auth?.user.permisos == "*" ||
-                props_page.auth?.user.permisos.includes("clientes.destroy")
+                props_page.auth?.user.permisos.includes("usuarios.destroy")
             ) {
                 buttons += ` <button class="mx-0 rounded-0 btn btn-danger eliminar"
                  data-id="${row.id}"
@@ -135,15 +136,15 @@ const agregarRegistro = () => {
 
 const accionesRow = () => {
     // edit
-    // $("#table-usuario").on("click", "button.edit", function (e) {
-    //     e.preventDefault();
-    //     let id = $(this).attr("data-id");
-    //     axios.get(route("usuarios.show", id)).then((response) => {
-    //         setUsuario(response.data, true);
-    //         accion_dialog_edit.value = 1;
-    //         open_dialog_edit.value = true;
-    //     });
-    // });
+    $("#table-usuario").on("click", "button.edit", function (e) {
+        e.preventDefault();
+        let id = $(this).attr("data-id");
+        axios.get(route("usuarios.show", id)).then((response) => {
+            setUsuario(response.data, true);
+            accion_dialog_edit.value = 1;
+            open_dialog_edit.value = true;
+        });
+    });
     // infoCliente
     // $("#table-usuario").on("click", "button.infoCliente", function (e) {
     //     e.preventDefault();
@@ -170,7 +171,9 @@ const accionesRow = () => {
         }).then(async (result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-                let respuesta = await deleteUsuario(id);
+                let respuesta = await axiosDelete(
+                    route("usuarios.destroy", id)
+                );
                 if (respuesta && respuesta.sw) {
                     updateDatatable();
                 }

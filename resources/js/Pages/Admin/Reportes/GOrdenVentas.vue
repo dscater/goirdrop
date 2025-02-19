@@ -4,9 +4,11 @@ import { computed, onMounted, ref, nextTick } from "vue";
 import { Head, usePage } from "@inertiajs/vue3";
 import Highcharts from "highcharts";
 import exporting from "highcharts/modules/exporting";
+import accessibility from "highcharts/modules/accessibility";
 import { useFormater } from "@/composables/useFormater";
 const { getFormatoMoneda } = useFormater();
 exporting(Highcharts);
+accessibility(Highcharts);
 Highcharts.setOptions({
     lang: {
         downloadPNG: "Descargar PNG",
@@ -40,28 +42,25 @@ const obtenerFechaActual = () => {
 const form = ref({
     fecha_ini: obtenerFechaActual(),
     fecha_fin: obtenerFechaActual(),
-    categoria: "todos",
+    estado: "todos",
 });
 
 const listPublicacions = ref([]);
-const listClientes = ref([]);
-const listCategorias = ref(["VEHÍCULOS", "OTROS BIENES", "ECOLÓGICO"]);
+const listEstados = ref([
+    { value: "todos", label: "TODOS" },
+    { value: "PENDIENTE", label: "PENDIENTE" },
+    { value: "RECHAZADO", label: "RECHAZADO" },
+    { value: "CONFIRMADO", label: "CONFIRMADO" },
+]);
 
 const cargarPublicacions = () => {
-    axios.get(route("publicacions.listado")).then((response) => {
-        listPublicacions.value = response.data.publicacions;
-    });
-};
-
-const cargarClientes = () => {
-    axios.get(route("clientes.listado")).then((response) => {
-        listClientes.value = response.data.clientes;
-    });
+    // axios.get(route("publicacions.listado")).then((response) => {
+    //     listPublicacions.value = response.data.publicacions;
+    // });
 };
 
 const cargarListas = () => {
     cargarPublicacions();
-    cargarClientes();
 };
 
 const aPublicacions = ref([]);
@@ -70,47 +69,39 @@ const generarGrafico = async () => {
     generando.value = true;
     axios;
     axios
-        .get(route("reportes.gr_puja_clientes"), { params: form.value })
+        .get(route("reportes.r_g_orden_ventas"), { params: form.value })
         .then((response) => {
-            aPublicacions.value = response.data.publicacions;
-            const array_data = response.data.array_data;
-            const array_fechas = response.data.array_fechas;
-
             nextTick(() => {
-                aPublicacions.value.forEach((publicacion, index) => {
-                    const containerId = `chart-${index}`;
-                    const container = document.getElementById(containerId);
-
-                    // Verificar que el contenedor exista y tenga un tamaño válido
-                    if (container) {
-                        renderChart(
-                            containerId,
-                            publicacion,
-                            array_data[publicacion.id],
-                            array_fechas
-                        );
-                    } else {
-                        console.error(`Contenedor ${containerId} no válido.`);
-                    }
-                });
+                const containerId = `container`;
+                const container = document.getElementById(containerId);
+                // Verificar que el contenedor exista y tenga un tamaño válido
+                if (container) {
+                    renderChart(
+                        containerId,
+                        response.data.categories,
+                        response.data.data
+                    );
+                } else {
+                    console.error(`Contenedor ${containerId} no válido.`);
+                }
             });
             // Create the chart
             generando.value = false;
         });
 };
 
-const renderChart = (containerId, publicacion, data, categories) => {
+const renderChart = (containerId, categories, data) => {
     Highcharts.chart(containerId, {
         chart: {
-            type: "line",
+            type: "column",
         },
         title: {
             align: "center",
-            text: `PUBLICACIÓN NRO. ${publicacion.nro} - ${publicacion.categoria}<br/>${publicacion.moneda_exp}`,
+            text: `ORDENES DE VENTA`,
         },
         subtitle: {
             align: "center",
-            text: `PUBLICACIÓN ${publicacion.estado_txt}`,
+            text: ``,
         },
         accessibility: {
             announceNewData: {
@@ -122,7 +113,7 @@ const renderChart = (containerId, publicacion, data, categories) => {
         },
         yAxis: {
             title: {
-                text: "Monto de la Oferta/Puja",
+                text: "CANTIDAD",
             },
         },
         legend: {
@@ -139,27 +130,52 @@ const renderChart = (containerId, publicacion, data, categories) => {
                         fontWeight: "bold",
                     },
                     formatter: function () {
-                        return getFormatoMoneda(this.point.y); // Aquí se aplica el formato de moneda
+                        return parseInt(this.point.y); // Aquí se aplica el formato de moneda
                     },
                 },
             },
         },
         tooltip: {
+            useHTML: true,
             formatter: function () {
-                let fecha_hora_puja = ``;
+                // console.log(this.point.ordenVentas);
 
-                this.point.array_pujas.forEach((elem) => {
-                    fecha_hora_puja = `<b>- ${
-                        elem.fecha_hora_oferta_t
-                    }:</b> ${publicacion.moneda_txt} ${getFormatoMoneda(elem.puja)}<br/>`;
+                let trTbody = ``;
+                this.point.ordenVentas.forEach((elem) => {
+                    elem.detalle_venta.forEach((elemDetalle) => {
+                        trTbody += `<tr>`;
+                        trTbody += `<td class="border p-1">${elem.codigo}</td>`;
+                        trTbody += `<td class="border p-1">${elemDetalle.producto.nombre}</td>`;
+                        trTbody += `<td class="border p-1">${elemDetalle.cantidad}</td>`;
+                        trTbody += `<td class="border p-1">${elem.cliente.full_name}</td>`;
+                        trTbody += `</tr>`;
+                    });
                 });
 
-                return `<span style="font-size:11px">${this.series.name}</span><br>
-            ${fecha_hora_puja}`;
+                return `<h4 style="font-size:11px" class="mb-1">${this.series.name} - ${this.x}</h4><br>
+                <table class="border">
+                    <thead>
+                        <tr>
+                            <th class="border p-1">Cód.</th>
+                            <th class="border p-1">Prod.</th>
+                            <th class="border p-1">Cant.</th>
+                            <th class="border p-1">Cliente</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${trTbody}
+                    </tbody>
+                </table>`;
             },
         },
 
-        series: data,
+        series: [
+            {
+                name: "Ordenes de venta",
+                data: data,
+                colorByPoint: true,
+            },
+        ],
     });
 };
 
@@ -171,15 +187,15 @@ onMounted(() => {
 });
 </script>
 <template>
-    <Head title="Ofertas/Pujas"></Head>
+    <Head title="Ordenes de venta"></Head>
     <!-- BEGIN breadcrumb -->
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="javascript:;">Inicio</a></li>
-        <li class="breadcrumb-item active">Gráficas > Ofertas/Pujas</li>
+        <li class="breadcrumb-item active">Gráficas > Ordenes de venta</li>
     </ol>
     <!-- END breadcrumb -->
     <!-- BEGIN page-header -->
-    <h1 class="page-header">Gráficas > Ofertas/Pujas</h1>
+    <h1 class="page-header">Gráficas > Ordenes de venta</h1>
     <!-- END page-header -->
     <div class="row">
         <div class="col-md-6 mx-auto">
@@ -206,20 +222,20 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <label>Categoría</label>
+                            <div class="col-md-12 mt-2">
+                                <label>Estado</label>
                                 <select
                                     name=""
                                     id=""
                                     class="form-select"
-                                    v-model="form.categoria"
+                                    v-model="form.estado"
                                 >
                                     <option value="todos">Todos</option>
                                     <option
-                                        v-for="item in listCategorias"
-                                        :value="item"
+                                        v-for="item in listEstados"
+                                        :value="item.value"
                                     >
-                                        {{ item }}
+                                        {{ item.label }}
                                     </option>
                                 </select>
                             </div>
@@ -239,14 +255,6 @@ onMounted(() => {
         </div>
     </div>
     <div class="row mt-3" id="contenedor">
-        <div
-            v-for="(publicacion, index) in aPublicacions"
-            :key="index"
-            class="col-md-6 mb-3"
-            :id="'chart-container-' + index"
-        >
-            <!-- Aquí se renderizará el gráfico -->
-            <div :id="'chart-' + index" class="chart"></div>
-        </div>
+        <div class="col-12 mt-3" id="container"></div>
     </div>
 </template>

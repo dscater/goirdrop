@@ -4,11 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Cliente;
 use App\Models\Configuracion;
+use App\Models\DetalleVenta;
 use App\Models\HistorialOferta;
+use App\Models\OrdenVenta;
+use App\Models\Producto;
 use App\Models\Publicacion;
 use App\Models\PublicacionDetalle;
+use App\Models\SolicitudDetalle;
+use App\Models\SolicitudProducto;
 use App\Models\SubastaCliente;
 use App\Models\User;
+use App\Services\SedeUserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -95,6 +101,22 @@ class ReporteController extends Controller
         ],
     ];
 
+    private $configuracion = null;
+    public function __construct(private SedeUserService $sedeUserService)
+    {
+        $this->configuracion = Configuracion::first();
+        if (!$this->configuracion) {
+            $this->configuracion = new Configuracion([
+                "nombre_sistema" => "GOIRDROP S.A.",
+                "alias" => "GOIRDROP",
+                "logo" => "logo.png",
+                "fono" => "2222222",
+                "dir" => "LOS OLIVOS",
+            ]);
+        }
+    }
+
+    // REPORTE USUARIOS
     public function usuarios()
     {
         return Inertia::render("Admin/Reportes/Usuarios");
@@ -102,75 +124,26 @@ class ReporteController extends Controller
 
     public function r_usuarios(Request $request)
     {
-        $tipo =  $request->tipo;
-        $sucursal_id =  $request->sucursal_id;
+        $role_id =  $request->role_id;
+        $formato =  $request->formato;
         $usuarios = User::select("users.*")
             ->where('id', '!=', 1);
 
-        if ($tipo != 'todos') {
+        if ($role_id != 'todos') {
             $request->validate([
-                'tipo' => 'required',
+                'role_id' => 'required',
             ]);
-            $usuarios->where('tipo', $tipo);
+            if ($role_id != 'externo') {
+                $usuarios->where('role_id', $role_id);
+            } else {
+                $usuarios->where('role_id', 2); //CLIENTES
+            }
         }
 
-        if ($sucursal_id != 'todos') {
-            $usuarios->where('sucursal_id', $sucursal_id);
-        }
+        $usuarios = $usuarios->where("status", 1)->orderBy("apellidos", "ASC")->get();
 
-        $usuarios = $usuarios->orderBy("paterno", "ASC")->get();
-
-        $pdf = PDF::loadView('reportes.usuarios', compact('usuarios'))->setPaper('legal', 'landscape');
-
-        // ENUMERAR LAS PÁGINAS USANDO CANVAS
-        $pdf->output();
-        $dom_pdf = $pdf->getDomPDF();
-        $canvas = $dom_pdf->get_canvas();
-        $alto = $canvas->get_height();
-        $ancho = $canvas->get_width();
-        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
-
-        return $pdf->stream('usuarios.pdf');
-    }
-
-    public function publicacions()
-    {
-        return Inertia::render("Admin/Reportes/Publicacions");
-    }
-
-    public function r_publicacions(Request $request)
-    {
-        $formato =  $request->formato;
-
-        $fecha_ini =  $request->fecha_ini;
-        $fecha_fin =  $request->fecha_fin;
-        $categoria =  $request->categoria;
-
-        $publicacions = Publicacion::select("publicacions.*");
-
-        $permisos = Auth::user()->permisos;
-        if (is_array($permisos) && !in_array("publicacions.todos", $permisos)) {
-            $publicacions->where("user_id", Auth::user()->id);
-        }
-
-
-        if ($categoria != 'todos') {
-            $publicacions->where("categoria", $categoria);
-        }
-
-        if ($fecha_ini && $fecha_fin) {
-            $publicacions->whereBetween("created_at", [
-                Carbon::parse($fecha_ini)->startOfDay(),
-                Carbon::parse($fecha_fin)->endOfDay()
-            ]);
-        }
-
-        $publicacions->whereNotIn("estado_sub", [5]);
-
-        $publicacions = $publicacions->orderBy("nro", "desc")->get();
-
-        if ($formato == "pdf") {
-            $pdf = PDF::loadView('reportes.publicacions', compact('publicacions'))->setPaper('legal', 'landscape');
+        if ($formato === 'pdf') {
+            $pdf = PDF::loadView('reportes.usuarios', compact('usuarios'))->setPaper('legal', 'landscape');
 
             // ENUMERAR LAS PÁGINAS USANDO CANVAS
             $pdf->output();
@@ -180,158 +153,7 @@ class ReporteController extends Controller
             $ancho = $canvas->get_width();
             $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
 
-            return $pdf->stream('publicacions.pdf');
-        } else {
-            $spreadsheet = new Spreadsheet();
-            $spreadsheet->getProperties()
-                ->setCreator("ADMIN")
-                ->setLastModifiedBy('Administración')
-                ->setTitle('Formularios')
-                ->setSubject('Formularios')
-                ->setDescription('Formularios')
-                ->setKeywords('PHPSpreadsheet')
-                ->setCategory('Listado');
-
-            $sheet = $spreadsheet->getActiveSheet();
-
-            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
-
-            $fila = 1;
-            if (file_exists(public_path() . '/imgs/' . Configuracion::first()->logo)) {
-                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                $drawing->setName('logo');
-                $drawing->setDescription('logo');
-                $drawing->setPath(public_path() . '/imgs/' . Configuracion::first()->logo); // put your path and image here
-                $drawing->setCoordinates('A' . $fila);
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(0);
-                $drawing->setHeight(60);
-                $drawing->setWorksheet($sheet);
-            }
-
-            $fila = 2;
-            $sheet->setCellValue('A' . $fila, "LISTA DE PUBLICACIONES");
-            $sheet->mergeCells("A" . $fila . ":M" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':M' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':M' . $fila)->applyFromArray($this->titulo);
-            $fila++;
-            $fila++;
-            $fila++;
-            $sheet->setCellValue('A' . $fila, 'N°');
-            $sheet->setCellValue('B' . $fila, 'NRO. DEL BIEN');
-            $sheet->setCellValue('C' . $fila, 'USUARIO');
-            $sheet->setCellValue('D' . $fila, 'CATEGORÍA');
-            $sheet->setCellValue('E' . $fila, 'MONEDA');
-            $sheet->setCellValue('F' . $fila, 'OFERTA INICIAL');
-            $sheet->setCellValue('G' . $fila, 'UBICACIÓN');
-            $sheet->setCellValue('H' . $fila, 'OBSERVACIONES');
-            $sheet->setCellValue('I' . $fila, 'FECHA Y HORA DE PUBLICACIÓN');
-            $sheet->setCellValue('J' . $fila, 'FECHA Y HORA LIMITE');
-            $sheet->setCellValue('K' . $fila, 'MONTO DE GARANTÍA');
-            $sheet->setCellValue('L' . $fila, 'CARACTERISTICAS-DETALLES');
-            $sheet->setCellValue('M' . $fila, 'ESTADO');
-            $sheet->getStyle('A' . $fila . ':M' . $fila)->applyFromArray($this->headerTabla);
-            $fila++;
-            $cont = 1;
-            foreach ($publicacions as $publicacion) {
-                $sheet->setCellValue('A' . $fila, $cont++);
-                $sheet->setCellValue('B' . $fila, $publicacion->nro);
-                $sheet->setCellValue('C' . $fila, $publicacion->user->full_name);
-                $sheet->setCellValue('D' . $fila, $publicacion->categoria);
-                $sheet->setCellValue('E' . $fila, $publicacion->moneda);
-                $sheet->setCellValue('F' . $fila, $publicacion->oferta_inicial);
-                $sheet->setCellValue('G' . $fila, $publicacion->ubicacion);
-                $sheet->setCellValue('H' . $fila, $publicacion->observaciones);
-                $sheet->setCellValue('I' . $fila, $publicacion->subasta ? $publicacion->subasta->fecha_hora_pub_am : 'S/P');
-                $sheet->setCellValue('J' . $fila, $publicacion->fecha_hora_limite_am);
-                $sheet->setCellValue('K' . $fila, $publicacion->monto_garantia);
-
-                $detalles = PublicacionDetalle::where('publicacion_id', $publicacion->id)
-                    ->get()
-                    ->take(3);
-                $text = "";
-
-                foreach ($detalles as $item) {
-                    $text .= "-$item->caracteristica: $item->detalle \n";
-                }
-
-                $sheet->setCellValue('L' . $fila, $text);
-                $sheet->setCellValue('M' . $fila, $publicacion->estado_txt);
-                $sheet->getStyle('A' . $fila . ':M' . $fila)->applyFromArray($this->bodyTabla);
-                $fila++;
-            }
-
-            $sheet->getColumnDimension('A')->setWidth(6);
-            $sheet->getColumnDimension('B')->setWidth(9);
-            $sheet->getColumnDimension('C')->setWidth(20);
-            $sheet->getColumnDimension('D')->setWidth(15);
-            $sheet->getColumnDimension('E')->setWidth(15);
-            $sheet->getColumnDimension('F')->setWidth(10);
-            $sheet->getColumnDimension('G')->setWidth(25);
-            $sheet->getColumnDimension('H')->setWidth(30);
-            $sheet->getColumnDimension('I')->setWidth(10);
-            $sheet->getColumnDimension('J')->setWidth(10);
-            $sheet->getColumnDimension('K')->setWidth(10);
-            $sheet->getColumnDimension('L')->setWidth(25);
-            $sheet->getColumnDimension('M')->setWidth(10);
-
-            foreach (range('A', 'M') as $columnID) {
-                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
-            }
-
-            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
-            $sheet->getPageMargins()->setTop(0.5);
-            $sheet->getPageMargins()->setRight(0.1);
-            $sheet->getPageMargins()->setLeft(0.1);
-            $sheet->getPageMargins()->setBottom(0.1);
-            $sheet->getPageSetup()->setPrintArea('A:M');
-            $sheet->getPageSetup()->setFitToWidth(1);
-            $sheet->getPageSetup()->setFitToHeight(0);
-
-            // DESCARGA DEL ARCHIVO
-            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="publicacions_' . time() . '.xlsx"');
-            header('Cache-Control: max-age=0');
-            $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-            $writer->save('php://output');
-        }
-    }
-    public function subasta_clientes()
-    {
-        return Inertia::render("Admin/Reportes/SubastaClientes");
-    }
-
-    public function r_subasta_clientes(Request $request)
-    {
-        $formato =  $request->formato;
-        $fecha_ini =  $request->fecha_ini;
-        $fecha_fin =  $request->fecha_fin;
-        $categoria =  $request->categoria;
-        $publicacions = Publicacion::select("publicacions.*");
-
-        $permisos = Auth::user()->permisos;
-        if (is_array($permisos) && !in_array("publicacions.todos", $permisos)) {
-            $publicacions->where("user_id", Auth::user()->id);
-        }
-
-        if ($categoria != 'todos') {
-            $publicacions->where("categoria", $categoria);
-        }
-
-        $publicacions = $publicacions->whereNotIn("estado_sub", [5])->get();
-
-        if ($formato == "pdf") {
-            $pdf = PDF::loadView('reportes.subasta_clientes', compact('publicacions', 'fecha_ini', 'fecha_fin'))->setPaper('legal', 'landscape');
-
-            // ENUMERAR LAS PÁGINAS USANDO CANVAS
-            $pdf->output();
-            $dom_pdf = $pdf->getDomPDF();
-            $canvas = $dom_pdf->get_canvas();
-            $alto = $canvas->get_height();
-            $ancho = $canvas->get_width();
-            $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
-
-            return $pdf->stream('subasta_clientes.pdf');
+            return $pdf->stream('usuarios.pdf');
         } else {
             $spreadsheet = new Spreadsheet();
             $spreadsheet->getProperties()
@@ -348,11 +170,11 @@ class ReporteController extends Controller
             $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
 
             $fila = 1;
-            if (file_exists(public_path() . '/imgs/' . Configuracion::first()->logo)) {
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
                 $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
                 $drawing->setName('logo');
                 $drawing->setDescription('logo');
-                $drawing->setPath(public_path() . '/imgs/' . Configuracion::first()->logo); // put your path and image here
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
                 $drawing->setCoordinates('A' . $fila);
                 $drawing->setOffsetX(5);
                 $drawing->setOffsetY(0);
@@ -361,191 +183,56 @@ class ReporteController extends Controller
             }
 
             $fila = 2;
-            $sheet->setCellValue('A' . $fila, "LISTA DE CLIENTES OFERTANTES POR SUBASTA");
-            $sheet->mergeCells("A" . $fila . ":T" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':T' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':T' . $fila)->applyFromArray($this->titulo);
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":J" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "LISTA DE USUARIOS");
+            $sheet->mergeCells("A" . $fila . ":J" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->titulo);
             $fila++;
             $fila++;
+            $sheet->setCellValue('A' . $fila, 'N°');
+            $sheet->setCellValue('B' . $fila, 'APELLIDOS');
+            $sheet->setCellValue('C' . $fila, 'NOMBRES');
+            $sheet->setCellValue('D' . $fila, 'C.I.');
+            $sheet->setCellValue('E' . $fila, 'CORREO');
+            $sheet->setCellValue('F' . $fila, 'TELÉFONO/CELULAR');
+            $sheet->setCellValue('G' . $fila, 'SEDE(S)');
+            $sheet->setCellValue('H' . $fila, 'ROLE');
+            $sheet->setCellValue('I' . $fila, 'ACCESO');
+            $sheet->setCellValue('J' . $fila, 'FECHA DE REGISTRO');
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->headerTabla);
             $fila++;
 
-            foreach ($publicacions as $publicacion) {
-
-                $subasta_clientes = [];
-                if ($fecha_ini && $fecha_fin) {
-                    if ($publicacion->subasta) {
-                        $subasta_clientes = SubastaCliente::where(
-                            'subasta_id',
-                            $publicacion->subasta->id,
-                        )
-                            ->whereBetween('fecha_oferta', [$fecha_ini, $fecha_fin])
-                            ->orWhere('fecha_oferta', null)
-                            // ->where('puja', '>', 0)
-                            // ->where('estado_comprobante', 1)
-                            ->get();
-                    }
-                } else {
-                    $subasta_clientes = SubastaCliente::where(
-                        'subasta_id',
-                        $publicacion->subasta->id,
-                    )
-                        // ->where('puja', '>', 0)
-                        // ->where('estado_comprobante', 1)
-                        ->get();
-                }
-
-                if ($publicacion->subasta && count($subasta_clientes) > 0) {
-                    $sheet->setCellValue('A' . $fila, 'NOMBRE DEL SUBASTADOR:');
-                    $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
-                    $sheet->setCellValue('C' . $fila, $publicacion->user->full_name);
-                    $sheet->mergeCells("C" . $fila . ":U" . $fila);  //COMBINAR CELDAS
-                    $sheet->getStyle('A' . $fila . ':U' . $fila)->applyFromArray($this->bodyTabla);
-                    $fila++;
-                    $sheet->setCellValue('A' . $fila, 'CATEGORÍA:');
-                    $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
-                    $sheet->setCellValue('C' . $fila, $publicacion->categoria);
-                    $sheet->mergeCells("C" . $fila . ":U" . $fila);  //COMBINAR CELDAS
-                    $sheet->getStyle('A' . $fila . ':U' . $fila)->applyFromArray($this->bodyTabla);
-                    $fila++;
-                    $sheet->setCellValue('A' . $fila, 'NRO. DEL BIEN OFERTADO:');
-                    $sheet->mergeCells("A" . $fila . ":B" . $fila);  //COMBINAR CELDAS
-                    $sheet->setCellValue('C' . $fila, $publicacion->nro . "");
-                    $sheet->mergeCells("C" . $fila . ":U" . $fila);  //COMBINAR CELDAS
-                    $sheet->getStyle('A' . $fila . ':U' . $fila)->applyFromArray($this->bodyTabla);
-                    $sheet->getStyle('C' . $fila . ':U' . $fila)->applyFromArray($this->textLeft);
-                    $fila++;
-
-                    $sheet->setCellValue('A' . $fila, 'N°');
-                    $sheet->setCellValue('B' . $fila, 'NOMBRE DEL PARTICIPANTE');
-                    $sheet->setCellValue('C' . $fila, 'CARNET DE IDENTIDAD');
-                    $sheet->setCellValue('D' . $fila, 'COMPLEMENTO');
-                    $sheet->setCellValue('E' . $fila, 'CORREO ELECTRÓNICO INICIAL');
-                    $sheet->setCellValue('F' . $fila, 'NRO. DE CELULAR');
-                    $sheet->setCellValue('G' . $fila, 'USUARIO DEL PARTICIPANTE');
-                    $sheet->setCellValue('H' . $fila, 'NOMBRE DEL BIEN OFERTADO');
-                    $sheet->setCellValue('I' . $fila, 'FECHA DE LA OFERTA');
-                    $sheet->setCellValue('J' . $fila, 'ÚLTIMA FECHA DE LA OFERTA'); //
-                    $sheet->setCellValue('K' . $fila, 'HORA DE LA OFERTA');
-                    $sheet->setCellValue('L' . $fila, 'ÚLTIMA HORA DE LA OFERTA'); //
-                    $sheet->setCellValue('M' . $fila, "OFERTA\nMONTO " . $publicacion->moneda_txt);
-                    $sheet->setCellValue('N' . $fila, "OFERTA FINAL\nMONTO " . $publicacion->moneda_txt); //
-                    $sheet->setCellValue('O' . $fila, "MONTO DE GARANTÍA\n" . $publicacion->moneda_txt."\n-\nESTADO DEVOLUCIÓN");
-                    $sheet->setCellValue('P' . $fila, "COMPROBANTE");
-                    $sheet->setCellValue('Q' . $fila, "COMPROBANTE DE PAGO DE GARANTÍA\n(DOCUMENTO PARA DESCARGAR)");
-                    $sheet->setCellValue('R' . $fila, "CARNET DE IDENTIDAD\n(DOCUMENTO PARA DESCARGAR)");
-                    $sheet->setCellValue('S' . $fila, 'DATOS PARA DEVOLUCIÓN');
-                    $sheet->setCellValue('T' . $fila, 'CARACTERISTICAS-DETALLES');
-                    $sheet->setCellValue('U' . $fila, 'SUBASTA VIGENTE/FINALIZADA');
-                    $sheet->getStyle('A' . $fila . ':U' . $fila)->applyFromArray($this->headerTabla);
-                    $fila++;
-                    $cont = 1;
-
-
-
-                    $detalles = PublicacionDetalle::where('publicacion_id', $publicacion->id)
-                        ->get()
-                        ->take(3);
-                    $text = "";
-
-                    foreach ($detalles as $item) {
-                        $text .= "-$item->caracteristica: $item->detalle \n";
-                    }
-
-                    foreach ($subasta_clientes as $subasta_cliente) {
-                        $sheet->setCellValue('A' . $fila, $cont++);
-                        $sheet->setCellValue('B' . $fila, $subasta_cliente->cliente->full_name);
-                        $sheet->setCellValue('C' . $fila, $subasta_cliente->cliente->full_ci);
-                        $sheet->setCellValue('D' . $fila, $subasta_cliente->cliente->complemento);
-                        $sheet->setCellValue('E' . $fila, $subasta_cliente->cliente->email);
-                        $sheet->setCellValue('F' . $fila, $subasta_cliente->cliente->fono);
-                        $sheet->setCellValue('G' . $fila, $subasta_cliente->cliente->user->usuario);
-                        $sheet->setCellValue('H' . $fila, $publicacion->categoria);
-                        $texto = $subasta_cliente->fecha_oferta_t;
-                        if (count($subasta_cliente->historial_ofertas) > 0) {
-                            $texto = "";
-                            foreach ($subasta_cliente->historial_ofertas as $key_ho => $historial_oferta) {
-                                $texto .= "- " . $historial_oferta->fecha_oferta_t . "\n";
-                            }
-                        }
-                        $sheet->setCellValue('I' . $fila, $texto);
-                        $sheet->setCellValue('J' . $fila, $subasta_cliente->fecha_oferta_t);
-                        $texto = $subasta_cliente->hora_oferta_t;
-                        if (count($subasta_cliente->historial_ofertas) > 0) {
-                            $texto = "";
-                            foreach ($subasta_cliente->historial_ofertas as $key_ho => $historial_oferta) {
-                                $texto .= "- " . $historial_oferta->hora_oferta_t . "\n";
-                            }
-                        }
-                        $sheet->setCellValue('K' . $fila, $texto);
-                        $sheet->setCellValue('L' . $fila, $subasta_cliente->hora_oferta_t);
-                        $texto = number_format($subasta_cliente->puja, 2, '.', ',');
-                        if (count($subasta_cliente->historial_ofertas) > 0) {
-                            $texto = "";
-                            foreach ($subasta_cliente->historial_ofertas as $key_ho => $historial_oferta) {
-                                $texto .= "- " . number_format($historial_oferta->puja, 2, '.', ',')  . "\n";
-                            }
-                        }
-                        $sheet->setCellValue('M' . $fila, $texto);
-                        $sheet->setCellValue('N' . $fila, number_format($subasta_cliente->puja, 2, ".", ","));
-
-                        $txt_devolucion = "";
-                        if ($subasta_cliente->estado_puja != 2 && $subasta_cliente->estado_comprobante == 1)
-                        {
-                        $txt_devolucion = "\nDEVOLUCIÓN\n";
-                        $txt_devolucion .= $subasta_cliente->devolucion_txt;
-                        }
-                        $sheet->setCellValue('O' . $fila, $publicacion->monto_garantia.$txt_devolucion);
-                        $sheet->setCellValue('P' . $fila, $subasta_cliente->estado_comprobante_t);
-                        $sheet->setCellValue('Q' . $fila, $subasta_cliente->url_comprobante);
-                        $sheet->setCellValue('R' . $fila, $subasta_cliente->cliente->url_ci_anverso . "\n" . $subasta_cliente->cliente->url_ci_reverso);
-
-                        // datos para devolucion
-                        $text_devolucion = "";
-                        $text_devolucion .= "BANCO: " . $subasta_cliente->cliente->banco . "\n";
-                        $text_devolucion .= "NRO. DE CUENTA: " . $subasta_cliente->cliente->nro_cuenta . "\n";
-                        $text_devolucion .= "MONEDA: " . $subasta_cliente->cliente->moneda;
-                        $sheet->setCellValue('S' . $fila, $text_devolucion);
-
-                        $sheet->setCellValue('T' . $fila, $text);
-                        $sheet->setCellValue('U' . $fila, $publicacion->estado_txt . ($publicacion->estado_txt == 'FINALIZADO' && $subasta_cliente->estado_puja == 2 ? "\n(GANADOR)" : ''));
-                        $sheet->getStyle('A' . $fila . ':U' . $fila)->applyFromArray($this->bodyTabla);
-
-                        if ($publicacion->estado_txt == 'FINALIZADO' && $subasta_cliente->estado_puja == 2) {
-                            $sheet->getStyle('A' . $fila . ':U' . $fila)->applyFromArray($this->bgGanador);
-                        }
-
-                        $fila++;
-                    }
-                    $fila++;
-                    $fila++;
-                    $fila++;
-                }
+            foreach ($usuarios as $key => $user) {
+                $sheet->setCellValue('A' . $fila, $key + 1);
+                $sheet->setCellValue('B' . $fila, $user->apellidos);
+                $sheet->setCellValue('C' . $fila, $user->nombres);
+                $sheet->setCellValue('D' . $fila, $user->full_ci);
+                $sheet->setCellValue('E' . $fila, $user->correo);
+                $sheet->setCellValue('F' . $fila, $user->cliente ? $user->cliente->cel : '');
+                $sheet->setCellValue('G' . $fila, $user->nom_sedes);
+                $sheet->setCellValue('H' . $fila, $user->role->nombre);
+                $sheet->setCellValue('I' . $fila, $user->acceso == 1 ? 'HABILITADO' : 'DENEGADO');
+                $sheet->setCellValue('J' . $fila, $user->fecha_registro_t);
+                $fila++;
             }
 
-
             $sheet->getColumnDimension('A')->setWidth(6);
-            $sheet->getColumnDimension('B')->setWidth(20);
-            $sheet->getColumnDimension('C')->setWidth(10);
-            $sheet->getColumnDimension('D')->setWidth(7);
-            $sheet->getColumnDimension('E')->setWidth(15);
-            $sheet->getColumnDimension('F')->setWidth(10);
-            $sheet->getColumnDimension('G')->setWidth(10);
+            $sheet->getColumnDimension('B')->setWidth(15);
+            $sheet->getColumnDimension('C')->setWidth(15);
+            $sheet->getColumnDimension('D')->setWidth(10);
+            $sheet->getColumnDimension('E')->setWidth(20);
+            $sheet->getColumnDimension('F')->setWidth(12);
+            $sheet->getColumnDimension('G')->setWidth(15);
             $sheet->getColumnDimension('H')->setWidth(15);
-            $sheet->getColumnDimension('I')->setWidth(10);
-            $sheet->getColumnDimension('J')->setWidth(10);
-            $sheet->getColumnDimension('K')->setWidth(10);
-            $sheet->getColumnDimension('L')->setWidth(10);
-            $sheet->getColumnDimension('M')->setWidth(15);
-            $sheet->getColumnDimension('N')->setWidth(15);
-            $sheet->getColumnDimension('O')->setWidth(15);
-            $sheet->getColumnDimension('P')->setWidth(15);
-            $sheet->getColumnDimension('Q')->setWidth(20);
-            $sheet->getColumnDimension('R')->setWidth(20);
-            $sheet->getColumnDimension('S')->setWidth(35);
-            $sheet->getColumnDimension('T')->setWidth(35);
-            $sheet->getColumnDimension('U')->setWidth(15);
+            $sheet->getColumnDimension('I')->setWidth(13);
+            $sheet->getColumnDimension('J')->setWidth(12);
 
-            foreach (range('A', 'U') as $columnID) {
+            foreach (range('A', 'J') as $columnID) {
                 $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
             }
 
@@ -554,142 +241,709 @@ class ReporteController extends Controller
             $sheet->getPageMargins()->setRight(0.1);
             $sheet->getPageMargins()->setLeft(0.1);
             $sheet->getPageMargins()->setBottom(0.1);
-            $sheet->getPageSetup()->setPrintArea('A:U');
+            $sheet->getPageSetup()->setPrintArea('A:J');
             $sheet->getPageSetup()->setFitToWidth(1);
             $sheet->getPageSetup()->setFitToHeight(0);
 
             // DESCARGA DEL ARCHIVO
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="subasta_clientes_' . time() . '.xlsx"');
+            header('Content-Disposition: attachment;filename="usuarios' . time() . '.xlsx"');
             header('Cache-Control: max-age=0');
             $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
             $writer->save('php://output');
         }
     }
 
-
-    public function g_subasta_clientes()
+    // REPORTE PRODUCTOS
+    public function productos()
     {
-        return Inertia::render("Admin/Reportes/GSubastaClientes");
+        return Inertia::render("Admin/Reportes/Productos");
     }
 
-    public function gr_subasta_clientes(Request $request)
+    public function r_productos(Request $request)
+    {
+        $formato =  $request->formato;
+        $categoria =  $request->categoria;
+        $productos = Producto::select("productos.*");
+
+        if ($categoria != 'todos') {
+            $productos->where("categoria_id", $categoria);
+        }
+        $productos = $productos->where("status", 1)->orderBy("nombre", "asc")->get();
+
+        if ($formato == "pdf") {
+            $pdf = PDF::loadView('reportes.productos', compact('productos'))->setPaper('letter', 'portrait');
+
+            // ENUMERAR LAS PÁGINAS USANDO CANVAS
+            $pdf->output();
+            $dom_pdf = $pdf->getDomPDF();
+            $canvas = $dom_pdf->get_canvas();
+            $alto = $canvas->get_height();
+            $ancho = $canvas->get_width();
+            $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+
+            return $pdf->stream('productos.pdf');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Formularios')
+                ->setSubject('Formularios')
+                ->setDescription('Formularios')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":J" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "LISTA DE PRODUCTOS");
+            $sheet->mergeCells("A" . $fila . ":J" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+            $fila++;
+            $sheet->setCellValue('A' . $fila, 'N°');
+            $sheet->setCellValue('B' . $fila, 'NOMBRE');
+            $sheet->setCellValue('C' . $fila, 'CATEGORÍA');
+            $sheet->setCellValue('D' . $fila, 'DESCRIPCIÓN');
+            $sheet->setCellValue('E' . $fila, 'STOCK ACTUAL');
+            $sheet->setCellValue('F' . $fila, "PRECIO COMPRA \n" . ($this->configuracion->conf_moneda ? $this->configuracion->conf_moneda["abrev"] : ''));
+            $sheet->setCellValue('G' . $fila, "PRECIO VENTA \n" . ($this->configuracion->conf_moneda ? $this->configuracion->conf_moneda["abrev"] : ''));
+            $sheet->setCellValue('H' . $fila, 'OBSERVACIONES');
+            $sheet->setCellValue('I' . $fila, 'PÚBLICO');
+            $sheet->setCellValue('J' . $fila, 'FECHA DE REGISTRO');
+            $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+            $cont = 1;
+            foreach ($productos as $producto) {
+                $sheet->setCellValue('A' . $fila, $cont++);
+                $sheet->setCellValue('B' . $fila, $producto->nombre);
+                $sheet->setCellValue('C' . $fila, $producto->categoria->nombre);
+                $sheet->setCellValue('D' . $fila, $producto->descripcion);
+                $sheet->setCellValue('E' . $fila, $producto->stock_actual);
+                $sheet->setCellValue('F' . $fila, $producto->precio_compra);
+                $sheet->setCellValue('G' . $fila, $producto->precio_venta);
+                $sheet->setCellValue('H' . $fila, $producto->observaciones);
+                $sheet->setCellValue('I' . $fila, $producto->publico);
+                $sheet->setCellValue('J' . $fila, $producto->fecha_registro_t);
+                $sheet->getStyle('A' . $fila . ':J' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+            }
+
+            $sheet->getColumnDimension('A')->setWidth(6);
+            $sheet->getColumnDimension('B')->setWidth(15);
+            $sheet->getColumnDimension('C')->setWidth(15);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(13);
+            $sheet->getColumnDimension('F')->setWidth(13);
+            $sheet->getColumnDimension('G')->setWidth(13);
+            $sheet->getColumnDimension('H')->setWidth(20);
+            $sheet->getColumnDimension('I')->setWidth(13);
+            $sheet->getColumnDimension('J')->setWidth(13);
+
+            foreach (range('A', 'J') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:J');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            // DESCARGA DEL ARCHIVO
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="productos_' . time() . '.xlsx"');
+            header('Cache-Control: max-age=0');
+            $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
+        }
+    }
+
+    //ORDENES DE VENTAS
+    public function orden_ventas()
+    {
+        return Inertia::render("Admin/Reportes/OrdenVentas");
+    }
+
+    public function r_orden_ventas(Request $request)
+    {
+        $formato =  $request->formato;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $estado =  $request->estado;
+        $orden_ventas = OrdenVenta::select("orden_ventas.*");
+
+        if ($estado != 'todos') {
+            $orden_ventas->where("estado_orden", $estado);
+        }
+
+        if ($fecha_ini && $fecha_fin) {
+            $orden_ventas->whereBetween("fecha_orden", [$fecha_ini, $fecha_fin]);
+        }
+
+        $orden_ventas = $orden_ventas->where("status", 1)->orderBy("id", "asc")->get();
+        if ($formato == "pdf") {
+            $pdf = PDF::loadView('reportes.orden_ventas', compact('orden_ventas', 'fecha_ini', 'fecha_fin'))->setPaper('letter', 'portrait');
+
+            // ENUMERAR LAS PÁGINAS USANDO CANVAS
+            $pdf->output();
+            $dom_pdf = $pdf->getDomPDF();
+            $canvas = $dom_pdf->get_canvas();
+            $alto = $canvas->get_height();
+            $ancho = $canvas->get_width();
+            $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+
+            return $pdf->stream('orden_ventas.pdf');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":H" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':H' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "LISTA DE ORDENDES DE VENTAS");
+            $sheet->mergeCells("A" . $fila . ":H" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':H' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+
+            $sheet->setCellValue('A' . $fila, 'CÓDIGO');
+            $sheet->setCellValue('B' . $fila, 'CLIENTE');
+            $sheet->setCellValue('C' . $fila, 'CELULAR');
+            $sheet->setCellValue('D' . $fila, 'CORREO');
+            $sheet->setCellValue('E' . $fila, 'ESTADO DE ORDEN');
+            $sheet->setCellValue('F' . $fila, 'COMPROBANTE');
+            $sheet->setCellValue('G' . $fila, 'OBSERVACIÓN');
+            $sheet->setCellValue('H' . $fila, 'FECHA DE ORDEN');
+            $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+            $cont = 1;
+
+            foreach ($orden_ventas as $orden_venta) {
+                $sheet->setCellValue('A' . $fila, $orden_venta->codigo);
+                $sheet->setCellValue('B' . $fila, $orden_venta->cliente->full_name);
+                $sheet->setCellValue('C' . $fila, $orden_venta->cliente->cel);
+                $sheet->setCellValue('D' . $fila, $orden_venta->cliente->correo);
+                $sheet->setCellValue('E' . $fila, $orden_venta->estado_orden);
+                $sheet->setCellValue('F' . $fila, $orden_venta->comprobante ? 'SI' : 'NO');
+                $sheet->setCellValue('G' . $fila, $orden_venta->observacion);
+                $sheet->setCellValue('H' . $fila, $orden_venta->fecha_orden_t);
+                $sheet->getStyle('A' . $fila . ':H' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+            }
+
+
+            $sheet->getColumnDimension('A')->setWidth(10);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(13);
+            $sheet->getColumnDimension('D')->setWidth(18);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(10);
+            $sheet->getColumnDimension('G')->setWidth(26);
+            $sheet->getColumnDimension('H')->setWidth(15);
+
+            foreach (range('A', 'H') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:H');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            // DESCARGA DEL ARCHIVO
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="orden_ventas_' . time() . '.xlsx"');
+            header('Cache-Control: max-age=0');
+            $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
+        }
+    }
+
+    //SOLICITUD PRODUCTOS
+    public function solicitud_productos()
+    {
+        return Inertia::render("Admin/Reportes/SolicitudProductos");
+    }
+
+    public function r_solicitud_productos(Request $request)
+    {
+        $formato =  $request->formato;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $estado =  $request->estado;
+        $solicitud_productos = SolicitudProducto::select("solicitud_productos.*");
+
+        if ($estado != 'todos') {
+            $solicitud_productos->where("estado_solicitud", $estado);
+        }
+
+        if ($fecha_ini && $fecha_fin) {
+            $solicitud_productos->whereBetween("fecha_solicitud", [$fecha_ini, $fecha_fin]);
+        }
+
+        // Filtro por usuario
+        $user = Auth::user();
+        if ($user->sedes_todo != 1) {
+            $sedes_id = $this->sedeUserService->getArraySedesIdUser();
+            $solicitud_productos->whereIn("solicitud_productos.sede_id", $sedes_id);
+        }
+
+        $solicitud_productos = $solicitud_productos->where("status", 1)->orderBy("id", "asc")->get();
+        if ($formato == "pdf") {
+            $pdf = PDF::loadView('reportes.solicitud_productos', compact('solicitud_productos', 'fecha_ini', 'fecha_fin'))->setPaper('letter', 'landscape');
+
+            // ENUMERAR LAS PÁGINAS USANDO CANVAS
+            $pdf->output();
+            $dom_pdf = $pdf->getDomPDF();
+            $canvas = $dom_pdf->get_canvas();
+            $alto = $canvas->get_height();
+            $ancho = $canvas->get_width();
+            $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+
+            return $pdf->stream('solicitud_productos.pdf');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":N" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "LISTA DE SOLICITUD DE COMPRA DE PRODUCTOS");
+            $sheet->mergeCells("A" . $fila . ":N" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+
+            $sheet->setCellValue('A' . $fila, 'CÓDIGO');
+            $sheet->setCellValue('B' . $fila, 'CLIENTE');
+            $sheet->setCellValue('C' . $fila, 'CELULAR');
+            $sheet->setCellValue('D' . $fila, 'CORREO');
+            $sheet->setCellValue('E' . $fila, 'SEDE');
+            $sheet->setCellValue('F' . $fila, 'PRODUCTO');
+            $sheet->setCellValue('G' . $fila, 'DETALLE');
+            $sheet->setCellValue('H' . $fila, 'LINKS REFERENCIA');
+            $sheet->setCellValue('I' . $fila, 'ESTADO DE SOLICITUD');
+            $sheet->setCellValue('J' . $fila, "PRECIO COMPRA \n" . ($this->configuracion->conf_moneda ? $this->configuracion->conf_moneda["abrev"] : ''));
+            $sheet->setCellValue('K' . $fila, "MARGEN GANANCIA \n" . ($this->configuracion->conf_moneda ? $this->configuracion->conf_moneda["abrev"] : ''));
+            $sheet->setCellValue('L' . $fila, 'OBSERVACIÓN');
+            $sheet->setCellValue('M' . $fila, 'SEGUIMIENTO');
+            $sheet->setCellValue('N' . $fila, 'FECHA DE SOLICITUD');
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+            $cont = 1;
+
+            foreach ($solicitud_productos as $solicitud_producto) {
+                $sheet->setCellValue('A' . $fila, $solicitud_producto->codigo_solicitud);
+                $sheet->setCellValue('B' . $fila, $solicitud_producto->cliente->full_name);
+                $sheet->setCellValue('C' . $fila, $solicitud_producto->cliente->cel);
+                $sheet->setCellValue('D' . $fila, $solicitud_producto->cliente->correo);
+                $sheet->setCellValue('E' . $fila, $solicitud_producto->sede->nombre);
+                $solicitudDetalle = SolicitudDetalle::where(
+                    'solicitud_producto_id',
+                    $solicitud_producto->id,
+                )->get()->first();
+                $sheet->setCellValue('F' . $fila, $solicitudDetalle->nombre_producto ?? '');
+                $sheet->setCellValue('G' . $fila, $solicitudDetalle->detalle_producto ?? '');
+                $links = str_replace(["<br />", "<br/>", "<br>", "<BR/>", "<BR />", "<BR>"], "\n", $solicitudDetalle->links_referencia);
+                $sheet->setCellValue('H' . $fila, $links);
+                $sheet->setCellValue('I' . $fila, $solicitud_producto->estado_solicitud);
+                $sheet->setCellValue('J' . $fila, $solicitud_producto->precio_compra ?? '');
+                $sheet->setCellValue('K' . $fila, $solicitud_producto->margen_ganancia ?? '');
+                $sheet->setCellValue('L' . $fila, $solicitud_producto->observacion ?? '');
+                $sheet->setCellValue('M' . $fila, $solicitud_producto->estado_seguimiento ?? '');
+                $sheet->setCellValue('N' . $fila, $solicitud_producto->fecha_solicitud_t);
+
+
+                $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+            }
+
+
+            $sheet->getColumnDimension('A')->setWidth(10);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(13);
+            $sheet->getColumnDimension('D')->setWidth(18);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(10);
+            $sheet->getColumnDimension('G')->setWidth(26);
+            $sheet->getColumnDimension('H')->setWidth(15);
+            $sheet->getColumnDimension('I')->setWidth(15);
+            $sheet->getColumnDimension('J')->setWidth(15);
+            $sheet->getColumnDimension('K')->setWidth(15);
+            $sheet->getColumnDimension('L')->setWidth(15);
+            $sheet->getColumnDimension('M')->setWidth(15);
+            $sheet->getColumnDimension('N')->setWidth(15);
+
+            foreach (range('A', 'N') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:N');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            // DESCARGA DEL ARCHIVO
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="solicitud_productos_' . time() . '.xlsx"');
+            header('Cache-Control: max-age=0');
+            $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
+        }
+    }
+
+    //SEGUIMIENTO DE SOLICITUD PRODUCTOS
+    public function seguimiento_solicituds()
+    {
+        return Inertia::render("Admin/Reportes/SeguimientoSolicituds");
+    }
+
+    public function r_seguimiento_solicituds(Request $request)
+    {
+        $formato =  $request->formato;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $estado =  $request->estado;
+        $solicitud_productos = SolicitudProducto::select("solicitud_productos.*");
+
+        if ($estado != 'todos') {
+            $solicitud_productos->where("estado_seguimiento", $estado);
+        }
+
+        if ($fecha_ini && $fecha_fin) {
+            $solicitud_productos->whereBetween("fecha_solicitud", [$fecha_ini, $fecha_fin]);
+        }
+
+        // Filtro por usuario
+        $user = Auth::user();
+        if ($user->sedes_todo != 1) {
+            $sedes_id = $this->sedeUserService->getArraySedesIdUser();
+            $solicitud_productos->whereIn("solicitud_productos.sede_id", $sedes_id);
+        }
+
+        $solicitud_productos = $solicitud_productos->where("status", 1)->orderBy("id", "asc")->get();
+        if ($formato == "pdf") {
+            $pdf = PDF::loadView('reportes.seguimiento_solicituds', compact('solicitud_productos', 'fecha_ini', 'fecha_fin'))->setPaper('letter', 'landscape');
+
+            // ENUMERAR LAS PÁGINAS USANDO CANVAS
+            $pdf->output();
+            $dom_pdf = $pdf->getDomPDF();
+            $canvas = $dom_pdf->get_canvas();
+            $alto = $canvas->get_height();
+            $ancho = $canvas->get_width();
+            $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+
+            return $pdf->stream('solicitud_productos.pdf');
+        } else {
+            $spreadsheet = new Spreadsheet();
+            $spreadsheet->getProperties()
+                ->setCreator("ADMIN")
+                ->setLastModifiedBy('Administración')
+                ->setTitle('Registros')
+                ->setSubject('Registros')
+                ->setDescription('Registros')
+                ->setKeywords('PHPSpreadsheet')
+                ->setCategory('Listado');
+
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+
+            $fila = 1;
+            if (file_exists(public_path() . '/imgs/' . $this->configuracion->logo)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('logo');
+                $drawing->setDescription('logo');
+                $drawing->setPath(public_path() . '/imgs/' . $this->configuracion->logo); // put your path and image here
+                $drawing->setCoordinates('A' . $fila);
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(0);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $fila = 2;
+            $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
+            $sheet->mergeCells("A" . $fila . ":N" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $sheet->setCellValue('A' . $fila, "LISTA DE SEGUIMIENTO DE SOLICITUD DE COMPRA DE PRODUCTOS");
+            $sheet->mergeCells("A" . $fila . ":N" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->titulo);
+            $fila++;
+            $fila++;
+
+            $sheet->setCellValue('A' . $fila, 'CÓDIGO');
+            $sheet->setCellValue('B' . $fila, 'CLIENTE');
+            $sheet->setCellValue('C' . $fila, 'CELULAR');
+            $sheet->setCellValue('D' . $fila, 'CORREO');
+            $sheet->setCellValue('E' . $fila, 'SEDE');
+            $sheet->setCellValue('F' . $fila, 'PRODUCTO');
+            $sheet->setCellValue('G' . $fila, 'DETALLE');
+            $sheet->setCellValue('H' . $fila, 'LINKS REFERENCIA');
+            $sheet->setCellValue('I' . $fila, 'ESTADO DE SOLICITUD');
+            $sheet->setCellValue('J' . $fila, "PRECIO COMPRA \n" . ($this->configuracion->conf_moneda ? $this->configuracion->conf_moneda["abrev"] : ''));
+            $sheet->setCellValue('K' . $fila, "MARGEN GANANCIA \n" . ($this->configuracion->conf_moneda ? $this->configuracion->conf_moneda["abrev"] : ''));
+            $sheet->setCellValue('L' . $fila, 'OBSERVACIÓN');
+            $sheet->setCellValue('M' . $fila, 'SEGUIMIENTO');
+            $sheet->setCellValue('N' . $fila, 'FECHA DE SOLICITUD');
+            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->headerTabla);
+            $fila++;
+            $cont = 1;
+
+            foreach ($solicitud_productos as $solicitud_producto) {
+                $sheet->setCellValue('A' . $fila, $solicitud_producto->codigo_solicitud);
+                $sheet->setCellValue('B' . $fila, $solicitud_producto->cliente->full_name);
+                $sheet->setCellValue('C' . $fila, $solicitud_producto->cliente->cel);
+                $sheet->setCellValue('D' . $fila, $solicitud_producto->cliente->correo);
+                $sheet->setCellValue('E' . $fila, $solicitud_producto->sede->nombre);
+                $solicitudDetalle = SolicitudDetalle::where(
+                    'solicitud_producto_id',
+                    $solicitud_producto->id,
+                )->get()->first();
+                $sheet->setCellValue('F' . $fila, $solicitudDetalle->nombre_producto ?? '');
+                $sheet->setCellValue('G' . $fila, $solicitudDetalle->detalle_producto ?? '');
+                $links = str_replace(["<br />", "<br/>", "<br>", "<BR/>", "<BR />", "<BR>"], "\n", $solicitudDetalle->links_referencia);
+                $sheet->setCellValue('H' . $fila, $links);
+                $sheet->setCellValue('I' . $fila, $solicitud_producto->estado_solicitud);
+                $sheet->setCellValue('J' . $fila, $solicitud_producto->precio_compra ?? '');
+                $sheet->setCellValue('K' . $fila, $solicitud_producto->margen_ganancia ?? '');
+                $sheet->setCellValue('L' . $fila, $solicitud_producto->observacion ?? '');
+                $sheet->setCellValue('M' . $fila, $solicitud_producto->estado_seguimiento ?? '');
+                $sheet->setCellValue('N' . $fila, $solicitud_producto->fecha_solicitud_t);
+
+
+                $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
+            }
+
+
+            $sheet->getColumnDimension('A')->setWidth(10);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(13);
+            $sheet->getColumnDimension('D')->setWidth(18);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(10);
+            $sheet->getColumnDimension('G')->setWidth(26);
+            $sheet->getColumnDimension('H')->setWidth(15);
+            $sheet->getColumnDimension('I')->setWidth(15);
+            $sheet->getColumnDimension('J')->setWidth(15);
+            $sheet->getColumnDimension('K')->setWidth(15);
+            $sheet->getColumnDimension('L')->setWidth(15);
+            $sheet->getColumnDimension('M')->setWidth(15);
+            $sheet->getColumnDimension('N')->setWidth(15);
+
+            foreach (range('A', 'N') as $columnID) {
+                $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+            $sheet->getPageMargins()->setTop(0.5);
+            $sheet->getPageMargins()->setRight(0.1);
+            $sheet->getPageMargins()->setLeft(0.1);
+            $sheet->getPageMargins()->setBottom(0.1);
+            $sheet->getPageSetup()->setPrintArea('A:N');
+            $sheet->getPageSetup()->setFitToWidth(1);
+            $sheet->getPageSetup()->setFitToHeight(0);
+
+            // DESCARGA DEL ARCHIVO
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="seguimiento_solicituds' . time() . '.xlsx"');
+            header('Cache-Control: max-age=0');
+            $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
+        }
+    }
+
+    // GRAFÍCO ORDENES DE VENTAS
+    public function g_orden_ventas()
+    {
+        return Inertia::render("Admin/Reportes/GOrdenVentas");
+    }
+
+    public function r_g_orden_ventas(Request $request)
     {
         $fecha_ini = $request->fecha_ini;
         $fecha_fin = $request->fecha_fin;
-        $categoria = $request->categoria;
+        $estado = $request->estado;
 
-        $publicacions = Publicacion::select("publicacions.*")
-            ->whereIn("estado_sub", [1, 2, 3, 4]);
+        $orden_ventas = OrdenVenta::select("orden_ventas.*");
 
-        if ($categoria != 'todos') {
-            $publicacions->where("publicacions.categoria", $categoria);
+        $categories = ["PENDIENTE", "RECHAZADO", "CONFIRMADO"];
+
+        if ($estado != 'todos') {
+            $orden_ventas->where("estado_orden", $estado);
+            $categories = [$estado];
         }
 
-        $permisos = Auth::user()->permisos;
-        if (is_array($permisos) && !in_array("publicacions.todos", $permisos)) {
-            $publicacions->where("user_id", Auth::user()->id);
-        }
-
-        $publicacions->whereNotIn("estado_sub", [5]);
-        $publicacions = $publicacions->get();
+        $orden_ventas = $orden_ventas->where("status", 1)->get();
         $data = [];
-        foreach ($publicacions as $publicacion) {
-            $total = 0;
-            if ($publicacion->subasta) {
-                $total = SubastaCliente::select("subasta_clientes.*")
-                    ->join("historial_ofertas", "historial_ofertas.subasta_cliente_id", "=", "subasta_clientes.id")
-                    ->where("subasta_clientes.subasta_id", $publicacion->subasta->id);
-                if ($fecha_ini && $fecha_fin) {
-                    $total->whereBetween("historial_ofertas.fecha_oferta", [$fecha_ini, $fecha_fin]);
-                }
-                $total = $total->distinct("subasta_clientes.cliente_id")->count();
+        foreach ($categories as $value) {
+            $total = DetalleVenta::join("orden_ventas", "orden_ventas.id", "=", "detalle_ventas.orden_venta_id")
+                ->where("orden_ventas.status", 1)
+                ->where("orden_ventas.estado_orden", $value);
+            $ordenVentas = OrdenVenta::with(["cliente", "detalleVenta.producto"])->where("estado_orden", $value)
+                ->where("status", 1);
+
+            if ($fecha_ini && $fecha_fin) {
+                $ordenVentas->whereBetween("orden_ventas.fecha_orden", [$fecha_ini, $fecha_fin]);
+                $total->whereBetween("orden_ventas.fecha_orden", [$fecha_ini, $fecha_fin]);
             }
+            $total = $total->sum("detalle_ventas.cantidad");
+            $ordenVentas = $ordenVentas->orderBy("id", "asc")->get();
 
             $data[] = [
                 "y" => (int)$total,
-                "name" => "PUBLICACIÓN NRO. " . $publicacion->nro . " | " . $publicacion->categoria,
-                "nro_pub" => $publicacion->nro
+                "ordenVentas" => $ordenVentas
             ];
         }
 
         return response()->JSON([
+            "categories" => $categories,
             "data" => $data
         ]);
     }
 
-    public function g_puja_clientes()
+    // GRAFICO SOLICITUD DE PRODUCTOS
+    public function g_solicitud_productos()
     {
-        return Inertia::render("Admin/Reportes/GPujaClientes");
+        return Inertia::render("Admin/Reportes/GSolicitudProductos");
     }
 
-    public function gr_puja_clientes(Request $request)
+    public function r_g_solicitud_productos(Request $request)
     {
         $fecha_ini = $request->fecha_ini;
         $fecha_fin = $request->fecha_fin;
-        $categoria = $request->categoria;
+        $estado = $request->estado;
 
-        $array_fechas = [];
-        $array_data = [];
-        $categories = [];
-        if ($fecha_ini && $fecha_fin) {
-            $aux_fecha_ini = date("Y-m-d", strtotime($fecha_ini));
+        $solicitud_productos = SolicitudProducto::select("solicitud_productos.*");
 
-            while ($aux_fecha_ini <= $fecha_fin) {
-                $array_fechas[] = $aux_fecha_ini;
-                $categories[] = date("d/m/Y", strtotime($aux_fecha_ini));
-                $aux_fecha_ini = date("Y-m-d", strtotime("$aux_fecha_ini +1 days"));
+        $categories = ["PENDIENTE", "RECHAZADO", "APROBADO"];
+
+        if ($estado != 'todos') {
+            $solicitud_productos->where("estado_solicitud", $estado);
+            $categories = [$estado];
+        }
+
+        $solicitud_productos = $solicitud_productos->where("status", 1)->get();
+        $data = [];
+        foreach ($categories as $value) {
+            $total = SolicitudDetalle::join("solicitud_productos", "solicitud_productos.id", "=", "solicitud_detalles.solicitud_producto_id")
+                ->where("solicitud_productos.status", 1)
+                ->where("solicitud_productos.estado_solicitud", $value);
+            $solicitudProductos = SolicitudProducto::with(["cliente", "solicitudDetalles"])->where("estado_solicitud", $value)
+                ->where("status", 1);
+
+            if ($fecha_ini && $fecha_fin) {
+                $solicitudProductos->whereBetween("solicitud_productos.fecha_solicitud", [$fecha_ini, $fecha_fin]);
+                $total->whereBetween("solicitud_productos.fecha_solicitud", [$fecha_ini, $fecha_fin]);
             }
+            // $total = $total->sum("solicitud_detalles.cantidad");
+            $total = $total->count();
+            $solicitudProductos = $solicitudProductos->orderBy("id", "asc")->get();
 
-            // armar datos
-            $publicacions = Publicacion::select("publicacions.*")
-                ->whereIn("estado_sub", [1, 2, 3, 4]);
-            if ($categoria != 'todos') {
-                $publicacions->where("publicacions.categoria", $categoria);
-            }
-            $permisos = Auth::user()->permisos;
-            if (is_array($permisos) && !in_array("publicacions.todos", $permisos)) {
-                $publicacions->where("user_id", Auth::user()->id);
-            }
-            $publicacions->whereNotIn("estado_sub", [0, 5, 6]);
-            $publicacions = $publicacions->orderBy("estado_sub", "asc")->get();
-
-            foreach ($publicacions as $publicacion) {
-                $data_contenedor = [];
-
-                $subasta_clientes = [];
-                if ($publicacion->subasta) {
-                    $subasta_clientes = SubastaCliente::where("subasta_id", $publicacion->subasta->id)->get();
-                }
-
-                foreach ($subasta_clientes as $subasta_cliente) {
-                    $data = [];
-                    foreach ($array_fechas as $fecha) {
-                        $historial_ofertas = HistorialOferta::where("subasta_cliente_id", $subasta_cliente->id)
-                            ->where("fecha_oferta", $fecha)
-                            ->orderBy("id", "desc")
-                            ->orderBy("hora_oferta", "desc")
-                            ->get();
-
-                        $data[] = [
-                            "y" => count($historial_ofertas) > 1 ? (int)$historial_ofertas[0]->puja : 0,
-                            "array_pujas" => count($historial_ofertas) > 1 ? $historial_ofertas : []
-                        ];
-                    }
-                    $data_contenedor[] = [
-                        "name" => $subasta_cliente->cliente->full_name,
-                        "data" => $data,
-                    ];
-
-                    $array_data[$publicacion->id] = $data_contenedor;
-                }
-            }
+            $data[] = [
+                "y" => (int)$total,
+                "solicitudProductos" => $solicitudProductos
+            ];
         }
 
         return response()->JSON([
-            "publicacions" => $publicacions,
-            "array_data" => $array_data,
-            "array_fechas" => $categories,
+            "categories" => $categories,
+            "data" => $data
         ]);
     }
 
