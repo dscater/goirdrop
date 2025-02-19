@@ -132,6 +132,23 @@ class ProductoController extends Controller
         return response()->JSON($productos);
     }
 
+
+    /**
+     * Lista 6 productos mas vendidos/populares
+     *
+     * @return JsonResponse
+     */
+    public function populares(): JsonResponse
+    {
+        $productos = Producto::with(["imagens", "categoria"])
+            ->select("productos.*")
+            ->leftJoin("detalle_ventas", "productos.id", "=", "detalle_ventas.producto_id")
+            ->selectRaw("SUM(detalle_ventas.cantidad) as total_vendido")
+            ->groupBy("productos.id");
+        $productos = $productos->orderBy("total_vendido", "desc")->get()->take(6);
+        return response()->JSON($productos);
+    }
+
     /**
      * Registrar un nuevo producto
      *

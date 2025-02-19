@@ -18,6 +18,7 @@ const listCategorias = ref([]);
 const listProductos1 = ref([]);
 const listProductos2 = ref([]);
 const productoPrincipal = ref([]);
+const listPopulares = ref([]);
 const paramsProductos = ref({
     tomar: 7,
     categoria_id: "",
@@ -32,6 +33,14 @@ const obtenerProductos = async () => {
     productoPrincipal.value = data[0];
     listProductos1.value = data.splice(1, 3);
     listProductos2.value = data.splice(1, 7);
+};
+
+const obtenerProductosPopulares = async () => {
+    const data = await axiosGet(
+        route("productos.populares"),
+        paramsProductos.value
+    );
+    listPopulares.value = data;
 };
 
 const obtenerCategorias = async () => {
@@ -57,6 +66,7 @@ const mostrarProdPrincipal = () => {
 const cargarListas = () => {
     obtenerProductos();
     obtenerCategorias();
+    obtenerProductosPopulares();
 };
 
 onMounted(() => {
@@ -64,6 +74,65 @@ onMounted(() => {
 });
 </script>
 <template>
+    <div id="trending-items" class="section-container">
+        <!-- BEGIN container -->
+        <div class="container">
+            <!-- BEGIN section-title -->
+            <h4 class="section-title clearfix">
+                <span class="flex-1">
+                    Productos populares
+                    <small></small>
+                </span>
+                <Link :href="route('portal.productos')" class="btn"
+                    >Ver todos</Link
+                >
+                <!-- <div class="btn-group">
+                    <a href="#" class="btn"
+                        ><i class="fa fa-angle-left fs-16px"></i
+                    ></a>
+                    <a href="#" class="btn"
+                        ><i class="fa fa-angle-right fs-16px"></i
+                    ></a>
+                </div> -->
+            </h4>
+            <!-- END section-title -->
+            <!-- BEGIN row -->
+            <div class="row gx-2">
+                <!-- BEGIN col-2 -->
+                <div
+                    class="col-lg-2 col-md-4 col-sm-6"
+                    v-for="item in listPopulares"
+                >
+                    <!-- BEGIN item -->
+                    <div class="item item-thumbnail">
+                        <a href="product_detail.html" class="item-image">
+                            <img :src="item.imagens[0].url_imagen" alt="" />
+                        </a>
+                        <div class="item-info">
+                            <h4 class="item-title">
+                                <Link
+                                    :href="route('portal.producto', item.id)"
+                                    >{{ item.nombre }}</Link
+                                >
+                            </h4>
+                            <p class="item-desc">
+                                {{ item.descripcion }}
+                            </p>
+                            <div class="item-price">
+                                {{ oConfiguracion.conf_moneda.abrev }}
+                                {{ item.precio_venta }}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END item -->
+                </div>
+                <!-- END col-2 -->
+            </div>
+            <!-- END row -->
+        </div>
+        <!-- END container -->
+    </div>
+
     <!-- BEGIN #productos -->
     <div id="productos" class="productos pt-5 pb-5 mb-5">
         <!-- BEGIN container -->

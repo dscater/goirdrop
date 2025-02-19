@@ -45,6 +45,8 @@ class ProductoService
             ->selectRaw("SUM(detalle_ventas.cantidad) as total_vendido")
             ->groupBy("productos.id");
 
+        $productos->where("status", 1);
+
         // Filtros exactos
         foreach ($columnsFilter as $key => $value) {
             if (!is_null($value)) {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 18-02-2025 a las 21:41:38
+-- Tiempo de generación: 19-02-2025 a las 21:22:30
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -66,7 +66,7 @@ CREATE TABLE `clientes` (
 --
 
 INSERT INTO `clientes` (`id`, `user_id`, `nombres`, `apellidos`, `cel`, `correo`, `fecha_registro`, `created_at`, `updated_at`) VALUES
-(1, 3, 'MARIO', 'GONZALES PAREDES', '78787878', 'victorgonzalo.as@gmail.com', '2025-02-11', '2025-02-11 14:59:54', '2025-02-11 14:59:54'),
+(1, 3, 'MARIO ALBERTO', 'GONZALES PAREDES', '78787878', 'victorgonzalo.as@gmail.com', '2025-02-11', '2025-02-11 14:59:54', '2025-02-19 13:51:30'),
 (2, 4, 'MARIA', 'FERNANDEZ', '78787878', 'maria@gmail.com', '2025-02-18', '2025-02-18 20:26:41', '2025-02-18 20:26:41');
 
 -- --------------------------------------------------------
@@ -253,7 +253,14 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (74, 4, 'CREACIÓN', 'EL USUARIO maria@gmail.com REGISTRO UNA SOLICITUD DE PRODUCTO', '{\"id\": 6, \"cel\": \"78787878\", \"nro\": 4, \"sede_id\": 3, \"cliente_id\": 2, \"created_at\": \"2025-02-18T21:09:33.000000Z\", \"updated_at\": \"2025-02-18T21:09:33.000000Z\", \"nombre_cliente\": \"MARIA\", \"fecha_solicitud\": \"2025-02-18\", \"codigo_solicitud\": \"SOL.4\", \"apellidos_cliente\": \"FERNANDEZ\"}', NULL, 'SOLICITUD DE PRODUCTO', '2025-02-18', '17:09:33', '2025-02-18 21:09:33', '2025-02-18 21:09:33'),
 (75, 1, 'MODIFICACIÓN', 'admin ACTUALIZO LAS SEDES DEL USUARIO juan@gmail.com', '{\"sedes\": [1, 2, 3, 8]}', '{\"updated\": [], \"attached\": [], \"detached\": {\"2\": 3, \"3\": 8}}', 'USUARIOS', '2025-02-18', '17:23:55', '2025-02-18 21:23:55', '2025-02-18 21:23:55'),
 (76, 1, 'MODIFICACIÓN', 'admin ACTUALIZO LAS SEDES DEL USUARIO juan@gmail.comadmin ACTUALIZÓ UN USUARIO', '{\"ci\": \"222222\", \"id\": 2, \"foto\": \"1739213656_2.jpg\", \"acceso\": 1, \"ci_exp\": \"LP\", \"correo\": \"juan@gmail.com\", \"status\": 1, \"nombres\": \"JUAN\", \"role_id\": 3, \"usuario\": \"juan@gmail.com\", \"apellidos\": \"PERES\", \"created_at\": \"2025-02-09T16:28:14.000000Z\", \"sedes_todo\": 0, \"updated_at\": \"2025-02-10T18:54:16.000000Z\", \"fecha_registro\": \"2025-02-09\"}', '{\"ci\": \"222222\", \"id\": 2, \"foto\": \"1739213656_2.jpg\", \"acceso\": \"1\", \"ci_exp\": \"LP\", \"correo\": \"juan@gmail.com\", \"status\": 1, \"nombres\": \"JUAN\", \"role_id\": \"3\", \"usuario\": \"juan@gmail.com\", \"apellidos\": \"PERES\", \"created_at\": \"2025-02-09T16:28:14.000000Z\", \"sedes_todo\": 0, \"updated_at\": \"2025-02-18T21:23:55.000000Z\", \"fecha_registro\": \"2025-02-18\"}', 'USUARIOS', '2025-02-18', '17:23:55', '2025-02-18 21:23:55', '2025-02-18 21:23:55'),
-(77, 4, 'CREACIÓN', 'EL USUARIO maria@gmail.com REGISTRO UNA SOLICITUD DE PRODUCTO', '{\"id\": 7, \"cel\": \"78787878\", \"nro\": 5, \"sede_id\": 3, \"cliente_id\": 2, \"created_at\": \"2025-02-18T21:28:09.000000Z\", \"updated_at\": \"2025-02-18T21:28:09.000000Z\", \"nombre_cliente\": \"MARIA\", \"fecha_solicitud\": \"2025-02-18\", \"codigo_solicitud\": \"SOL.5\", \"apellidos_cliente\": \"FERNANDEZ\"}', NULL, 'SOLICITUD DE PRODUCTO', '2025-02-18', '17:28:09', '2025-02-18 21:28:09', '2025-02-18 21:28:09');
+(77, 4, 'CREACIÓN', 'EL USUARIO maria@gmail.com REGISTRO UNA SOLICITUD DE PRODUCTO', '{\"id\": 7, \"cel\": \"78787878\", \"nro\": 5, \"sede_id\": 3, \"cliente_id\": 2, \"created_at\": \"2025-02-18T21:28:09.000000Z\", \"updated_at\": \"2025-02-18T21:28:09.000000Z\", \"nombre_cliente\": \"MARIA\", \"fecha_solicitud\": \"2025-02-18\", \"codigo_solicitud\": \"SOL.5\", \"apellidos_cliente\": \"FERNANDEZ\"}', NULL, 'SOLICITUD DE PRODUCTO', '2025-02-18', '17:28:09', '2025-02-18 21:28:09', '2025-02-18 21:28:09'),
+(78, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ LA INFORMACIÓN DE UN CLIENTE', '{\"id\": 1, \"cel\": \"78787878\", \"correo\": \"victorgonzalo.as@gmail.com\", \"nombres\": \"MARIO\", \"user_id\": 3, \"apellidos\": \"GONZALES PAREDES\", \"created_at\": \"2025-02-11T14:59:54.000000Z\", \"updated_at\": \"2025-02-11T14:59:54.000000Z\", \"fecha_registro\": \"2025-02-11\"}', '{\"id\": 1, \"cel\": \"78787878\", \"user\": {\"ci\": null, \"id\": 3, \"foto\": null, \"sedes\": [], \"acceso\": \"1\", \"ci_exp\": null, \"correo\": \"victorgonzalo.as@gmail.com\", \"status\": 1, \"full_ci\": \" \", \"nombres\": \"MARIO alberto\", \"role_id\": 2, \"usuario\": \"victorgonzalo.as@gmail.com\", \"foto_b64\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIAAgMAAACJFjxpAAAADFBMVEXFxcX////p6enW1tbAmiBwAAAFiElEQVR4AezAgQAAAACAoP2pF6kAAAAAAAAAAAAAAIDbu2MkvY0jiuMWWQoUmI50BB+BgRTpCAz4G6C8CJDrC3AEXGKPoMTlYA/gAJfwETawI8cuBs5Nk2KtvfiLW+gLfK9m+r3X82G653+JP/zjF8afP1S//y+An4/i51//AsB4aH+/QPD6EQAY/zwZwN8BAP50bh786KP4+VT+3fs4/noigEc+jnHeJrzxX+NWMDDh4g8+EXcnLcC9T8U5S/CdT8bcUeBEIrwBOiI8ki7Ba5+NrePgWUy89/nYyxQ8Iw3f+pWY4h1gb3eAW7sDTPEOsLc7wK1TIeDuDB+I/OA1QOUHv/dFsZQkhKkh4QlEfOULYz2nGj2/Nn1LmwR/86VxlCoAW6kCsHRGANx1RgCMo5Qh2EsZgrXNQZZShp5Liv7Il8eIc5C91EHY2hxk6bwYmNscZIReDBwtCdhbErC1JGBpScBcOgFMLQsZMQs5Whayd+UQsLYsZGlZyNyykKllISNmIUfAwifw8NXvTojAjGFrdYi11SGWVoeYWx1i6lmQCiEjFkKOVgjZ+xxIhZCtFULWHkCqxCw9gNQKmP9vNHzipdEPrRcxtVbAeDkAvve0iM2QozVD9hfjhp4YP/UrkJYDbD2AtBxgfSkAvvHEeNcDSAsilgtAWxIy91J8AXgZAJ5e33+4tuACcAG4AFwALgBXRXQB6AFcB5MXAuA6nl9/0Vx/011/1V5/1/dfTPJvRtdnu/zL6beeFO/7r+fXBYbrEkt/j+i6ytXfpuvvE/ZXOnsA/a3a/l5xf7O6v1t+Xe/vOyz6HpO8yyboM8o7rfJes77bru83THk48p7TvOs27zvOO6/73vO++z7l4cgnMPQzKPopHC0N9noSSz6LJp/Gk88jyicy5TOp6qlc+VyyfDJbPpuuns6XzyfMJzTmMyrrKZ35nNJ8Ums+q7af1tvPK+4nNodEnPKp3fnc8npyez67/qVP7+/fL8hfcMjfsOhf8cjfMclfcnn9+BkOnLECP8Q58OYeyJ40eoyF6Ee/En/JHlP6mIlRVXprF4BxtAvArV0AxtEuALd2ARhHuwDc2gVgHPX/hFv9fMBddjIGeKg/WCxlCsI46u+Ga5mCcJd+sIG9UkGAW32ZbApFAHhod4Bb3eo04h3god0BbiUHYApVCNjbHeBW+QDAXT4a7qg7r7e214057vg0QhkEHkoSwq0kIdydXw4/Q3H8hjYJ3vL0WConBJhCHQaOToeBrU0BljYFmEoVgHGUKgAPnREAt84IgLuqFgAYSUEOAHszDwuAtSkHAZhLGYIpdCLgKGUIHtocZG1zkLmUIRhxDnJU1RDA1uYga5uDzKUOwhTnIEfnxcDe5iBrcyQAYGlzkKkUYhhxDrKXQgxbSwLWUohhbknA1JKAEZOAvSUBW0sC1pYEzC0JmFoSMMJyCDhaFrK3JGDtyiFgaVnI3LKQqWUhI2YhR8tC9paFrC0LWVoWMrcsZGpZyIhZyNGykL2rSIGtlQHWVgZYWhlgbmWAqZUBRiwDHK0MsLcywNbKAGsOoNUhllaHmFsdYmp1iBHrEEerQ+w5gFYI2VodYm11iKXVIeYcQCuETK0QMmIh5MgBtELI3gohWyuErDmAVolZWiFkzgG0SszUKjGjfj6gVmKOVonZcwCtFbB9HQC+ozWDbz1bvGu9iKW1AuYcQOtFTLEX1GbIaFegN0OOHEBrhuw5gNYM2XIArRuz5gDacoB3bTnAEktxXQ4wfw0AvveM8b4tiJjSJOwLIsbXsAKeNeKCiOO3D+AVbUl0AfjGs8ZPbUnIdgFoa1LWC0BblfMuB9AeC1j6gqQE0J9LmC8AOYD2ZMb7i4bt2ZTpWoHfPoB7Tj2fXzT8N1X41vkq/QHOAAAAAElFTkSuQmCC\", \"permisos\": \"*\", \"url_foto\": \"http://goirdrop.test/imgs/users/default.png\", \"apellidos\": \"GONZALES PAREDES\", \"full_name\": \"MARIO alberto GONZALES PAREDES\", \"nom_sedes\": \"\", \"created_at\": \"2025-02-11T14:59:54.000000Z\", \"sedes_todo\": 0, \"updated_at\": \"2025-02-19T13:49:39.000000Z\", \"usuario_abrev\": \"victorgo...\", \"array_sedes_id\": [], \"fecha_registro\": \"2025-02-11\", \"fecha_registro_t\": \"11/02/2025\"}, \"correo\": \"victorgonzalo.as@gmail.com\", \"nombres\": \"MARIO alberto\", \"user_id\": 3, \"apellidos\": \"GONZALES PAREDES\", \"created_at\": \"2025-02-11T14:59:54.000000Z\", \"updated_at\": \"2025-02-19T13:49:39.000000Z\", \"fecha_registro\": \"2025-02-11\"}', 'CLIENTES', '2025-02-19', '09:49:39', '2025-02-19 13:49:39', '2025-02-19 13:49:39'),
+(79, 1, 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ LA INFORMACIÓN DE UN CLIENTE', '{\"id\": 1, \"cel\": \"78787878\", \"correo\": \"victorgonzalo.as@gmail.com\", \"nombres\": \"MARIO alberto\", \"user_id\": 3, \"apellidos\": \"GONZALES PAREDES\", \"created_at\": \"2025-02-11T14:59:54.000000Z\", \"updated_at\": \"2025-02-19T13:49:39.000000Z\", \"fecha_registro\": \"2025-02-11\"}', '{\"id\": 1, \"cel\": \"78787878\", \"user\": {\"ci\": null, \"id\": 3, \"foto\": null, \"sedes\": [], \"acceso\": \"1\", \"ci_exp\": null, \"correo\": \"victorgonzalo.as@gmail.com\", \"status\": 1, \"full_ci\": \" \", \"nombres\": \"MARIO ALBERTO\", \"role_id\": 2, \"usuario\": \"victorgonzalo.as@gmail.com\", \"foto_b64\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIAAgMAAACJFjxpAAAADFBMVEXFxcX////p6enW1tbAmiBwAAAFiElEQVR4AezAgQAAAACAoP2pF6kAAAAAAAAAAAAAAIDbu2MkvY0jiuMWWQoUmI50BB+BgRTpCAz4G6C8CJDrC3AEXGKPoMTlYA/gAJfwETawI8cuBs5Nk2KtvfiLW+gLfK9m+r3X82G653+JP/zjF8afP1S//y+An4/i51//AsB4aH+/QPD6EQAY/zwZwN8BAP50bh786KP4+VT+3fs4/noigEc+jnHeJrzxX+NWMDDh4g8+EXcnLcC9T8U5S/CdT8bcUeBEIrwBOiI8ki7Ba5+NrePgWUy89/nYyxQ8Iw3f+pWY4h1gb3eAW7sDTPEOsLc7wK1TIeDuDB+I/OA1QOUHv/dFsZQkhKkh4QlEfOULYz2nGj2/Nn1LmwR/86VxlCoAW6kCsHRGANx1RgCMo5Qh2EsZgrXNQZZShp5Liv7Il8eIc5C91EHY2hxk6bwYmNscZIReDBwtCdhbErC1JGBpScBcOgFMLQsZMQs5Whayd+UQsLYsZGlZyNyykKllISNmIUfAwifw8NXvTojAjGFrdYi11SGWVoeYWx1i6lmQCiEjFkKOVgjZ+xxIhZCtFULWHkCqxCw9gNQKmP9vNHzipdEPrRcxtVbAeDkAvve0iM2QozVD9hfjhp4YP/UrkJYDbD2AtBxgfSkAvvHEeNcDSAsilgtAWxIy91J8AXgZAJ5e33+4tuACcAG4AFwALgBXRXQB6AFcB5MXAuA6nl9/0Vx/011/1V5/1/dfTPJvRtdnu/zL6beeFO/7r+fXBYbrEkt/j+i6ytXfpuvvE/ZXOnsA/a3a/l5xf7O6v1t+Xe/vOyz6HpO8yyboM8o7rfJes77bru83THk48p7TvOs27zvOO6/73vO++z7l4cgnMPQzKPopHC0N9noSSz6LJp/Gk88jyicy5TOp6qlc+VyyfDJbPpuuns6XzyfMJzTmMyrrKZ35nNJ8Ums+q7af1tvPK+4nNodEnPKp3fnc8npyez67/qVP7+/fL8hfcMjfsOhf8cjfMclfcnn9+BkOnLECP8Q58OYeyJ40eoyF6Ee/En/JHlP6mIlRVXprF4BxtAvArV0AxtEuALd2ARhHuwDc2gVgHPX/hFv9fMBddjIGeKg/WCxlCsI46u+Ga5mCcJd+sIG9UkGAW32ZbApFAHhod4Bb3eo04h3god0BbiUHYApVCNjbHeBW+QDAXT4a7qg7r7e214057vg0QhkEHkoSwq0kIdydXw4/Q3H8hjYJ3vL0WConBJhCHQaOToeBrU0BljYFmEoVgHGUKgAPnREAt84IgLuqFgAYSUEOAHszDwuAtSkHAZhLGYIpdCLgKGUIHtocZG1zkLmUIRhxDnJU1RDA1uYga5uDzKUOwhTnIEfnxcDe5iBrcyQAYGlzkKkUYhhxDrKXQgxbSwLWUohhbknA1JKAEZOAvSUBW0sC1pYEzC0JmFoSMMJyCDhaFrK3JGDtyiFgaVnI3LKQqWUhI2YhR8tC9paFrC0LWVoWMrcsZGpZyIhZyNGykL2rSIGtlQHWVgZYWhlgbmWAqZUBRiwDHK0MsLcywNbKAGsOoNUhllaHmFsdYmp1iBHrEEerQ+w5gFYI2VodYm11iKXVIeYcQCuETK0QMmIh5MgBtELI3gohWyuErDmAVolZWiFkzgG0SszUKjGjfj6gVmKOVonZcwCtFbB9HQC+ozWDbz1bvGu9iKW1AuYcQOtFTLEX1GbIaFegN0OOHEBrhuw5gNYM2XIArRuz5gDacoB3bTnAEktxXQ4wfw0AvveM8b4tiJjSJOwLIsbXsAKeNeKCiOO3D+AVbUl0AfjGs8ZPbUnIdgFoa1LWC0BblfMuB9AeC1j6gqQE0J9LmC8AOYD2ZMb7i4bt2ZTpWoHfPoB7Tj2fXzT8N1X41vkq/QHOAAAAAElFTkSuQmCC\", \"permisos\": \"*\", \"url_foto\": \"http://goirdrop.test/imgs/users/default.png\", \"apellidos\": \"GONZALES PAREDES\", \"full_name\": \"MARIO ALBERTO GONZALES PAREDES\", \"nom_sedes\": \"\", \"created_at\": \"2025-02-11T14:59:54.000000Z\", \"sedes_todo\": 0, \"updated_at\": \"2025-02-19T13:51:30.000000Z\", \"usuario_abrev\": \"victorgo...\", \"array_sedes_id\": [], \"fecha_registro\": \"2025-02-11\", \"fecha_registro_t\": \"11/02/2025\"}, \"correo\": \"victorgonzalo.as@gmail.com\", \"nombres\": \"MARIO ALBERTO\", \"user_id\": 3, \"apellidos\": \"GONZALES PAREDES\", \"created_at\": \"2025-02-11T14:59:54.000000Z\", \"updated_at\": \"2025-02-19T13:51:30.000000Z\", \"fecha_registro\": \"2025-02-11\"}', 'CLIENTES', '2025-02-19', '09:51:30', '2025-02-19 13:51:30', '2025-02-19 13:51:30'),
+(80, 1, 'ELIMINACIÓN', 'EL USUARIO admin ELIMINÓ AL USUARIO victorgonzalo.as@gmail.com', '{\"ci\": null, \"id\": 3, \"foto\": null, \"acceso\": 1, \"ci_exp\": null, \"correo\": \"victorgonzalo.as@gmail.com\", \"status\": 1, \"nombres\": \"MARIO ALBERTO\", \"role_id\": 2, \"usuario\": \"victorgonzalo.as@gmail.com\", \"apellidos\": \"GONZALES PAREDES\", \"created_at\": \"2025-02-11T14:59:54.000000Z\", \"sedes_todo\": 0, \"updated_at\": \"2025-02-19T13:52:00.000000Z\", \"fecha_registro\": \"2025-02-11\"}', '{\"ci\": null, \"id\": 3, \"foto\": null, \"acceso\": 1, \"ci_exp\": null, \"correo\": \"victorgonzalo.as@gmail.com\", \"status\": 0, \"nombres\": \"MARIO ALBERTO\", \"role_id\": 2, \"usuario\": \"victorgonzalo.as@gmail.com\", \"apellidos\": \"GONZALES PAREDES\", \"created_at\": \"2025-02-11T14:59:54.000000Z\", \"sedes_todo\": 0, \"updated_at\": \"2025-02-19T13:53:42.000000Z\", \"fecha_registro\": \"2025-02-11\"}', 'USUARIOS', '2025-02-19', '09:53:42', '2025-02-19 13:53:42', '2025-02-19 13:53:42'),
+(81, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN ROLE', '{\"id\": 4, \"nombre\": \"AUXILIAR\", \"created_at\": \"2025-02-19T20:34:05.000000Z\", \"updated_at\": \"2025-02-19T20:34:05.000000Z\"}', NULL, 'ROLES', '2025-02-19', '16:34:05', '2025-02-19 20:34:05', '2025-02-19 20:34:05'),
+(82, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN USUARIO', '{\"ci\": \"333333\", \"id\": 5, \"acceso\": \"1\", \"ci_exp\": \"LP\", \"correo\": \"marcos@gmail.com\", \"nombres\": \"MARCOS\", \"role_id\": \"4\", \"usuario\": \"marcos@gmail.com\", \"apellidos\": \"RAMIRES\", \"created_at\": \"2025-02-19T20:34:51.000000Z\", \"sedes_todo\": 1, \"updated_at\": \"2025-02-19T20:34:51.000000Z\", \"fecha_registro\": \"2025-02-19\"}', NULL, 'USUARIOS', '2025-02-19', '16:34:51', '2025-02-19 20:34:51', '2025-02-19 20:34:51'),
+(83, 1, 'MODIFICACIÓN', 'admin ACTUALIZO LAS SEDES DEL USUARIO marcos@gmail.com', '{\"sedes\": []}', '{\"updated\": [], \"attached\": [1, 2, 4, 5, 6, 7, 8, 9], \"detached\": []}', 'USUARIOS', '2025-02-19', '16:35:28', '2025-02-19 20:35:28', '2025-02-19 20:35:28'),
+(84, 1, 'MODIFICACIÓN', 'admin ACTUALIZO LAS SEDES DEL USUARIO marcos@gmail.comadmin ACTUALIZÓ UN USUARIO', '{\"ci\": \"333333\", \"id\": 5, \"foto\": null, \"acceso\": 1, \"ci_exp\": \"LP\", \"correo\": \"marcos@gmail.com\", \"status\": 1, \"nombres\": \"MARCOS\", \"role_id\": 4, \"usuario\": \"marcos@gmail.com\", \"apellidos\": \"RAMIRES\", \"created_at\": \"2025-02-19T20:34:51.000000Z\", \"sedes_todo\": 1, \"updated_at\": \"2025-02-19T20:34:51.000000Z\", \"fecha_registro\": \"2025-02-19\"}', '{\"ci\": \"333333\", \"id\": 5, \"foto\": null, \"acceso\": \"1\", \"ci_exp\": \"LP\", \"correo\": \"marcos@gmail.com\", \"status\": 1, \"nombres\": \"MARCOS\", \"role_id\": \"4\", \"usuario\": \"marcos@gmail.com\", \"apellidos\": \"RAMIRES\", \"created_at\": \"2025-02-19T20:34:51.000000Z\", \"sedes_todo\": 0, \"updated_at\": \"2025-02-19T20:35:28.000000Z\", \"fecha_registro\": \"2025-02-19\"}', 'USUARIOS', '2025-02-19', '16:35:28', '2025-02-19 20:35:28', '2025-02-19 20:35:28');
 
 -- --------------------------------------------------------
 
@@ -489,7 +496,17 @@ INSERT INTO `permisos` (`id`, `role_id`, `modulo_id`, `created_at`, `updated_at`
 (23, 3, 40, '2025-02-18 20:40:17', '2025-02-18 20:40:17'),
 (24, 3, 42, '2025-02-18 20:40:18', '2025-02-18 20:40:18'),
 (25, 3, 43, '2025-02-18 20:40:18', '2025-02-18 20:40:18'),
-(26, 3, 41, '2025-02-18 20:45:16', '2025-02-18 20:45:16');
+(26, 3, 41, '2025-02-18 20:45:16', '2025-02-18 20:45:16'),
+(27, 3, 25, '2025-02-19 20:32:28', '2025-02-19 20:32:28'),
+(28, 4, 11, '2025-02-19 20:34:13', '2025-02-19 20:34:13'),
+(29, 4, 15, '2025-02-19 20:34:14', '2025-02-19 20:34:14'),
+(30, 4, 19, '2025-02-19 20:34:15', '2025-02-19 20:34:15'),
+(31, 4, 23, '2025-02-19 20:34:15', '2025-02-19 20:34:15'),
+(32, 4, 29, '2025-02-19 20:34:17', '2025-02-19 20:34:17'),
+(33, 4, 37, '2025-02-19 20:34:19', '2025-02-19 20:34:19'),
+(34, 4, 38, '2025-02-19 20:34:21', '2025-02-19 20:34:21'),
+(35, 4, 39, '2025-02-19 20:34:22', '2025-02-19 20:34:22'),
+(36, 4, 40, '2025-02-19 20:34:23', '2025-02-19 20:34:23');
 
 -- --------------------------------------------------------
 
@@ -588,7 +605,8 @@ CREATE TABLE `roles` (
 INSERT INTO `roles` (`id`, `nombre`, `permisos`, `usuarios`, `created_at`, `updated_at`) VALUES
 (1, 'SUPER USUARIO', 1, 0, '2025-02-07 15:17:41', '2025-02-07 15:17:41'),
 (2, 'CLIENTE', 0, 0, NULL, NULL),
-(3, 'ADMINITRADOR', 0, 1, '2025-02-09 15:32:31', '2025-02-09 15:32:31');
+(3, 'ADMINITRADOR', 0, 1, '2025-02-09 15:32:31', '2025-02-09 15:32:31'),
+(4, 'AUXILIAR', 0, 1, '2025-02-19 20:34:05', '2025-02-19 20:34:05');
 
 -- --------------------------------------------------------
 
@@ -637,7 +655,15 @@ CREATE TABLE `sede_users` (
 
 INSERT INTO `sede_users` (`sede_id`, `user_id`, `created_at`, `updated_at`) VALUES
 (1, 2, '2025-02-09 16:28:14', '2025-02-09 16:28:14'),
-(2, 2, '2025-02-09 16:28:14', '2025-02-09 16:28:14');
+(2, 2, '2025-02-09 16:28:14', '2025-02-09 16:28:14'),
+(1, 5, '2025-02-19 20:35:28', '2025-02-19 20:35:28'),
+(2, 5, '2025-02-19 20:35:28', '2025-02-19 20:35:28'),
+(4, 5, '2025-02-19 20:35:28', '2025-02-19 20:35:28'),
+(5, 5, '2025-02-19 20:35:28', '2025-02-19 20:35:28'),
+(6, 5, '2025-02-19 20:35:28', '2025-02-19 20:35:28'),
+(7, 5, '2025-02-19 20:35:28', '2025-02-19 20:35:28'),
+(8, 5, '2025-02-19 20:35:28', '2025-02-19 20:35:28'),
+(9, 5, '2025-02-19 20:35:28', '2025-02-19 20:35:28');
 
 -- --------------------------------------------------------
 
@@ -736,8 +762,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `usuario`, `nombres`, `apellidos`, `ci`, `ci_exp`, `correo`, `password`, `role_id`, `sedes_todo`, `foto`, `fecha_registro`, `acceso`, `status`, `created_at`, `updated_at`) VALUES
 (1, 'admin', 'admin', 'admin', '0', '', 'admin@admin.com', '$2y$12$65d4fgZsvBV5Lc/AxNKh4eoUdbGyaczQ4sSco20feSQANshNLuxSC', 1, 1, NULL, '2025-02-07', 1, 1, '2025-02-07 15:17:42', '2025-02-07 15:17:42'),
 (2, 'juan@gmail.com', 'JUAN', 'PERES', '222222', 'LP', 'juan@gmail.com', '$2y$12$itLoRKn93EgasFLYaz3kIevAfQTctoaq6Vd6O4a9hwRh8M42gavkm', 3, 0, '1739213656_2.jpg', '2025-02-18', 1, 1, '2025-02-09 16:28:14', '2025-02-18 21:23:55'),
-(3, 'mario@gmail.com', 'MARIO', 'GONZALES PAREDES', NULL, NULL, 'mario@gmail.com', '$2y$12$mv2fV.NPQ4snrQAb9Fy/zuPnbSXbIJZXG8JvL4QbfzZNd1XjIpgRa', 2, 0, NULL, '2025-02-11', 1, 1, '2025-02-11 14:59:54', '2025-02-11 14:59:54'),
-(4, 'maria@gmail.com', 'MARIA', 'FERNANDEZ', NULL, NULL, 'maria@gmail.com', '$2y$12$oCVIJK04rZqSR8JliGYxReW0A.IFNS60Bc8XJpzG7Dl9MiYCM5hGy', 2, 0, NULL, '2025-02-18', 1, 1, '2025-02-18 20:26:41', '2025-02-18 20:26:41');
+(3, 'victorgonzalo.as@gmail.com', 'MARIO ALBERTO', 'GONZALES PAREDES', NULL, NULL, 'victorgonzalo.as@gmail.com', '$2y$12$ZRFTxtc/ZHEMy.lnYp5Yk.RmFioERNbowDBmIycMSHstB5U6X1i4S', 2, 0, NULL, '2025-02-11', 1, 1, '2025-02-11 14:59:54', '2025-02-19 13:53:42'),
+(4, 'maria@gmail.com', 'MARIA', 'FERNANDEZ', NULL, NULL, 'maria@gmail.com', '$2y$12$oCVIJK04rZqSR8JliGYxReW0A.IFNS60Bc8XJpzG7Dl9MiYCM5hGy', 2, 0, NULL, '2025-02-18', 1, 1, '2025-02-18 20:26:41', '2025-02-18 20:26:41'),
+(5, 'marcos@gmail.com', 'MARCOS', 'RAMIRES', '333333', 'LP', 'marcos@gmail.com', '$2y$12$OhMl.imw86YVbmM9yek7C.BHpFbb8jo/YGAc1Z5moL35tspkiX.RG', 4, 0, NULL, '2025-02-19', 1, 1, '2025-02-19 20:34:51', '2025-02-19 20:35:28');
 
 --
 -- Índices para tablas volcadas
@@ -921,7 +948,7 @@ ALTER TABLE `detalle_ventas`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
 -- AUTO_INCREMENT de la tabla `migrations`
@@ -951,7 +978,7 @@ ALTER TABLE `orden_ventas`
 -- AUTO_INCREMENT de la tabla `permisos`
 --
 ALTER TABLE `permisos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -969,7 +996,7 @@ ALTER TABLE `producto_imagens`
 -- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `sedes`
@@ -993,7 +1020,7 @@ ALTER TABLE `solicitud_productos`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Restricciones para tablas volcadas

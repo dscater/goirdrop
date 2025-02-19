@@ -58,6 +58,7 @@ Route::get("configuracion_pagos/listadoPortal", [ConfiguracionPagoController::cl
 
 // productos
 Route::get("productos/inicioPortal", [ProductoController::class, 'productosInicioPortal'])->name("productos.productosInicioPortal");
+Route::get("productos/populares", [ProductoController::class, 'populares'])->name("productos.populares");
 Route::get("productos/dataProductos", [ProductoController::class, 'productosPaginadoPortal'])->name("productos.dataProductos");
 
 // categorias
