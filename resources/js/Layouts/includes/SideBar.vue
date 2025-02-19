@@ -827,6 +827,9 @@ const logout = () => {
                         ) ||
                         user_logeado.permisos.includes(
                             'reportes.g_solicitud_productos'
+                        ) ||
+                        user_logeado.permisos.includes(
+                            'reportes.g_seguimiento_productos'
                         )
                     "
                 >
@@ -870,7 +873,28 @@ const logout = () => {
                         <div class="menu-text">Solicitud de productos</div>
                     </Link>
                 </div>
-                
+                <div
+                    v-if="user_logeado.permisos == '*'"
+                    class="menu-item"
+                    :class="[
+                        route_current == 'reportes.g_seguimiento_productos'
+                            ? 'active'
+                            : 'none',
+                    ]"
+                >
+                    <Link
+                        :href="route('reportes.g_seguimiento_productos')"
+                        class="menu-link"
+                    >
+                        <div class="menu-icon">
+                            <i class="fa fa-chart-pie"></i>
+                        </div>
+                        <div class="menu-text">
+                            Seguimiento de Solicitud de productos
+                        </div>
+                    </Link>
+                </div>
+
                 <div class="menu-header">OTROS</div>
                 <div
                     v-if="

@@ -5,7 +5,8 @@ import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 import { useAxios } from "@/composables/axios/useAxios";
 const { oConfiguracion } = useConfiguracion();
 
-const { url_assets } = usePage().props;
+const { url_assets, auth } = usePage().props;
+const user = auth.user;
 const { axiosPost } = useAxios();
 const props = defineProps({
     open_dialog: {
@@ -311,6 +312,12 @@ onMounted(() => {});
                         ><i class="fa fa-times"></i> Cerrar</a
                     >
                     <button
+                        v-if="
+                            user?.permisos == '*' ||
+                            user?.permisos.includes(
+                                'solicitud_productos.seguimiento'
+                            )
+                        "
                         type="button"
                         class="btn btn-primary"
                         v-html="txtBtnGuardar"

@@ -152,7 +152,7 @@ const renderChart = (containerId, categories, data) => {
                     });
                 });
 
-                return `<h4 style="font-size:11px" class="mb-1">${this.series.name} - ${this.x}</h4><br>
+                return `<h4 style="font-size:13px" class="w-100 text-center mb-0">${this.x}</h4><br>
                 <table class="border">
                     <thead>
                         <tr>
@@ -171,7 +171,7 @@ const renderChart = (containerId, categories, data) => {
 
         series: [
             {
-                name: "Ordenes de venta",
+                name: "Solicitud de productos",
                 data: data,
                 colorByPoint: true,
             },
@@ -191,7 +191,9 @@ onMounted(() => {
     <!-- BEGIN breadcrumb -->
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="javascript:;">Inicio</a></li>
-        <li class="breadcrumb-item active">Gráficas > Solicitud de compra de productos</li>
+        <li class="breadcrumb-item active">
+            Gráficas > Solicitud de compra de productos
+        </li>
     </ol>
     <!-- END breadcrumb -->
     <!-- BEGIN page-header -->

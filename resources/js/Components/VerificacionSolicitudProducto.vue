@@ -5,7 +5,8 @@ import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 import { useAxios } from "@/composables/axios/useAxios";
 const { oConfiguracion } = useConfiguracion();
 
-const { url_assets } = usePage().props;
+const { url_assets, auth } = usePage().props;
+const user = auth.user;
 const { axiosPost } = useAxios();
 const props = defineProps({
     open_dialog: {
@@ -384,7 +385,13 @@ onMounted(() => {});
                     <button
                         type="button"
                         class="btn btn-primary"
-                        v-if="oSolicitudProducto.estado_solicitud != 'APROBADO'"
+                        v-if="
+                            oSolicitudProducto.estado_solicitud != 'APROBADO' &&
+                            (user?.permisos == '*' ||
+                                user?.permisos.includes(
+                                    'solicitud_productos.confirmar'
+                                ))
+                        "
                         v-html="txtBtnGuardar"
                         @click="enviarFormulario"
                         :disabled="enviando"

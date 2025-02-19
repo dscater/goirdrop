@@ -49,8 +49,9 @@ const listPublicacions = ref([]);
 const listEstados = ref([
     { value: "todos", label: "TODOS" },
     { value: "PENDIENTE", label: "PENDIENTE" },
-    { value: "RECHAZADO", label: "RECHAZADO" },
-    { value: "CONFIRMADO", label: "CONFIRMADO" },
+    { value: "EN PROCESO", label: "EN PROCESO" },
+    { value: "EN ALMACÉN", label: "EN ALMACÉN" },
+    { value: "ENTREGADO", label: "ENTREGADO" },
 ]);
 
 const cargarPublicacions = () => {
@@ -69,7 +70,9 @@ const generarGrafico = async () => {
     generando.value = true;
     axios;
     axios
-        .get(route("reportes.r_g_orden_ventas"), { params: form.value })
+        .get(route("reportes.r_g_seguimiento_productos"), {
+            params: form.value,
+        })
         .then((response) => {
             nextTick(() => {
                 const containerId = `container`;
@@ -97,7 +100,7 @@ const renderChart = (containerId, categories, data) => {
         },
         title: {
             align: "center",
-            text: `ORDENES DE VENTA`,
+            text: `SEGUIMIENTO DE SOLICITUD DE COMPRA DE PRODUCTOS`,
         },
         subtitle: {
             align: "center",
@@ -138,15 +141,15 @@ const renderChart = (containerId, categories, data) => {
         tooltip: {
             useHTML: true,
             formatter: function () {
-                // console.log(this.point.ordenVentas);
+                // console.log(this.point.solicitudProductos);
 
                 let trTbody = ``;
-                this.point.ordenVentas.forEach((elem) => {
-                    elem.detalle_venta.forEach((elemDetalle) => {
+                this.point.solicitudProductos.forEach((elem) => {
+                    elem.solicitud_detalles.forEach((elemDetalle) => {
                         trTbody += `<tr>`;
-                        trTbody += `<td class="border p-1">${elem.codigo}</td>`;
-                        trTbody += `<td class="border p-1">${elemDetalle.producto.nombre}</td>`;
-                        trTbody += `<td class="border p-1">${elemDetalle.cantidad}</td>`;
+                        trTbody += `<td class="border p-1">${elem.codigo_solicitud}</td>`;
+                        trTbody += `<td class="border p-1">${elemDetalle.nombre_producto}</td>`;
+                        trTbody += `<td class="border p-1">1</td>`;
                         trTbody += `<td class="border p-1">${elem.cliente.full_name}</td>`;
                         trTbody += `</tr>`;
                     });
@@ -171,7 +174,7 @@ const renderChart = (containerId, categories, data) => {
 
         series: [
             {
-                name: "Ordenes de venta",
+                name: "Seguimiento Solicitud Producto",
                 data: data,
                 colorByPoint: true,
             },
@@ -187,15 +190,17 @@ onMounted(() => {
 });
 </script>
 <template>
-    <Head title="Ordenes de venta"></Head>
+    <Head title="Seguimiento de Solicitud de compra de productos"></Head>
     <!-- BEGIN breadcrumb -->
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="javascript:;">Inicio</a></li>
-        <li class="breadcrumb-item active">Gráficas > Ordenes de venta</li>
+        <li class="breadcrumb-item active">
+            Gráficas > Seguimiento de Solicitud de compra de productos
+        </li>
     </ol>
     <!-- END breadcrumb -->
     <!-- BEGIN page-header -->
-    <h1 class="page-header">Gráficas > Ordenes de venta</h1>
+    <h1 class="page-header">Gráficas > Seguimiento de Solicitud de compra de productos</h1>
     <!-- END page-header -->
     <div class="row">
         <div class="col-md-6 mx-auto">
