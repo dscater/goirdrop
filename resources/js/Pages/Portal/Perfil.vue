@@ -10,7 +10,9 @@ import { ref, onMounted, computed } from "vue";
 import { useApp } from "@/composables/useApp";
 import { router, useForm, usePage, Head, Link } from "@inertiajs/vue3";
 import { useUser } from "@/composables/useUser";
+import { useUsuarios } from "@/composables/usuarios/useUsuarios";
 const { setLoading } = useApp();
+const { oUsuario, limpiarUsuario, setUsuario } = useUsuarios();
 onMounted(() => {
     setTimeout(() => {
         setLoading(false);
@@ -31,6 +33,7 @@ const imagen_cargada = ref(false);
 function cargaImagen(e) {
     foto.value = e.target.files[0];
     props.user.url_foto = URL.createObjectURL(foto.value);
+    user.value.url_foto = URL.createObjectURL(foto.value);
     imagen_cargada.value = true;
 }
 
@@ -78,6 +81,7 @@ function guardarImagen() {
 function cancelarImagen() {
     imagen_cargada.value = false;
     props.user.url_foto = url_aux.value;
+    user.value.url_foto = url_aux.value;
 }
 
 const form = useForm({
@@ -100,7 +104,7 @@ const enviaFormulario = () => {
             Swal.fire({
                 icon: "success",
                 title: "Correcto",
-                text: `${flash.bien ? flash.bien : "Proceso realizado"}`,
+                text: `Proceso realizado`,
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: `Aceptar`,
             });
@@ -110,11 +114,7 @@ const enviaFormulario = () => {
             Swal.fire({
                 icon: "info",
                 title: "Error",
-                text: `${
-                    flash.error
-                        ? flash.error
-                        : "Tienes errores en el formulario"
-                }`,
+                text: `Tienes errores en el formulario`,
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: `Aceptar`,
             });
@@ -124,26 +124,8 @@ const enviaFormulario = () => {
 };
 
 // INFORMACION
-let formInfo = useForm({
-    nombre: "",
-    paterno: "",
-    materno: "",
-    ci: "",
-    complemento: "",
-    ci_exp: "",
-    fono: "",
-    dpto_residencia: "",
-    email: "",
-    foto_ci_anverso: "",
-    foto_ci_reverso: "",
-    banco: "",
-    nro_cuenta: "",
-    moneda: "",
-    password: "",
-    password_confirmation: "",
-});
+let formInfo = ref(null);
 const oCliente = ref(null);
-
 const errors = ref([]);
 
 const listExpedido = [
@@ -170,24 +152,6 @@ const listUbicacions = [
     { value: "BENI", label: "Beni" },
 ];
 
-const listBancos = ref([
-    "BANCO NACIONAL DE BOLIVIA S.A.",
-    "BANCO MERCANTIL SANTA CRUZ S.A.",
-    "BANCO BISA S.A.",
-    "BANCO DE CRÉDITO DE BOLIVIA S.A.",
-    "BANCO ECONÓMICO S.A.",
-    "BANCO GANADERO S.A.",
-    "BANCO SOLIDARIO S.A.",
-    "BANCO DE LA NACIÓN ARGENTINA",
-    "BANCO PARA EL FOMENTO A INICIATIVAS ECONÓMICAS S.A.",
-    "BANCO FORTALEZA S.A.",
-    "BANCO PRODEM S.A.",
-    "BANCO PYME DE LA COMUNIDAD S.A.",
-    "BANCO PYME ECOFUTURO S.A.",
-    "BANCO DE DESARROLLO PRODUCTIVO S.A.M.",
-    "BANCO UNIÓN S.A.",
-]);
-
 var url_assets = "";
 var url_principal = "";
 
@@ -207,37 +171,33 @@ const verTerminosCondiciones = () => {
 };
 
 const submit = () => {
-    formInfo.post(route("profile.updateInfoCliente"), {
-        onSuccess: () => {
-            Swal.fire({
-                icon: "success",
-                title: "Correcto",
-                text: `Información actualizada`,
-                confirmButtonColor: "#3085d6",
-                confirmButtonText: `Aceptar`,
-            });
-        },
-        onFinish: () => {},
-    });
+    formInfo.value.post(
+        route(
+            "clientes.update",
+            user.value.cliente ? user.value.cliente.id : 0
+        ),
+        {
+            onSuccess: () => {
+                Swal.fire({
+                    icon: "success",
+                    title: "Correcto",
+                    text: `Información actualizada`,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: `Aceptar`,
+                });
+                setTimeout(() => {
+                    // window.location.reload();
+                }, 1000);
+            },
+            onFinish: () => {},
+        }
+    );
 };
 
 const getCliente = () => {
     axios.get(route("profile.getInfoCliente")).then((response) => {
-        oCliente.value = response.data;
-        formInfo.nombre = response.data.nombre;
-        formInfo.paterno = response.data.paterno;
-        formInfo.materno = response.data.materno;
-        formInfo.ci = response.data.ci;
-        formInfo.complemento = response.data.complemento;
-        formInfo.ci_exp = response.data.ci_exp;
-        formInfo.fono = response.data.fono;
-        formInfo.dpto_residencia = response.data.dpto_residencia;
-        formInfo.email = response.data.email;
-        formInfo.foto_ci_anverso = response.data.foto_ci_anverso;
-        formInfo.foto_ci_reverso = response.data.foto_ci_reverso;
-        formInfo.banco = response.data.banco;
-        formInfo.nro_cuenta = response.data.nro_cuenta;
-        formInfo.moneda = response.data.moneda;
+        setUsuario(response.data.user, true, "user");
+        formInfo.value = useForm(oUsuario.value);
     });
 };
 
@@ -252,26 +212,25 @@ onMounted(() => {
     <Head title="Perfil"></Head>
 
     <div class="container pt-10px pb-20px section_page">
+        <h4 class="section-title clearfix">
+            <span class="flex-1"> Mi Perfil </span>
+        </h4>
         <div class="row mt-20px">
             <div class="col-md-7">
-                <h4 class="titlesec">
-                    <img :src="url_asset + 'imgs/16.png'" alt="" />
-                    <span>Mi perfil </span>
-                </h4>
                 <form
                     @submit.prevent="submit()"
                     class="bg-principal-portal2 p-3 login-content"
+                    v-if="formInfo"
                 >
                     <div class="row">
                         <div class="col-12">
                             <div class="form-floating mt-20px">
                                 <input
                                     type="text"
-                                    name="nombre"
+                                    name="nombres"
                                     class="form-control fs-13px h-45px border-0"
                                     placeholder="Nombre(s)"
-                                    v-model="formInfo.nombre"
-                                    readonly
+                                    v-model="formInfo.cliente.nombres"
                                 />
                                 <label
                                     for="name"
@@ -279,111 +238,43 @@ onMounted(() => {
                                     >Nombre(s)*</label
                                 >
                             </div>
-                            <div class="w-100" v-if="formInfo.errors?.nombre">
+                            <div
+                                class="w-100"
+                                v-if="
+                                    formInfo.errors &&
+                                    formInfo.errors['cliente.nombres']
+                                "
+                            >
                                 <span
                                     class="invalid-feedback alert alert-danger"
                                     style="display: block"
                                     role="alert"
                                 >
                                     <strong>{{
-                                        formInfo.errors.nombre
+                                        formInfo.errors["cliente.nombres"]
                                     }}</strong>
                                 </span>
                             </div>
                             <div class="form-floating mt-20px">
                                 <input
                                     type="text"
-                                    name="paterno"
+                                    name="apellidos"
                                     class="form-control fs-13px h-45px border-0"
-                                    placeholder="Apellido Paterno"
-                                    v-model="formInfo.paterno"
-                                    readonly
+                                    placeholder="Apellidos"
+                                    v-model="formInfo.cliente.apellidos"
                                 />
                                 <label
                                     for="name"
                                     class="d-flex align-items-center text-gray-600 fs-13px"
-                                    >Apellido Paterno*</label
-                                >
-                            </div>
-                            <div class="w-100" v-if="formInfo.errors?.paterno">
-                                <span
-                                    class="invalid-feedback alert alert-danger"
-                                    style="display: block"
-                                    role="alert"
-                                >
-                                    <strong>{{
-                                        formInfo.errors.paterno
-                                    }}</strong>
-                                </span>
-                            </div>
-                            <div class="form-floating mt-20px">
-                                <input
-                                    type="text"
-                                    name="materno"
-                                    class="form-control fs-13px h-45px border-0"
-                                    placeholder="Apellido Materno"
-                                    v-model="formInfo.materno"
-                                    readonly
-                                />
-                                <label
-                                    for="name"
-                                    class="d-flex align-items-center text-gray-600 fs-13px"
-                                    >Apellido Materno</label
-                                >
-                            </div>
-                            <div class="w-100" v-if="formInfo.errors?.materno">
-                                <span
-                                    class="invalid-feedback alert alert-danger"
-                                    style="display: block"
-                                    role="alert"
-                                >
-                                    <strong>{{
-                                        formInfo.errors.materno
-                                    }}</strong>
-                                </span>
-                            </div>
-                            <div class="form-floating mt-20px">
-                                <input
-                                    type="text"
-                                    name="ci"
-                                    class="form-control fs-13px h-45px border-0"
-                                    placeholder="Documento de identidad"
-                                    v-model="formInfo.ci"
-                                    readonly
-                                />
-                                <label
-                                    for="name"
-                                    class="d-flex align-items-center text-gray-600 fs-13px"
-                                    >Documento de identidad*</label
-                                >
-                            </div>
-                            <div class="w-100" v-if="formInfo.errors?.ci">
-                                <span
-                                    class="invalid-feedback alert alert-danger"
-                                    style="display: block"
-                                    role="alert"
-                                >
-                                    <strong>{{ formInfo.errors.ci }}</strong>
-                                </span>
-                            </div>
-                            <div class="form-floating mt-20px">
-                                <input
-                                    type="text"
-                                    name="complemento"
-                                    class="form-control fs-13px h-45px border-0"
-                                    placeholder="Complemento"
-                                    v-model="formInfo.complemento"
-                                    readonly
-                                />
-                                <label
-                                    for="name"
-                                    class="d-flex align-items-center text-gray-600 fs-13px"
-                                    >Complemento</label
+                                    >Apellidos*</label
                                 >
                             </div>
                             <div
                                 class="w-100"
-                                v-if="formInfo.errors?.complemento"
+                                v-if="
+                                    formInfo.errors &&
+                                    formInfo.errors['cliente.apellidos']
+                                "
                             >
                                 <span
                                     class="invalid-feedback alert alert-danger"
@@ -391,98 +282,31 @@ onMounted(() => {
                                     role="alert"
                                 >
                                     <strong>{{
-                                        formInfo.errors.complemento
+                                        formInfo.errors["cliente.apellidos"]
                                     }}</strong>
                                 </span>
                             </div>
                             <div class="form-floating mt-20px">
                                 <input
                                     type="text"
-                                    name="complemento"
+                                    name="correo"
                                     class="form-control fs-13px h-45px border-0"
-                                    placeholder="Complemento"
-                                    v-model="formInfo.ci_exp"
-                                    readonly
-                                />
-                                <!-- <select
-                                    name="ci_exp"
-                                    class="form-control fs-13px h-45px border-0"
-                                    placeholder="Lugar de expedición"
-                                    v-model="formInfo.ci_exp"
-                                    readonly
-                                >
-                                    <option value="">- Seleccione -</option>
-                                    <option
-                                        v-for="item in listExpedido"
-                                        :value="item.value"
-                                    >
-                                        {{ item.label }}
-                                    </option>
-                                </select> -->
-                                <label
-                                    for="name"
-                                    class="d-flex align-items-center text-gray-600 fs-13px"
-                                    >Lugar de expedición*</label
-                                >
-                            </div>
-                            <div class="w-100" v-if="formInfo.errors?.ci_exp">
-                                <span
-                                    class="invalid-feedback alert alert-danger"
-                                    style="display: block"
-                                    role="alert"
-                                >
-                                    <strong>{{
-                                        formInfo.errors.ci_exp
-                                    }}</strong>
-                                </span>
-                            </div>
-                            <div class="form-floating mt-20px">
-                                <input
-                                    type="text"
-                                    name="fono"
-                                    class="form-control fs-13px h-45px border-0"
-                                    placeholder="Número de Celular"
-                                    v-model="formInfo.fono"
+                                    placeholder="Correo"
+                                    v-model="formInfo.cliente.correo"
                                 />
                                 <label
                                     for="name"
                                     class="d-flex align-items-center text-gray-600 fs-13px"
-                                    >Número de Celular*</label
+                                    >Correo*</label
                                 >
                             </div>
-                            <div class="w-100" v-if="formInfo.errors?.fono">
-                                <span
-                                    class="invalid-feedback alert alert-danger"
-                                    style="display: block"
-                                    role="alert"
-                                >
-                                    <strong>{{ formInfo.errors.fono }}</strong>
-                                </span>
-                            </div>
-                            <div class="form-floating mt-20px">
-                                <select
-                                    name="dpto_residencia"
-                                    class="form-control fs-13px h-45px border-0"
-                                    placeholder="Departamento donde resides"
-                                    v-model="formInfo.dpto_residencia"
-                                >
-                                    <option value="">- Seleccione -</option>
-                                    <option
-                                        v-for="item in listUbicacions"
-                                        :value="item.value"
-                                    >
-                                        {{ item.label }}
-                                    </option>
-                                </select>
-                                <label
-                                    for="name"
-                                    class="d-flex align-items-center text-gray-600 fs-13px"
-                                    >Departamento donde recides*</label
-                                >
-                            </div>
+
                             <div
                                 class="w-100"
-                                v-if="formInfo.errors?.dpto_residencia"
+                                v-if="
+                                    formInfo.errors &&
+                                    formInfo.errors['cliente.correo']
+                                "
                             >
                                 <span
                                     class="invalid-feedback alert alert-danger"
@@ -490,201 +314,61 @@ onMounted(() => {
                                     role="alert"
                                 >
                                     <strong>{{
-                                        formInfo.errors.dpto_residencia
+                                        formInfo.errors["cliente.correo"]
                                     }}</strong>
                                 </span>
                             </div>
                             <div class="form-floating mt-20px">
                                 <input
-                                    type="email"
-                                    name="email"
+                                    type="text"
+                                    name="cel"
                                     class="form-control fs-13px h-45px border-0"
-                                    placeholder="Correo electrónico"
-                                    v-model="formInfo.email"
+                                    placeholder="Celular"
+                                    v-model="formInfo.cliente.cel"
                                 />
                                 <label
+                                    for="name"
                                     class="d-flex align-items-center text-gray-600 fs-13px"
-                                    >Correo electrónico*</label
+                                    >Celular*</label
                                 >
                             </div>
-                            <div class="w-100" v-if="formInfo.errors?.email">
+
+                            <div
+                                class="w-100"
+                                v-if="
+                                    formInfo.errors &&
+                                    formInfo.errors['cliente.cel']
+                                "
+                            >
                                 <span
                                     class="invalid-feedback alert alert-danger"
                                     style="display: block"
                                     role="alert"
                                 >
-                                    <strong>{{ formInfo.errors.email }}</strong>
+                                    <strong>{{
+                                        formInfo.errors["cliente.cel"]
+                                    }}</strong>
                                 </span>
                             </div>
-                        </div>
-                        <h4 class="text-white mt-20px">
-                            Datos para Devolución de Garantías
-                        </h4>
-                        <div class="form-floating mb-20px">
-                            <select
-                                name="banco"
-                                class="form-control fs-13px h-45px border-0"
-                                placeholder="Banco"
-                                v-model="formInfo.banco"
-                            >
-                                <option value="">- Seleccione -</option>
-                                <option
-                                    v-for="item in listBancos"
-                                    :value="item"
-                                >
-                                    {{ item }}
-                                </option>
-                            </select>
-                            <label
-                                class="d-flex align-items-center text-gray-600 fs-13px mx-1"
-                                >Banco*</label
-                            >
-                        </div>
-                        <div class="w-100" v-if="formInfo.errors?.banco">
-                            <span
-                                class="invalid-feedback alert alert-danger"
-                                style="display: block"
-                                role="alert"
-                            >
-                                <strong>{{ formInfo.errors.banco }}</strong>
-                            </span>
-                        </div>
-                        <div class="form-floating mb-20px">
-                            <input
-                                type="text"
-                                name="nro_cuenta"
-                                class="form-control fs-13px h-45px border-0"
-                                placeholder="Número de cuenta"
-                                v-model="formInfo.nro_cuenta"
-                            />
-                            <label
-                                for="name"
-                                class="d-flex align-items-center text-gray-600 fs-13px mx-1"
-                                >Número de cuenta*</label
-                            >
-                        </div>
-                        <div class="w-100" v-if="formInfo.errors?.nro_cuenta">
-                            <span
-                                class="invalid-feedback alert alert-danger"
-                                style="display: block"
-                                role="alert"
-                            >
-                                <strong>{{
-                                    formInfo.errors.nro_cuenta
-                                }}</strong>
-                            </span>
-                        </div>
-                        <div class="form-floating mb-20px">
-                            <input
-                                type="text"
-                                name="moneda"
-                                class="form-control fs-13px h-45px border-0"
-                                placeholder="Moneda de cuenta Bancaria"
-                                v-model="formInfo.moneda"
-                            />
-                            <label
-                                for="name"
-                                class="d-flex align-items-center text-gray-600 fs-13px mx-1"
-                                >Moneda de cuenta Bancaria*</label
-                            >
-                        </div>
-                        <div class="w-100" v-if="formInfo.errors?.moneda">
-                            <span
-                                class="invalid-feedback alert alert-danger"
-                                style="display: block"
-                                role="alert"
-                            >
-                                <strong>{{ formInfo.errors.moneda }}</strong>
-                            </span>
                         </div>
 
-                        <div class="col-12 mb-20px">
+                        <div class="col-12 mt-20px">
                             <button
+                                type="button"
                                 class="btn btn-primary"
-                                @click="actualizaInformacion"
+                                @click="submit"
                             >
-                                Actualizar información
+                                Actualizar
                             </button>
                         </div>
                     </div>
-                    <!-- <div class="row mt-20px">
-                        <div class="col-12">
-                            <h4 class="text-white">Datos complementarios</h4>
-                            <div class="form-group mb-15px">
-                                <label
-                                    class="text-white d-flex align-items-center text-gray-600 fs-13px"
-                                    >Foto del C.I. anverso(PDF o Imagen)*</label
-                                >
-                                <input
-                                    type="file"
-                                    name="foto_ci_anverso"
-                                    class="form-control border-0"
-                                    placeholder="Foto del C.I. anverso(PDF o Imagen)"
-                                    @change="
-                                        cargaArchivo($event, 'foto_ci_anverso')
-                                    "
-                                />
-                            </div>
-                            <div
-                                class="w-100"
-                                v-if="formInfo.errors?.foto_ci_anverso"
-                            >
-                                <span
-                                    class="invalid-feedback alert alert-danger"
-                                    style="display: block"
-                                    role="alert"
-                                >
-                                    <strong>{{
-                                        formInfo.errors.foto_ci_anverso
-                                    }}</strong>
-                                </span>
-                            </div>
-                            <div class="form-group mb-20px">
-                                <label
-                                    class="text-white d-flex align-items-center text-gray-600 fs-13px"
-                                    >Foto del C.I. reverso(PDF o Imagen)*</label
-                                >
-                                <input
-                                    type="file"
-                                    name="foto_ci_reverso"
-                                    class="form-control border-0"
-                                    placeholder="Foto del C.I. reverso (PDF o Imagen)"
-                                    @change="
-                                        cargaArchivo($event, 'foto_ci_reverso')
-                                    "
-                                />
-                            </div>
-                            <div
-                                class="w-100"
-                                v-if="formInfo.errors?.foto_ci_reverso"
-                            >
-                                <span
-                                    class="invalid-feedback alert alert-danger"
-                                    style="display: block"
-                                    role="alert"
-                                >
-                                    <strong>{{
-                                        formInfo.errors.foto_ci_reverso
-                                    }}</strong>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="col-12 mt-20px">
-                            <button
-                                class="btn btn-primary"
-                                @click="actualizaInformacion"
-                            >
-                                Actualizar información
-                            </button>
-                        </div>
-                    </div> -->
                 </form>
             </div>
             <div class="col-md-5">
                 <h4 class="stitle"></h4>
                 <div class="row">
                     <div clas="col-12">
-                        <div class="info_foto">
+                        <div class="info_foto mb-3">
                             <img class="image" :src="user.url_foto" />
                             <br />
                             <label
@@ -701,15 +385,14 @@ onMounted(() => {
                             /></label>
                             <button
                                 v-if="imagen_cargada"
-                                class="w-50 mb-1 btn btn-success btn-sm"
+                                class="w-50 mb-1 btn btn-dark"
                                 @click="guardarImagen"
                             >
                                 Guardar cambios
                             </button>
-                            <br />
                             <button
                                 v-if="imagen_cargada"
-                                class="w-50 mb-1 btn"
+                                class="w-50 mb-1 btn btn-white"
                                 @click="cancelarImagen"
                             >
                                 Cancelar
@@ -718,7 +401,10 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <form class="bg-principal-portal2 p-3 login-content">
+                <form
+                    class="bg-principal-portal2 p-3 login-content"
+                    v-if="formInfo"
+                >
                     <div class="row">
                         <div class="col-12">
                             <div class="form-floating mt-20px">
@@ -727,7 +413,7 @@ onMounted(() => {
                                     name="usuario"
                                     class="form-control fs-13px h-45px border-0"
                                     placeholder="Nombre de usuario"
-                                    v-model="formInfo.email"
+                                    v-model="formInfo.correo"
                                     readonly
                                 />
                                 <label

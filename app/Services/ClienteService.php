@@ -36,7 +36,6 @@ class ClienteService
             "correo" => $datos["cliente"]["correo"],
         ]);
 
-
         // registrar accion
         $mensaje = "ACTUALIZÓ LA INFORMACIÓN DE UN CLIENTE";
         if ($datos["origen"] == "user") {

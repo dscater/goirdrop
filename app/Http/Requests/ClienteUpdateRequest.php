@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ClienteUpdateRequest extends FormRequest
 {
@@ -24,7 +25,12 @@ class ClienteUpdateRequest extends FormRequest
         return [
             "cliente.nombres" => "required|string|min:2",
             "cliente.apellidos" => "required|string|min:2",
-            "cliente.correo" => "required|email|unique:clientes,correo," . $this->cliente["id"],
+            "cliente.correo" => [
+                "required",
+                "email",
+                Rule::unique("clientes", "correo")->ignore($this->cliente["id"]),
+                Rule::unique("users", "correo")->ignore($this->id),
+            ],
             "cliente.cel" => "required|numeric|digits_between:6,10",
             "origen" => "required|string|in:admin,user",
             "acceso" => "required_if:origen,admin"

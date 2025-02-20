@@ -43,7 +43,10 @@ class ProfileController extends Controller
             $cliente = Auth::user()->cliente;
         }
 
-        return response()->JSON($cliente);
+        return response()->JSON([
+            "user" => Auth::user()->load(["cliente"]),
+            "cliente" => $cliente,
+        ]);
     }
 
 
