@@ -67,7 +67,6 @@ const aPublicacions = ref([]);
 
 const generarGrafico = async () => {
     generando.value = true;
-    axios;
     axios
         .get(route("reportes.r_g_orden_ventas"), { params: form.value })
         .then((response) => {
@@ -230,7 +229,6 @@ onMounted(() => {
                                     class="form-select"
                                     v-model="form.estado"
                                 >
-                                    <option value="todos">Todos</option>
                                     <option
                                         v-for="item in listEstados"
                                         :value="item.value"

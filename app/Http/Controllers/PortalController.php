@@ -51,6 +51,16 @@ class PortalController extends Controller
         return Inertia::render("Portal/MiCarrito");
     }
 
+    /**
+     * Página de solicitud de productos
+     *
+     * @return InertiaResponse
+     */
+    public function solicitudProductos(): InertiaResponse
+    {
+        return Inertia::render("Portal/solicitudProductos");
+    }
+
 
     /**
      * Ver Mis Solicitudes

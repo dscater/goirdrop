@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Parkinsans:wght@300..800&display=swap");
 :root {
-    --principal: #00497e;
+    --principal: #f59c1a;
     --principal_hover: #134869;
     --principal-portal: #171717;
     --principal-portal2: #26638d;
@@ -29,7 +29,13 @@
     width: 100%;
     max-width: 200px;
 }
-
+textarea:read-only:focus,
+input:read-only:focus,
+textarea:read-only,
+input:read-only {
+    background-color: rgb(226, 226, 226);
+    cursor: not-allowed;
+}
 .button_subasta_clientes {
     cursor: pointer;
     position: absolute;
@@ -380,7 +386,7 @@ html {
 }
 
 .app-sidebar .menu .menu-item.active > .menu-link {
-    background-color: var(--secundario);
+    background-color: var(--principal);
 }
 
 .app-sidebar.bg-dark .menu-item .menu-submenu .menu-item.active .menu-text {

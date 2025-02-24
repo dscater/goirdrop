@@ -24,7 +24,7 @@ class ConfiguracionService
             $configuracion = Configuracion::create([
                 "nombre_sistema" => $datos["nombre_sistema"],
                 "alias" => $datos["alias"],
-                "fono" => $datos["fono"],
+                "fono" =>  $datos["fono"],
                 "dir" => $datos["dir"],
                 "conf_correos" => $datos["conf_correos"],
                 "conf_moneda" => $datos["conf_moneda"],
@@ -34,7 +34,7 @@ class ConfiguracionService
             $configuracion->update([
                 "nombre_sistema" => $datos["nombre_sistema"],
                 "alias" => $datos["alias"],
-                "fono" => $datos["fono"],
+                "fono" =>  $datos["fono"],
                 "dir" => $datos["dir"],
                 "conf_correos" => $datos["conf_correos"],
                 "conf_moneda" => $datos["conf_moneda"],

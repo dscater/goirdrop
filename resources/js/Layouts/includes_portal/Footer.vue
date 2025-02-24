@@ -15,20 +15,21 @@ const user = ref(props_page.auth?.user);
         <div class="container">
             <!-- BEGIN row -->
             <div class="row">
-                <div class="col-lg-3"></div>
-                <!-- BEGIN col-3 -->
-                <div class="col-lg-3">
-                    <img
-                        :src="oConfiguracion.url_logo"
-                        alt=""
-                        class="img_logo"
-                    />
+                <!-- BEGIN col-4 -->
+                <div class="col-lg-4">
+                    <p class="font-weight-bold text-md"><i class="fa fa-map-marked-alt"></i> Direcciones</p>
+                    <div
+                        v-html="oConfiguracion.dir"
+                        :style="{ whiteSpace: 'pre-line' }"
+                    ></div>
                 </div>
-                <!-- END col-3 -->
-                <!-- BEGIN col-3 -->
-                <div class="col-lg-3">
-                    <h4 class="footer-header">{{ oConfiguracion.alias }}</h4>
-                    <ul class="fa-ul mb-lg-4 mb-0 p-0">
+                <!-- END col-4 -->
+                <!-- BEGIN col-4 -->
+                <div class="col-lg-4 text-center">
+                    <h2 class="font-weight-bold">
+                        {{ oConfiguracion.alias }}
+                    </h2>
+                    <ul class="fa-ul mb-lg-4 mb-0 p-0 text-left">
                         <li>
                             <i class="fa fa-fw fa-angle-right"></i>
                             <Link
@@ -55,13 +56,27 @@ const user = ref(props_page.auth?.user);
                         </li>
                         <li>
                             <i class="fa fa-fw fa-angle-right"></i>
-                            <Link :href="route('portal.miCarrito')"
+                            <Link
+                                :href="route('portal.miCarrito')"
+                                class="text-white"
                                 >Mi carrito
                             </Link>
                         </li>
                     </ul>
                 </div>
-                <!-- END col-3 -->
+                <!-- END col-4 -->
+                <!-- BEGIN col-4 -->
+                <div class="col-lg-4">
+                    <p class="font-weight-bold text-md"><i class="fa fa-phone"></i> Teléfono Principal</p>
+                    <div
+                        style="font-size: 1.4rem"
+                        class="font-weight-bold"
+                        :style="{ whiteSpace: 'pre-line' }"
+                    >
+                        <span v-html="` ${oConfiguracion.fono}`"></span>
+                    </div>
+                </div>
+                <!-- END col-4 -->
             </div>
             <!-- END row -->
         </div>
@@ -77,7 +92,7 @@ const user = ref(props_page.auth?.user);
 
 .footer {
     color: white;
-    background-color: var(--principal-portal);
+    background-color: var(--principal);
     box-shadow: none;
 }
 

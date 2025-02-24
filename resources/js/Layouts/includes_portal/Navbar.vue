@@ -6,6 +6,7 @@ import { useOrdenVentaStore } from "@/stores/ordenVenta/ordenVentaStore";
 const ordenVentaStore = useOrdenVentaStore();
 const { oConfiguracion } = useConfiguracion();
 const { props: props_page } = usePage();
+const auth = props_page.auth;
 const user = ref(props_page.auth?.user);
 const url_asset = ref(props_page.url_assets);
 
@@ -97,7 +98,12 @@ onMounted(() => {
                         :class="{ show: colapse }"
                         ref="navbarCollapse"
                     >
-                        <ul class="nav justify-content-center">
+                        <ul
+                            class="nav justify-content-center"
+                            :style="{
+                                minWidth: auth && auth.user ? '670px' : '530px',
+                            }"
+                        >
                             <li
                                 :class="[
                                     route_current == 'portal.index'
@@ -123,6 +129,18 @@ onMounted(() => {
                                 >
                             </li>
                             <li
+                                :class="[
+                                    route_current == 'portal.solicitudProductos'
+                                        ? 'active'
+                                        : '',
+                                ]"
+                            >
+                                <Link :href="route('portal.solicitudProductos')"
+                                    ><i class="fa fa-clipboard fa-1x"></i
+                                    >Solicitud de productos</Link
+                                >
+                            </li>
+                            <li
                                 v-if="user && user.role_id == 2"
                                 :class="[
                                     route_current == 'portal.misSolicitudes'
@@ -132,7 +150,7 @@ onMounted(() => {
                             >
                                 <Link :href="route('portal.misSolicitudes')"
                                     ><i class="fa fa-clipboard fa-1x"></i>Mis
-                                    solicitudes</Link
+                                    compras</Link
                                 >
                             </li>
                             <li
@@ -226,7 +244,9 @@ onMounted(() => {
     <!-- END #header -->
 </template>
 <style scoped>
+
 .header {
+    background-color: var(--principal);
     border-bottom: solid 20px var(--principal-portal);
     height: 115px;
     transition: 0.3s all;
@@ -286,6 +306,13 @@ onMounted(() => {
 
 .header.header-fixed .header-menu {
     margin-top: 20px;
+}
+
+.header-menu .nav {
+    flex-wrap: nowrap;
+}
+.header-menu .nav ul {
+    width: 100%;
 }
 
 .header-menu .nav li {
@@ -393,7 +420,20 @@ onMounted(() => {
     border-color: var(--principal-portal);
     margin-top: 40px;
 }
+
+@media (max-width: 990px) {
+    .header-menu .navbar-collapse {
+        overflow: auto;
+        max-width: 460px;
+    }
+}
+
 @media (max-width: 800px) {
+    .header-menu .navbar-collapse {
+        overflow: auto;
+        max-width: 400px;
+    }
+
     .header.header-fixed {
         height: 66px;
     }

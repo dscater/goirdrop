@@ -25,6 +25,7 @@ const form = ref({
     observacion: oSolicitudProducto.value?.observacion,
     precio_compra: oSolicitudProducto.value?.precio_compra,
     margen_ganancia: oSolicitudProducto.value?.margen_ganancia,
+    totalSolicitud: 0,
 });
 const enviando = ref(false);
 const listEstados = ref(["PENDIENTE", "RECHAZADO", "APROBADO"]);
@@ -64,6 +65,37 @@ const cerrarDialog = () => {
     if (props.hideBg) {
         document.getElementsByTagName("body")[0].classList.remove("modal-open");
     }
+};
+
+const totalSolicitud = computed(() => {
+    if (
+        oSolicitudProducto.value.margen_ganancia &&
+        oSolicitudProducto.value.precio_compra
+    ) {
+        const total =
+            parseFloat(
+                isNaN(oSolicitudProducto.value.margen_ganancia)
+                    ? 0
+                    : oSolicitudProducto.value.margen_ganancia
+            ) +
+            parseFloat(
+                isNaN(oSolicitudProducto.value.precio_compra)
+                    ? 0
+                    : oSolicitudProducto.value.precio_compra
+            );
+        return total;
+    }
+    return "";
+});
+const calculaTotal = () => {
+    const total =
+        parseFloat(
+            isNaN(form.value.margen_ganancia) ? 0 : form.value.margen_ganancia
+        ) +
+        parseFloat(
+            isNaN(form.value.precio_compra) ? 0 : form.value.precio_compra
+        );
+    form.value.totalSolicitud = total;
 };
 
 const tituloDialog = computed(() => {
@@ -239,7 +271,8 @@ onMounted(() => {});
                                             <input
                                                 class="form-control"
                                                 v-model="form.precio_compra"
-                                                type="text"
+                                                type="number"
+                                                @keyup="calculaTotal"
                                                 v-else
                                             />
                                         </div>
@@ -267,9 +300,34 @@ onMounted(() => {});
                                             <input
                                                 class="form-control"
                                                 v-model="form.margen_ganancia"
-                                                type="text"
+                                                type="number"
+                                                @keyup="calculaTotal"
                                                 v-else
                                             />
+                                        </div>
+                                    </div>
+                                    <div class="row my-2">
+                                        <div class="col-4 text-right">
+                                            <strong
+                                            class="text-md"
+                                                >Total
+                                                {{
+                                                    oConfiguracion?.conf_moneda
+                                                        .abrev
+                                                }}:</strong
+                                            >
+                                        </div>
+                                        <div class="col-8">
+                                            <template
+                                                v-if="
+                                                    oSolicitudProducto.estado_solicitud ==
+                                                    'APROBADO'
+                                                "
+                                                >{{ totalSolicitud }}</template
+                                            >
+                                            <span v-else class="text-md">{{
+                                                form.totalSolicitud
+                                            }}</span>
                                         </div>
                                     </div>
                                 </div>

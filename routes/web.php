@@ -51,6 +51,8 @@ Route::get("productos/verProducto/{producto}", [PortalController::class, 'produc
 
 Route::get("productos/miCarrito", [PortalController::class, 'miCarrito'])->name("portal.miCarrito");
 
+Route::get("productos/solicitudProductos", [PortalController::class, 'solicitudProductos'])->name("portal.solicitudProductos");
+
 Route::get("productos/misSolicitudes", [PortalController::class, 'misSolicitudes'])->name("portal.misSolicitudes");
 
 // configuracion pagos
@@ -68,6 +70,9 @@ Route::get("categorias/listadoPortal", [CategoriaController::class, 'listadoPort
 Route::get('profile_cliente', [ProfileController::class, 'profile_cliente'])->name('profile.profile_cliente');
 Route::get('getInfoCliente', [ProfileController::class, 'getInfoCliente'])->name('profile.getInfoCliente');
 Route::post('updateInfoCliente', [ProfileController::class, 'updateInfoCliente'])->name('profile.updateInfoCliente');
+
+// SEDES
+Route::get("sedes/listado", [SedeController::class, 'listado'])->name("sedes.listado");
 
 // ADMINISTRACION
 Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function () {
@@ -115,9 +120,6 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::resource("roles", RoleController::class)->only(
         ["index", "store", "edit", "show", "update", "destroy"]
     );
-
-    // SEDES
-    Route::get("sedes/listado", [SedeController::class, 'listado'])->name("sedes.listado");
 
     // CATEGORIAS
     Route::get("categorias/api", [CategoriaController::class, 'api'])->name("categorias.api");

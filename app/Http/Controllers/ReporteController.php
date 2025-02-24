@@ -590,14 +590,14 @@ class ReporteController extends Controller
 
             $fila = 2;
             $sheet->setCellValue('A' . $fila, $this->configuracion->nombre_sistema);
-            $sheet->mergeCells("A" . $fila . ":N" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':N' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->titulo);
+            $sheet->mergeCells("A" . $fila . ":M" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':M' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':M' . $fila)->applyFromArray($this->titulo);
             $fila++;
             $sheet->setCellValue('A' . $fila, "LISTA DE SOLICITUD DE COMPRA DE PRODUCTOS");
-            $sheet->mergeCells("A" . $fila . ":N" . $fila);  //COMBINAR CELDAS
-            $sheet->getStyle('A' . $fila . ':N' . $fila)->getAlignment()->setHorizontal('center');
-            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->titulo);
+            $sheet->mergeCells("A" . $fila . ":M" . $fila);  //COMBINAR CELDAS
+            $sheet->getStyle('A' . $fila . ':M' . $fila)->getAlignment()->setHorizontal('center');
+            $sheet->getStyle('A' . $fila . ':M' . $fila)->applyFromArray($this->titulo);
             $fila++;
             $fila++;
 
@@ -608,14 +608,13 @@ class ReporteController extends Controller
             $sheet->setCellValue('E' . $fila, 'SEDE');
             $sheet->setCellValue('F' . $fila, 'PRODUCTO');
             $sheet->setCellValue('G' . $fila, 'DETALLE');
-            $sheet->setCellValue('H' . $fila, 'LINKS REFERENCIA');
-            $sheet->setCellValue('I' . $fila, 'ESTADO DE SOLICITUD');
-            $sheet->setCellValue('J' . $fila, "PRECIO COMPRA \n" . ($this->configuracion->conf_moneda ? $this->configuracion->conf_moneda["abrev"] : ''));
-            $sheet->setCellValue('K' . $fila, "MARGEN GANANCIA \n" . ($this->configuracion->conf_moneda ? $this->configuracion->conf_moneda["abrev"] : ''));
-            $sheet->setCellValue('L' . $fila, 'OBSERVACIÓN');
-            $sheet->setCellValue('M' . $fila, 'SEGUIMIENTO');
-            $sheet->setCellValue('N' . $fila, 'FECHA DE SOLICITUD');
-            $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->headerTabla);
+            $sheet->setCellValue('H' . $fila, 'ESTADO DE SOLICITUD');
+            $sheet->setCellValue('I' . $fila, "PRECIO COMPRA \n" . ($this->configuracion->conf_moneda ? $this->configuracion->conf_moneda["abrev"] : ''));
+            $sheet->setCellValue('J' . $fila, "MARGEN GANANCIA \n" . ($this->configuracion->conf_moneda ? $this->configuracion->conf_moneda["abrev"] : ''));
+            $sheet->setCellValue('K' . $fila, 'OBSERVACIÓN');
+            $sheet->setCellValue('L' . $fila, 'SEGUIMIENTO');
+            $sheet->setCellValue('M' . $fila, 'FECHA DE SOLICITUD');
+            $sheet->getStyle('A' . $fila . ':M' . $fila)->applyFromArray($this->headerTabla);
             $fila++;
             $cont = 1;
 
@@ -631,17 +630,19 @@ class ReporteController extends Controller
                 )->get()->first();
                 $sheet->setCellValue('F' . $fila, $solicitudDetalle->nombre_producto ?? '');
                 $sheet->setCellValue('G' . $fila, $solicitudDetalle->detalle_producto ?? '');
+                $sheet->setCellValue('H' . $fila, $solicitud_producto->estado_solicitud);
+                $sheet->setCellValue('I' . $fila, $solicitud_producto->precio_compra ?? '');
+                $sheet->setCellValue('J' . $fila, $solicitud_producto->margen_ganancia ?? '');
+                $sheet->setCellValue('K' . $fila, $solicitud_producto->observacion ?? '');
+                $sheet->setCellValue('L' . $fila, $solicitud_producto->estado_seguimiento ?? '');
+                $sheet->setCellValue('M' . $fila, $solicitud_producto->fecha_solicitud_t);
+                $sheet->getStyle('A' . $fila . ':M' . $fila)->applyFromArray($this->bodyTabla);
+                $fila++;
                 $links = str_replace(["<br />", "<br/>", "<br>", "<BR/>", "<BR />", "<BR>"], "\n", $solicitudDetalle->links_referencia);
-                $sheet->setCellValue('H' . $fila, $links);
-                $sheet->setCellValue('I' . $fila, $solicitud_producto->estado_solicitud);
-                $sheet->setCellValue('J' . $fila, $solicitud_producto->precio_compra ?? '');
-                $sheet->setCellValue('K' . $fila, $solicitud_producto->margen_ganancia ?? '');
-                $sheet->setCellValue('L' . $fila, $solicitud_producto->observacion ?? '');
-                $sheet->setCellValue('M' . $fila, $solicitud_producto->estado_seguimiento ?? '');
-                $sheet->setCellValue('N' . $fila, $solicitud_producto->fecha_solicitud_t);
+                $sheet->setCellValue('A' . $fila, $links);
+                $sheet->mergeCells("A" . $fila . ":M" . $fila);  //COMBINAR CELDAS
+                $sheet->getStyle('A' . $fila . ':M' . $fila)->applyFromArray($this->bodyTabla);
 
-
-                $sheet->getStyle('A' . $fila . ':N' . $fila)->applyFromArray($this->bodyTabla);
                 $fila++;
             }
 
@@ -659,9 +660,8 @@ class ReporteController extends Controller
             $sheet->getColumnDimension('K')->setWidth(15);
             $sheet->getColumnDimension('L')->setWidth(15);
             $sheet->getColumnDimension('M')->setWidth(15);
-            $sheet->getColumnDimension('N')->setWidth(15);
 
-            foreach (range('A', 'N') as $columnID) {
+            foreach (range('A', 'M') as $columnID) {
                 $sheet->getStyle($columnID)->getAlignment()->setWrapText(true);
             }
 
@@ -670,7 +670,7 @@ class ReporteController extends Controller
             $sheet->getPageMargins()->setRight(0.1);
             $sheet->getPageMargins()->setLeft(0.1);
             $sheet->getPageMargins()->setBottom(0.1);
-            $sheet->getPageSetup()->setPrintArea('A:N');
+            $sheet->getPageSetup()->setPrintArea('A:M');
             $sheet->getPageSetup()->setFitToWidth(1);
             $sheet->getPageSetup()->setFitToHeight(0);
 

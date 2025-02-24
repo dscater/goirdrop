@@ -142,6 +142,32 @@ onMounted(() => {});
                                     >
                                 </div>
                             </div>
+                            <div
+                                class="row my-2"
+                                v-if="
+                                    oSolicitudProducto.estado_solicitud ==
+                                    'APROBADO'
+                                "
+                            >
+                                <div class="col-12">
+                                    <div class="row my-2">
+                                        <div class="col-4 text-right">
+                                            <strong class="text-md"
+                                                >Total
+                                                {{
+                                                    oConfiguracion?.conf_moneda
+                                                        .abrev
+                                                }}:</strong
+                                            >
+                                        </div>
+                                        <div class="col-8 text-md">
+                                            {{
+                                                oSolicitudProducto.total_precio
+                                            }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row my-2">
                                 <div class="col-4 text-right">
                                     <strong>Estado Entrega:</strong>
@@ -205,21 +231,25 @@ onMounted(() => {});
                                         <th class="text-white text-sm">
                                             Detalle del producto
                                         </th>
-                                        <th class="text-white text-sm">
-                                            Links de referencia
-                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr
+                                    <template
                                         v-for="(
                                             item, index
                                         ) in oSolicitudProducto.solicitud_detalles"
                                     >
-                                        <td>{{ item.nombre_producto }}</td>
-                                        <td>{{ item.detalle_producto }}</td>
-                                        <td v-html="item.links_referencia"></td>
-                                    </tr>
+                                        <tr>
+                                            <td>{{ item.nombre_producto }}</td>
+                                            <td>{{ item.detalle_producto }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                colspan="3"
+                                                v-html="item.links_referencia"
+                                            ></td>
+                                        </tr>
+                                    </template>
                                 </tbody>
                             </table>
                         </div>

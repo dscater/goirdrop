@@ -123,11 +123,11 @@ onMounted(() => {});
                         }}</span>
                     </div>
                     <div class="col-md-4 form-group mb-3">
-                        <label for="">Teléfono/Celular*</label>
+                        <label for="">Teléfono/Celular Principal*</label>
                         <input
                             type="text"
-                            class="form-control"
                             v-model="form.fono"
+                            class="form-control"
                         />
                         <span class="text-danger" v-if="form.errors?.fono">{{
                             form.errors.fono
@@ -135,11 +135,11 @@ onMounted(() => {});
                     </div>
                     <div class="col-md-4 form-group mb-3">
                         <label for="">Dirección*</label>
-                        <input
-                            type="text"
-                            class="form-control"
+                        <el-input
+                            type="textarea"
                             v-model="form.dir"
-                        />
+                            autosize
+                        ></el-input>
                         <span class="text-danger" v-if="form.errors?.dir">{{
                             form.errors.dir
                         }}</span>
@@ -176,8 +176,11 @@ onMounted(() => {});
                             />
                             <span
                                 class="text-danger"
-                                v-if="form.errors && form.errors['conf_correos.host']"
-                                >{{ form.errors['conf_correos.host'] }}</span
+                                v-if="
+                                    form.errors &&
+                                    form.errors['conf_correos.host']
+                                "
+                                >{{ form.errors["conf_correos.host"] }}</span
                             >
                         </div>
                         <div class="col-md-4 form-group mb-3">
@@ -188,8 +191,11 @@ onMounted(() => {});
                             />
                             <span
                                 class="text-danger"
-                                v-if="form.errors && form.errors['conf_correos.puerto']"
-                                >{{ form.errors['conf_correos.puerto'] }}</span
+                                v-if="
+                                    form.errors &&
+                                    form.errors['conf_correos.puerto']
+                                "
+                                >{{ form.errors["conf_correos.puerto"] }}</span
                             >
                         </div>
                         <div class="col-md-4 form-group mb-3">
@@ -200,8 +206,13 @@ onMounted(() => {});
                             />
                             <span
                                 class="text-danger"
-                                v-if="form.errors && form.errors['conf_correos.encriptado']"
-                                >{{ form.errors['conf_correos.encriptado'] }}</span
+                                v-if="
+                                    form.errors &&
+                                    form.errors['conf_correos.encriptado']
+                                "
+                                >{{
+                                    form.errors["conf_correos.encriptado"]
+                                }}</span
                             >
                         </div>
                         <div class="col-md-4 form-group mb-3">
@@ -212,8 +223,11 @@ onMounted(() => {});
                             />
                             <span
                                 class="text-danger"
-                                v-if="form.errors && form.errors['conf_correos.correo']"
-                                >{{ form.errors['conf_correos.correo'] }}</span
+                                v-if="
+                                    form.errors &&
+                                    form.errors['conf_correos.correo']
+                                "
+                                >{{ form.errors["conf_correos.correo"] }}</span
                             >
                         </div>
                         <div class="col-md-4 form-group mb-3">
@@ -224,8 +238,11 @@ onMounted(() => {});
                             />
                             <span
                                 class="text-danger"
-                                v-if="form.errors && form.errors['conf_correos.nombre']"
-                                >{{ form.errors['conf_correos.nombre'] }}</span
+                                v-if="
+                                    form.errors &&
+                                    form.errors['conf_correos.nombre']
+                                "
+                                >{{ form.errors["conf_correos.nombre"] }}</span
                             >
                         </div>
                         <div class="col-md-4 form-group mb-3">
@@ -236,8 +253,13 @@ onMounted(() => {});
                             />
                             <span
                                 class="text-danger"
-                                v-if="form.errors && form.errors['conf_correos.password']"
-                                >{{ form.errors['conf_correos.password'] }}</span
+                                v-if="
+                                    form.errors &&
+                                    form.errors['conf_correos.password']
+                                "
+                                >{{
+                                    form.errors["conf_correos.password"]
+                                }}</span
                             >
                         </div>
                         <div class="col-md-4 form-group mb-3">
@@ -248,8 +270,11 @@ onMounted(() => {});
                             />
                             <span
                                 class="text-danger"
-                                v-if="form.errors && form.errors['conf_correos.driver']"
-                                >{{ form.errors['conf_correos.driver'] }}</span
+                                v-if="
+                                    form.errors &&
+                                    form.errors['conf_correos.driver']
+                                "
+                                >{{ form.errors["conf_correos.driver"] }}</span
                             >
                         </div>
                     </template>
@@ -269,8 +294,11 @@ onMounted(() => {});
                             </select>
                             <span
                                 class="text-danger"
-                                v-if="form.errors && form.errors['conf_moneda.moneda']"
-                                >{{ form.errors['conf_moneda.moneda'] }}</span
+                                v-if="
+                                    form.errors &&
+                                    form.errors['conf_moneda.moneda']
+                                "
+                                >{{ form.errors["conf_moneda.moneda"] }}</span
                             >
                         </div>
                         <div class="col-md-4 form-group mb-3">
@@ -281,8 +309,11 @@ onMounted(() => {});
                             />
                             <span
                                 class="text-danger"
-                                v-if="form.errors && form.errors['conf_moneda.abrev']"
-                                >{{ form.errors['conf_moneda.abrev'] }}</span
+                                v-if="
+                                    form.errors &&
+                                    form.errors['conf_moneda.abrev']
+                                "
+                                >{{ form.errors["conf_moneda.abrev"] }}</span
                             >
                         </div>
                     </template>
@@ -296,9 +327,16 @@ onMounted(() => {});
                                 class="form-control"
                                 v-model="form.conf_captcha.claveSitio"
                             />
-                            <span class="text-danger" v-if="form.errors && form.errors['conf_captcha.claveSitio']">{{
-                                form.errors['conf_captcha.claveSitio']
-                            }}</span>
+                            <span
+                                class="text-danger"
+                                v-if="
+                                    form.errors &&
+                                    form.errors['conf_captcha.claveSitio']
+                                "
+                                >{{
+                                    form.errors["conf_captcha.claveSitio"]
+                                }}</span
+                            >
                         </div>
                         <div class="col-md-4 form-group mb-3">
                             <label for="">Clave Backend*</label>
@@ -308,8 +346,13 @@ onMounted(() => {});
                             />
                             <span
                                 class="text-danger"
-                                v-if="form.errors && form.errors['conf_captcha.claveBackend']"
-                                >{{ form.errors['conf_captcha.claveBackend'] }}</span
+                                v-if="
+                                    form.errors &&
+                                    form.errors['conf_captcha.claveBackend']
+                                "
+                                >{{
+                                    form.errors["conf_captcha.claveBackend"]
+                                }}</span
                             >
                         </div>
                     </template>

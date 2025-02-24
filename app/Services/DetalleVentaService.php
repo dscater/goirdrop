@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Producto;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 
 class DetalleVentaService
 {
@@ -14,7 +15,7 @@ class DetalleVentaService
      * @param array $detallVenta
      * @return void
      */
-    public function descuentaStockProductos(array $detallVenta): void
+    public function descuentaStockProductos(Collection $detallVenta): void
     {
         foreach ($detallVenta as $item) {
             $producto = Producto::findOrFail($item->producto_id);

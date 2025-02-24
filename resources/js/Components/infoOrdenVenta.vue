@@ -210,8 +210,8 @@ onMounted(() => {});
                                         <td class="text-center">
                                             {{ item.cantidad }}
                                         </td>
-                                        <td>{{ item.precio }}</td>
-                                        <td>{{ item.subtotal }}</td>
+                                        <td class="text-right">{{ item.precio }}</td>
+                                        <td class="text-right">{{ item.subtotal }}</td>
                                     </tr>
                                 </tbody>
                                 <tfoot class="bg-dark">

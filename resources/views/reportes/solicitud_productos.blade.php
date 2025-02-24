@@ -191,7 +191,6 @@
                 <th>SEDE</th>
                 <th>PRODUCTO</th>
                 <th>DETALLE</th>
-                <th>LINKS REFERENCIA</th>
                 <th>ESTADO DE SOLICITUD</th>
                 <th>PRECIO COMPRA
                     <br />{{ $configuracion->first()->conf_moneda ? $configuracion->first()->conf_moneda['abrev'] : '' }}
@@ -223,13 +222,15 @@
 
                     <td>{{ $solicitudDetalle->nombre_producto ?? '' }}</td>
                     <td>{{ $solicitudDetalle->detalle_producto ?? '' }}</td>
-                    <td>{!! $solicitudDetalle->links_referencia ?? '' !!}</td>
                     <td>{{ $solicitud_producto->estado_solicitud }}</td>
                     <td>{{ $solicitud_producto->precio_compra ?? '' }}</td>
                     <td>{{ $solicitud_producto->margen_ganancia ?? '' }}</td>
                     <td>{{ $solicitud_producto->observacion }}</td>
                     <td>{{ $solicitud_producto->estado_seguimiento ?? '' }}</td>
                     <td>{{ $solicitud_producto->fecha_solicitud_t }}</td>
+                </tr>
+                <tr>
+                    <td colspan="13">{!! $solicitudDetalle->links_referencia ?? '' !!}</td>
                 </tr>
             @endforeach
         </tbody>
