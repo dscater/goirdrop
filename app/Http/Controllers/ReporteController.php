@@ -343,8 +343,8 @@ class ReporteController extends Controller
                 $sheet->setCellValue('C' . $fila, $producto->categoria->nombre);
                 $sheet->setCellValue('D' . $fila, $producto->descripcion);
                 $sheet->setCellValue('E' . $fila, $producto->stock_actual);
-                $sheet->setCellValue('F' . $fila, $producto->precio_compra);
-                $sheet->setCellValue('G' . $fila, $producto->precio_venta);
+                $sheet->setCellValue('F' . $fila, number_format($producto->precio_compra, 2, ".", ","));
+                $sheet->setCellValue('G' . $fila, number_format($producto->precio_venta, 2, ".", ","));
                 $sheet->setCellValue('H' . $fila, $producto->observaciones);
                 $sheet->setCellValue('I' . $fila, $producto->publico);
                 $sheet->setCellValue('J' . $fila, $producto->fecha_registro_t);

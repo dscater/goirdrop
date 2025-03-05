@@ -177,7 +177,7 @@ class OrdenVentaController extends Controller
             $this->ordenVentaService->crear($request->validated());
             DB::commit();
 
-            $mensaje = 'Tu compra fue registrada correctamente.<br/> Puedes realizar su seguimiento en la sección de "Mis solicitudes"';
+            $mensaje = 'Tu compra fue registrada correctamente.<br/> Puedes realizar su seguimiento en la sección de "Mis compras"';
             session()->flash("bien", $mensaje);
             if ($request->ajax()) {
                 return response()->JSON([

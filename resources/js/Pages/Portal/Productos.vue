@@ -10,6 +10,9 @@ import { usePage, Link } from "@inertiajs/vue3";
 import { useAxios } from "@/composables/axios/useAxios";
 import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 import MiPaginacion from "@/Components/MiPaginacion.vue";
+import { useFormater } from "@/composables/useFormater";
+const { getFormatoMoneda } = useFormater();
+
 const { oConfiguracion } = useConfiguracion();
 const { props: props_page } = usePage();
 const user = ref(props_page.auth?.user);
@@ -307,7 +310,7 @@ onMounted(() => {
                                     </p>
                                     <div class="item-price">
                                         {{ oConfiguracion.conf_moneda.abrev }}
-                                        {{ item.precio_venta }}
+                                        {{ getFormatoMoneda(item.precio_venta) }}
                                     </div>
                                 </div>
                             </div>

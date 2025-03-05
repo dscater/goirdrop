@@ -590,7 +590,9 @@ const logout = () => {
                         user_logeado.permisos.includes('productos.index')
                     "
                     class="menu-item"
-                    :class="[route_current == 'productos.index']"
+                    :class="[
+                        route_current == 'productos.index' ? 'active' : '',
+                    ]"
                 >
                     <Link :href="route('productos.index')" class="menu-link">
                         <div class="menu-icon">

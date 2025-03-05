@@ -12,6 +12,8 @@ import LoginModal from "@/Components/LoginModal.vue";
 import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 import { useAxios } from "@/composables/axios/useAxios";
 import Vue3Recaptcha2 from "vue3-recaptcha2";
+import { useFormater } from "@/composables/useFormater";
+const { getFormatoMoneda } = useFormater();
 const ordenVentaStore = useOrdenVentaStore();
 const { oConfiguracion } = useConfiguracion();
 const { axiosGet, axiosPostFormData } = useAxios();
@@ -274,10 +276,10 @@ onMounted(async () => {
                                         />
                                     </td>
                                     <td class="text-right">
-                                        {{ item.precio }}
+                                        {{ getFormatoMoneda(item.precio) }}
                                     </td>
                                     <td class="text-right">
-                                        {{ item.subtotal }}
+                                        {{ getFormatoMoneda(item.subtotal) }}
                                     </td>
                                     <td class="text-right">
                                         <button
@@ -306,7 +308,7 @@ onMounted(async () => {
                                 </td>
                                 <td class="text-right text-white h5">
                                     {{ oConfiguracion.conf_moneda?.abrev }}
-                                    {{ ordenVentaStore.getSumaTotalCarrito() }}
+                                    {{ getFormatoMoneda(ordenVentaStore.getSumaTotalCarrito()) }}
                                 </td>
                                 <td></td>
                             </tr>
@@ -392,8 +394,8 @@ onMounted(async () => {
                                 <td class="text-center">
                                     {{ item.cantidad }}
                                 </td>
-                                <td class="text-right">{{ item.precio }}</td>
-                                <td class="text-right">{{ item.subtotal }}</td>
+                                <td class="text-right">{{ getFormatoMoneda(item.precio) }}</td>
+                                <td class="text-right">{{ getFormatoMoneda(item.subtotal) }}</td>
                             </tr>
                         </tbody>
                         <tfoot>
@@ -406,7 +408,7 @@ onMounted(async () => {
                                 </td>
                                 <td class="text-right text-white h5">
                                     {{ oConfiguracion.conf_moneda?.abrev }}
-                                    {{ ordenVentaStore.getSumaTotalCarrito() }}
+                                    {{ getFormatoMoneda(ordenVentaStore.getSumaTotalCarrito()) }}
                                 </td>
                             </tr>
                         </tfoot>
@@ -507,7 +509,7 @@ onMounted(async () => {
                                 >
                                     TOTAL A PAGAR:
                                     {{ oConfiguracion.conf_moneda?.abrev }}
-                                    {{ ordenVentaStore.getSumaTotalCarrito() }}
+                                    {{ getFormatoMoneda(ordenVentaStore.getSumaTotalCarrito()) }}
                                 </p>
                             </div>
                             <div class="col-12 form-group text-center mb-3">

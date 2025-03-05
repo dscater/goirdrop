@@ -48,7 +48,6 @@
             <tr>
                 <th>Producto</th>
                 <th>Detalle</th>
-                <th>Links de Referencia</th>
             </tr>
         </thead>
         <tbody>
@@ -56,15 +55,14 @@
                 <tr>
                     <td>{{ $item->nombre_producto }}</td>
                     <td>{{ $item->detalle_producto }}</td>
-                    <td>{!! $item->links_referencia !!}</td>
                 </tr>
             @endforeach
         </tbody>
         @if ($datos['total_precio'])
             <tfoot>
                 <tr>
-                    <th colspan="2">PRECIO DE COMPRA {{ $datos['abrev_moneda'] }}</th>
-                    <th>{{ $datos['total_precio'] }}</th>
+                    <th>PRECIO DE COMPRA {{ $datos['abrev_moneda'] }}</th>
+                    <th>{{ number_format($datos['total_precio'], 2, '.', ',') }}</th>
                 </tr>
             </tfoot>
         @endif

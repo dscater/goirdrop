@@ -11,6 +11,8 @@ import { useAxios } from "@/composables/axios/useAxios";
 import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 import MiPaginacion from "@/Components/MiPaginacion.vue";
 import infoOrdenVenta from "@/Components/infoOrdenVenta.vue";
+import { useFormater } from "@/composables/useFormater";
+const { getFormatoMoneda } = useFormater();
 const { oConfiguracion } = useConfiguracion();
 const { props: props_page } = usePage();
 const { auth } = props_page;
@@ -122,7 +124,7 @@ onMounted(() => {
                                                         oConfiguracion
                                                             ?.conf_moneda?.abrev
                                                     }}
-                                                    {{ item.total }}
+                                                    {{ getFormatoMoneda(item.total) }}
                                                 </div>
                                             </div>
                                             <div class="row">

@@ -3,6 +3,8 @@ import { useForm, usePage } from "@inertiajs/vue3";
 import { watch, ref, computed, defineEmits, onMounted } from "vue";
 import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 import { useAxios } from "@/composables/axios/useAxios";
+import { useFormater } from "@/composables/useFormater";
+const { getFormatoMoneda } = useFormater();
 const { oConfiguracion } = useConfiguracion();
 
 const { url_assets, auth } = usePage().props;
@@ -273,8 +275,8 @@ onMounted(() => {});
                                         <td class="text-center">
                                             {{ item.cantidad }}
                                         </td>
-                                        <td>{{ item.precio }}</td>
-                                        <td>{{ item.subtotal }}</td>
+                                        <td class="text-right">{{ getFormatoMoneda(item.precio) }}</td>
+                                        <td class="text-right">{{ getFormatoMoneda(item.subtotal) }}</td>
                                     </tr>
                                 </tbody>
                                 <tfoot class="bg-dark">
@@ -286,7 +288,7 @@ onMounted(() => {});
                                             TOTAL
                                         </th>
                                         <th class="text-white text-right">
-                                            {{ oOrdenVenta.total }}
+                                            {{ getFormatoMoneda(oOrdenVenta.total) }}
                                         </th>
                                     </tr>
                                 </tfoot>

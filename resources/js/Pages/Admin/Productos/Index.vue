@@ -24,6 +24,8 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import PanelToolbar from "@/Components/PanelToolbar.vue";
 // import { useMenu } from "@/composables/useMenu";
 import Formulario from "./Formulario.vue";
+import { useFormater } from "@/composables/useFormater";
+const { getFormatoMoneda } = useFormater();
 // const { mobile, identificaDispositivo } = useMenu();
 const { props: props_page } = usePage();
 const { setLoading } = useApp();
@@ -68,10 +70,16 @@ const columns = [
     {
         title: "PRECIO COMPRA",
         data: "precio_compra",
+        render: function (data, type, row) {
+            return getFormatoMoneda(row.precio_compra);
+        },
     },
     {
         title: "PRECIO VENTA",
         data: "precio_venta",
+        render: function (data, type, row) {
+            return getFormatoMoneda(row.precio_venta);
+        },
     },
     {
         title: "PÚBLICO",

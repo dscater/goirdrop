@@ -3,6 +3,8 @@ import { useForm, usePage } from "@inertiajs/vue3";
 import { watch, ref, computed, defineEmits, onMounted } from "vue";
 import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 import { useAxios } from "@/composables/axios/useAxios";
+import { useFormater } from "@/composables/useFormater";
+const { getFormatoMoneda } = useFormater();
 const { oConfiguracion } = useConfiguracion();
 
 const { url_assets, auth } = usePage().props;
@@ -208,7 +210,9 @@ onMounted(() => {});
                                         </div>
                                         <div class="col-8">
                                             {{
-                                                oSolicitudProducto.precio_compra
+                                                getFormatoMoneda(
+                                                    oSolicitudProducto.precio_compra
+                                                )
                                             }}
                                         </div>
                                     </div>
@@ -224,10 +228,28 @@ onMounted(() => {});
                                         </div>
                                         <div class="col-8">
                                             {{
-                                                oSolicitudProducto.margen_ganancia
+                                                getFormatoMoneda(
+                                                    oSolicitudProducto.margen_ganancia
+                                                )
                                             }}
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-4 text-right">
+                                    <strong class="text-md"
+                                        >Total
+                                        {{
+                                            oConfiguracion?.conf_moneda.abrev
+                                        }}:</strong
+                                    >
+                                </div>
+                                <div class="col-8">
+                                    <span class="text-md font-weight-bold">
+                                        {{ getFormatoMoneda(oSolicitudProducto.total_precio) }}
+                                    </span>
                                 </div>
                             </div>
 

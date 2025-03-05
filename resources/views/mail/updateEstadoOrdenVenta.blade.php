@@ -36,6 +36,15 @@
             font-weight: bold;
             font-size: 1.1rem;
         }
+
+        .centreado {
+            text-align: center;
+        }
+
+        .paddingy {
+            padding-top: 6px;
+            padding-bottom: 6px;
+        }
     </style>
 </head>
 
@@ -58,16 +67,19 @@
                 <tr>
                     <td>{{ $key + 1 }}</td>
                     <td>{{ $item->producto->nombre }}</td>
-                    <td>{{ $item->producto->precio }}</td>
+                    <td>{{ number_format($item->producto->precio_venta, 2, '.', ',') }}</td>
                     <td>{{ $item->cantidad }}</td>
-                    <td>{{ $item->subtotal }}</td>
+                    <td>{{ number_format($item->subtotal, 2, '.', ',') }}</td>
                 </tr>
             @endforeach
         </tbody>
         <tfoot>
             <tr>
-                <th colspan="5">TOTAL {{ $datos['abrev_moneda'] }}</th>
-                <th>{{ $datos['total'] }}</th>
+                <td colspan="5" class="text-center paddingy">{{ $datos['literal'] }}</td>
+            </tr>
+            <tr>
+                <th colspan="4">TOTAL {{ $datos['abrev_moneda'] }}</th>
+                <th>{{ number_format($datos['total'], 2, '.', ',') }}</th>
             </tr>
         </tfoot>
     </table>

@@ -24,12 +24,33 @@
         b {
             font-size: 1.15em;
         }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        table tbody tr td {
+            padding: 5px;
+        }
     </style>
 </head>
 
 <body>
     <h1>Nueva solicitud de producto</h1>
     <p>{!! $datos['mensaje'] !!}</p>
+    <table border="1">
+        <tbody>
+            <tr>
+                <td><b>Código solicitud: </b> {{ $datos["solicitudProducto"]->codigo_solicitud }}</td>
+            </tr>
+            <tr>
+                <td><b>Nombre Producto: </b> {{ $datos["solicitudProducto"]->solicitudDetalles[0]->nombre_producto }}</td>
+            </tr>
+            <tr>
+                <td><b>Detalle Producto: </b> {{ $datos["solicitudProducto"]->solicitudDetalles[0]->detalle_producto }}</td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 
 </html>

@@ -170,8 +170,8 @@
                 <th>CATEGORÍA</th>
                 <th>DESCRIPCIÓN</th>
                 <th>STOCK ACTUAL</th>
-                <th>PRECIO COMPRA <br/>{{ $configuracion->first()->conf_moneda['abrev'] }}</th>
-                <th>PRECIO VENTA <br/>{{ $configuracion->first()->conf_moneda['abrev'] }}</th>
+                <th>PRECIO COMPRA <br />{{ $configuracion->first()->conf_moneda['abrev'] }}</th>
+                <th>PRECIO VENTA <br />{{ $configuracion->first()->conf_moneda['abrev'] }}</th>
                 <th>OBSERVACIONES</th>
                 <th>PÚBLICO</th>
                 <th>FECHA DE REGISTRO</th>
@@ -188,8 +188,8 @@
                     <td>{{ $producto->categoria->nombre }}</td>
                     <td>{{ $producto->descripcion }}</td>
                     <td>{{ $producto->stock_actual }}</td>
-                    <td>{{ $producto->precio_compra }}</td>
-                    <td>{{ $producto->precio_venta }}</td>
+                    <td>{{ number_format($producto->precio_compra, 2, '.', ',') }}</td>
+                    <td>{{ number_format($producto->precio_venta, 2, '.', ',') }}</td>
                     <td>{{ $producto->observaciones }}</td>
                     <td>{{ $producto->publico }}</td>
                     <td>{{ $producto->fecha_registro_t }}</td>

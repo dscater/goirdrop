@@ -32,7 +32,10 @@ class SolicitudProducto extends Model
     // appends
     public function getTotalPrecioAttribute()
     {
-        return (float)$this->precio_compra ?? 0 + (float)$this->margen_ganancia ?? 0;
+        $precio_compra = $this->precio_compra ? $this->precio_compra : 0;
+        $margen_ganancia = $this->margen_ganancia ? $this->margen_ganancia : 0;
+        $total = (float)$precio_compra + (float)$margen_ganancia;
+        return $total;
     }
 
     public function getFechaSolicitudTAttribute()

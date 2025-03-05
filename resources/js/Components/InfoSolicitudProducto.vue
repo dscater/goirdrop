@@ -3,6 +3,8 @@ import { useForm, usePage } from "@inertiajs/vue3";
 import { watch, ref, computed, defineEmits, onMounted } from "vue";
 import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 const { oConfiguracion } = useConfiguracion();
+import { useFormater } from "@/composables/useFormater";
+const { getFormatoMoneda } = useFormater();
 
 const { url_assets } = usePage().props;
 const props = defineProps({
@@ -162,7 +164,7 @@ onMounted(() => {});
                                         </div>
                                         <div class="col-8 text-md">
                                             {{
-                                                oSolicitudProducto.total_precio
+                                                getFormatoMoneda(oSolicitudProducto.total_precio)
                                             }}
                                         </div>
                                     </div>

@@ -22,7 +22,7 @@ class UpdateSolicitudProductoSeguimientoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "estado_seguimiento" => "required|string|in:PENDIENTE,EN PROCESO,EN ALMACÉN, ENTREGADO",
+            "estado_seguimiento" => "required|string|in:PENDIENTE,EN PROCESO,EN ALMACÉN,ENTREGADO",
             "observacion" => "nullable|min:2|string",
         ];
     }
@@ -38,7 +38,7 @@ class UpdateSolicitudProductoSeguimientoRequest extends FormRequest
         return [
             "estado_seguimiento.required" => "Debes seleccionar un estado de seguimiento",
             "estado_seguimiento.string" => "Debes enviar un texto",
-            "estado_seguimiento.in" => "El estado solo puede ser: PENDIENTE,EN PROCESO,EN ALMACÉN, ENTREGADO",
+            "estado_seguimiento.in" => "El estado solo puede ser: PENDIENTE, EN PROCESO, EN ALMACÉN, ENTREGADO",
             "observacion.min" => "Debes ingresar al menos :min caracteres",
             "observacion.string" => "Debes ingresar solo texto",
         ];

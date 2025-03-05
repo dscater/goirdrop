@@ -3,6 +3,8 @@ import { useForm, usePage } from "@inertiajs/vue3";
 import { watch, ref, computed, defineEmits, onMounted } from "vue";
 import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 import { useAxios } from "@/composables/axios/useAxios";
+import { useFormater } from "@/composables/useFormater";
+const { getFormatoMoneda } = useFormater();
 const { oConfiguracion } = useConfiguracion();
 
 const { url_assets, auth } = usePage().props;
@@ -132,6 +134,8 @@ const enviarFormulario = async () => {
                 margen_ganancia: form.value.margen_ganancia,
             }
         );
+        form.value.precio_compra = "";
+        form.value.margen_ganancia = "";
         emits("envio-formulario");
     } catch (e) {
         console.log(e);
@@ -308,8 +312,7 @@ onMounted(() => {});
                                     </div>
                                     <div class="row my-2">
                                         <div class="col-4 text-right">
-                                            <strong
-                                            class="text-md"
+                                            <strong class="text-md"
                                                 >Total
                                                 {{
                                                     oConfiguracion?.conf_moneda
@@ -323,10 +326,21 @@ onMounted(() => {});
                                                     oSolicitudProducto.estado_solicitud ==
                                                     'APROBADO'
                                                 "
-                                                >{{ totalSolicitud }}</template
                                             >
+                                                <span
+                                                    class="text-md font-weight-bold"
+                                                >
+                                                    {{
+                                                        getFormatoMoneda(
+                                                            totalSolicitud
+                                                        )
+                                                    }}
+                                                </span>
+                                            </template>
                                             <span v-else class="text-md">{{
-                                                form.totalSolicitud
+                                                getFormatoMoneda(
+                                                    form.totalSolicitud
+                                                )
                                             }}</span>
                                         </div>
                                     </div>
@@ -381,28 +395,28 @@ onMounted(() => {});
                                         <th class="text-white text-sm">
                                             Producto
                                         </th>
-                                        <th
-                                            class="text-white text-sm text-center"
-                                        >
+                                        <th class="text-white text-sm">
                                             Detalle
-                                        </th>
-                                        <th
-                                            class="text-white text-sm text-right"
-                                        >
-                                            Links de referencia
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr
+                                    <template
                                         v-for="(
                                             item, index
                                         ) in oSolicitudProducto.solicitud_detalles"
                                     >
-                                        <td>{{ item.nombre_producto }}</td>
-                                        <td>{{ item.detalle_producto }}</td>
-                                        <td v-html="item.links_referencia"></td>
-                                    </tr>
+                                        <tr>
+                                            <td>{{ item.nombre_producto }}</td>
+                                            <td>{{ item.detalle_producto }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                colspan="2"
+                                                v-html="item.links_referencia"
+                                            ></td>
+                                        </tr>
+                                    </template>
                                 </tbody>
                             </table>
                         </div>

@@ -119,7 +119,7 @@ onBeforeUnmount(() => {});
                 <div class="product-price mb-3">
                     <div class="price">
                         {{ oConfiguracion.conf_moneda?.abrev }}
-                        {{ producto.precio_venta }}
+                        {{ getFormatoMoneda(producto.precio_venta) }}
                     </div>
                 </div>
                 <button

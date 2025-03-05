@@ -12,6 +12,8 @@ use App\Models\OrdenVenta;
 use App\Models\SolicitudProducto;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
+use App\library\numero_a_letras\src\NumeroALetras;
+use Illuminate\Support\Facades\Log;
 
 class EnviarCorreoService
 {
@@ -94,6 +96,7 @@ class EnviarCorreoService
             "mensaje" => $mensaje,
             "detalleVenta" => $ordenVenta->detalleVenta,
             "total" => $ordenVenta->total,
+            "literal" => $this->getLiteralMonto(number_format($ordenVenta->total, 2, ".", "")),
             "abrev_moneda" => $this->abrev_moneda
         ];
 
@@ -111,9 +114,9 @@ class EnviarCorreoService
     {
         $mensaje = "Hola " . $solicitudProducto->cliente->full_name . '<br/>';
         $mensaje .= 'Tu solicitud fue registrada correctamente, nosotros nos comunicaremos contigo.';
-
         $datos = [
-            "mensaje" => $mensaje
+            "mensaje" => $mensaje,
+            "solicitudProducto" => $solicitudProducto
         ];
 
         Mail::to($solicitudProducto->cliente->correo)
@@ -182,7 +185,7 @@ class EnviarCorreoService
 
         if ($solicitudProducto->estado_seguimiento == 'ENTREGADO') {
             $mensaje = "Hola " . $solicitudProducto->cliente->full_name . '<br/>';
-            $mensaje .= 'Tu solicitud de producto con código <b>' . $solicitudProducto->codigo_solicitud . '</b>; ya se encuentra fue <b>ENTREGADO</b>';
+            $mensaje .= 'Tu solicitud de producto con código <b>' . $solicitudProducto->codigo_solicitud . '</b>; ya fue <b>ENTREGADO</b>';
         }
 
         $datos = [
@@ -194,5 +197,24 @@ class EnviarCorreoService
 
         Mail::to($solicitudProducto->cliente->correo)
             ->send(new SolicitudProductoSeguimientoMail($datos));
+    }
+
+    /**
+     * Obtener el literal de un monto
+     *
+     * @param string $monto
+     * @return string
+     */
+    private function getLiteralMonto(string $monto): string
+    {
+        $configuracion = Configuracion::first();
+        $literal = "";
+        $convertir = new NumeroALetras();
+        $array_monto = explode('.', $monto);
+        $literal = $convertir->convertir($array_monto[0]);
+        $literal .= " " . $array_monto[1];
+        $literal = ucfirst($literal) . "/100." . " " . $configuracion["conf_moneda"]["moneda"];
+
+        return $literal;
     }
 }

@@ -140,7 +140,6 @@ const enviarFormulario = () => {
         axios
             .post(route("solicitud_productos.store"), form.value)
             .then((response) => {
-                dialog.value = false;
                 errors.value = null;
                 resetRecaptcha();
                 Swal.fire({
@@ -154,7 +153,6 @@ const enviarFormulario = () => {
                     confirmButtonColor: "#3085d6",
                     confirmButtonText: `Aceptar`,
                 });
-                emits("envio-formulario");
             })
             .catch((error) => {
                 console.log("ERROR");

@@ -35,7 +35,7 @@ class SolicitudProductoService
     public function listado(): Collection
     {
         $solicitudProductos = SolicitudProducto::select("solicitudProductos.*");
-        
+
         // Filtro por usuario
         $user = Auth::user();
         if ($user->sedes_todo != 1) {
@@ -208,6 +208,7 @@ class SolicitudProductoService
 
             $solicitudProducto->update([
                 "estado_solicitud" => $datos["estado_solicitud"],
+                "estado_seguimiento" => $datos["estado_solicitud"] == 'APROBADO' ? 'PENDIENTE' : NULL,
                 "observacion" => mb_strtoupper(nl2br($datos["observacion"])),
                 "precio_compra" => $datos["estado_solicitud"] == 'APROBADO' ? $datos["precio_compra"] : null,
                 "margen_ganancia" => $datos["estado_solicitud"] == 'APROBADO' ? $datos["margen_ganancia"] : null,

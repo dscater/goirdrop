@@ -3,6 +3,8 @@ import { useForm, usePage } from "@inertiajs/vue3";
 import { watch, ref, computed, defineEmits, onMounted } from "vue";
 import { useConfiguracion } from "@/composables/configuracion/useConfiguracion";
 const { oConfiguracion } = useConfiguracion();
+import { useFormater } from "@/composables/useFormater";
+const { getFormatoMoneda } = useFormater();
 
 const { url_assets } = usePage().props;
 const props = defineProps({
@@ -137,6 +139,20 @@ onMounted(() => {});
                                     {{ oOrdenVenta.fecha_orden_t }}
                                 </div>
                             </div>
+                            <div class="row pb-3">
+                                <div class="col-4 text-right">
+                                    <strong>Comprobante:</strong>
+                                </div>
+                                <div class="col-8">
+                                    <a
+                                        :href="oOrdenVenta.url_comprobante"
+                                        target="_blank"
+                                        ><i
+                                            class="fa fa-external-link text-black"
+                                        ></i
+                                    ></a>
+                                </div>
+                            </div>
                             <div class="row mb-3">
                                 <div
                                     class="col-4 text-right"
@@ -210,8 +226,8 @@ onMounted(() => {});
                                         <td class="text-center">
                                             {{ item.cantidad }}
                                         </td>
-                                        <td class="text-right">{{ item.precio }}</td>
-                                        <td class="text-right">{{ item.subtotal }}</td>
+                                        <td class="text-right">{{ getFormatoMoneda(item.precio) }}</td>
+                                        <td class="text-right">{{ getFormatoMoneda(item.subtotal) }}</td>
                                     </tr>
                                 </tbody>
                                 <tfoot class="bg-dark">
@@ -223,7 +239,7 @@ onMounted(() => {});
                                             TOTAL
                                         </th>
                                         <th class="text-white text-right">
-                                            {{ oOrdenVenta.total }}
+                                            {{ getFormatoMoneda(oOrdenVenta.total) }}
                                         </th>
                                     </tr>
                                 </tfoot>
