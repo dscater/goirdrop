@@ -23,7 +23,7 @@ const modalVerificacion = ref(false);
 const modalSeguimiento = ref(false);
 const oSolicitudProducto = ref(null);
 const paramsSolicitudProductos = ref({
-    perPage: 9,
+    perPage: 12,
     page: 1,
     search: props.codigo,
     estado_solicitud: "PENDIENTE",

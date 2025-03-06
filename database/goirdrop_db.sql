@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 05-03-2025 a las 19:51:06
+-- Tiempo de generación: 06-03-2025 a las 13:31:43
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -278,7 +278,13 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (106, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO', '{\"id\": 4, \"cel\": \"78787878\", \"nro\": 2, \"status\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-02-18T13:26:48.000000Z\", \"updated_at\": \"2025-02-18T13:26:48.000000Z\", \"observacion\": null, \"precio_compra\": null, \"nombre_cliente\": \"MARIO\", \"fecha_solicitud\": \"2025-02-18\", \"margen_ganancia\": null, \"codigo_solicitud\": \"SOL.2\", \"estado_solicitud\": \"PENDIENTE\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": null, \"fecha_verificacion\": null}', '{\"id\": 4, \"cel\": \"78787878\", \"nro\": 2, \"status\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-02-18T13:26:48.000000Z\", \"updated_at\": \"2025-03-05T19:41:16.000000Z\", \"observacion\": \"\", \"precio_compra\": 5000, \"nombre_cliente\": \"MARIO\", \"fecha_solicitud\": \"2025-02-18\", \"margen_ganancia\": 2000, \"codigo_solicitud\": \"SOL.2\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": null, \"fecha_verificacion\": \"2025-03-05\"}', 'SOLICITUD DE PRODUCTO', '2025-03-05', '15:41:16', '2025-03-05 19:41:16', '2025-03-05 19:41:16'),
 (107, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO', '{\"id\": 8, \"cel\": \"78787878\", \"nro\": 6, \"status\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-03-05T19:26:48.000000Z\", \"updated_at\": \"2025-03-05T19:26:48.000000Z\", \"observacion\": null, \"precio_compra\": null, \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-05\", \"margen_ganancia\": null, \"codigo_solicitud\": \"SOL.6\", \"estado_solicitud\": \"PENDIENTE\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": null, \"fecha_verificacion\": null}', '{\"id\": 8, \"cel\": \"78787878\", \"nro\": 6, \"status\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-03-05T19:26:48.000000Z\", \"updated_at\": \"2025-03-05T19:45:00.000000Z\", \"observacion\": \"\", \"precio_compra\": 4000, \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-05\", \"margen_ganancia\": 3000, \"codigo_solicitud\": \"SOL.6\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"PENDIENTE\", \"fecha_verificacion\": \"2025-03-05\"}', 'SOLICITUD DE PRODUCTO', '2025-03-05', '15:45:00', '2025-03-05 19:45:00', '2025-03-05 19:45:00'),
 (108, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO', '{\"id\": 8, \"cel\": \"78787878\", \"nro\": 6, \"status\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-03-05T19:26:48.000000Z\", \"updated_at\": \"2025-03-05T19:45:00.000000Z\", \"observacion\": \"\", \"precio_compra\": \"4000.00\", \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-05\", \"margen_ganancia\": \"3000.00\", \"codigo_solicitud\": \"SOL.6\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"PENDIENTE\", \"fecha_verificacion\": \"2025-03-05\"}', '{\"id\": 8, \"cel\": \"78787878\", \"nro\": 6, \"status\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-03-05T19:26:48.000000Z\", \"updated_at\": \"2025-03-05T19:45:48.000000Z\", \"observacion\": \"\", \"precio_compra\": \"4000.00\", \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-05\", \"margen_ganancia\": \"3000.00\", \"codigo_solicitud\": \"SOL.6\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"EN ALMACÉN\", \"fecha_verificacion\": \"2025-03-05\"}', 'SOLICITUD DE PRODUCTO', '2025-03-05', '15:45:48', '2025-03-05 19:45:48', '2025-03-05 19:45:48'),
-(109, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO', '{\"id\": 8, \"cel\": \"78787878\", \"nro\": 6, \"status\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-03-05T19:26:48.000000Z\", \"updated_at\": \"2025-03-05T19:45:48.000000Z\", \"observacion\": \"\", \"precio_compra\": \"4000.00\", \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-05\", \"margen_ganancia\": \"3000.00\", \"codigo_solicitud\": \"SOL.6\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"EN ALMACÉN\", \"fecha_verificacion\": \"2025-03-05\"}', '{\"id\": 8, \"cel\": \"78787878\", \"nro\": 6, \"status\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-03-05T19:26:48.000000Z\", \"updated_at\": \"2025-03-05T19:47:35.000000Z\", \"observacion\": \"\", \"precio_compra\": \"4000.00\", \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-05\", \"margen_ganancia\": \"3000.00\", \"codigo_solicitud\": \"SOL.6\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"ENTREGADO\", \"fecha_verificacion\": \"2025-03-05\"}', 'SOLICITUD DE PRODUCTO', '2025-03-05', '15:47:35', '2025-03-05 19:47:35', '2025-03-05 19:47:35');
+(109, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO', '{\"id\": 8, \"cel\": \"78787878\", \"nro\": 6, \"status\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-03-05T19:26:48.000000Z\", \"updated_at\": \"2025-03-05T19:45:48.000000Z\", \"observacion\": \"\", \"precio_compra\": \"4000.00\", \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-05\", \"margen_ganancia\": \"3000.00\", \"codigo_solicitud\": \"SOL.6\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"EN ALMACÉN\", \"fecha_verificacion\": \"2025-03-05\"}', '{\"id\": 8, \"cel\": \"78787878\", \"nro\": 6, \"status\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-03-05T19:26:48.000000Z\", \"updated_at\": \"2025-03-05T19:47:35.000000Z\", \"observacion\": \"\", \"precio_compra\": \"4000.00\", \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-05\", \"margen_ganancia\": \"3000.00\", \"codigo_solicitud\": \"SOL.6\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"ENTREGADO\", \"fecha_verificacion\": \"2025-03-05\"}', 'SOLICITUD DE PRODUCTO', '2025-03-05', '15:47:35', '2025-03-05 19:47:35', '2025-03-05 19:47:35'),
+(110, 3, 'CREACIÓN', 'EL USUARIO mario@gmail.com REGISTRO UNA SOLICITUD DE PRODUCTO', '{\"id\": 12, \"cel\": \"78787878\", \"nro\": 9, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-03-06T12:11:56.000000Z\", \"updated_at\": \"2025-03-06T12:11:56.000000Z\", \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-06\", \"codigo_solicitud\": \"SOL.9\", \"apellidos_cliente\": \"GONZALES PAREDES\"}', NULL, 'SOLICITUD DE PRODUCTO', '2025-03-06', '08:11:56', '2025-03-06 12:11:56', '2025-03-06 12:11:56'),
+(111, 3, 'CREACIÓN', 'EL USUARIO mario@gmail.com REGISTRO UNA SOLICITUD DE PRODUCTO', '{\"id\": 13, \"cel\": \"78787878\", \"nro\": 10, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-03-06T12:12:57.000000Z\", \"updated_at\": \"2025-03-06T12:12:57.000000Z\", \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-06\", \"codigo_solicitud\": \"SOL.10\", \"apellidos_cliente\": \"GONZALES PAREDES\"}', NULL, 'SOLICITUD DE PRODUCTO', '2025-03-06', '08:12:57', '2025-03-06 12:12:57', '2025-03-06 12:12:57'),
+(112, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO', '{\"id\": 9, \"cel\": \"78787878\", \"nro\": 7, \"status\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-03-05T19:28:03.000000Z\", \"updated_at\": \"2025-03-05T19:28:03.000000Z\", \"observacion\": null, \"precio_compra\": null, \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-05\", \"margen_ganancia\": null, \"codigo_solicitud\": \"SOL.7\", \"estado_solicitud\": \"PENDIENTE\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": null, \"fecha_verificacion\": null}', '{\"id\": 9, \"cel\": \"78787878\", \"nro\": 7, \"status\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-03-05T19:28:03.000000Z\", \"updated_at\": \"2025-03-06T12:16:54.000000Z\", \"observacion\": \"\", \"precio_compra\": null, \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-05\", \"margen_ganancia\": null, \"codigo_solicitud\": \"SOL.7\", \"estado_solicitud\": \"RECHAZADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": null, \"fecha_verificacion\": \"2025-03-06\"}', 'SOLICITUD DE PRODUCTO', '2025-03-06', '08:16:54', '2025-03-06 12:16:54', '2025-03-06 12:16:54'),
+(113, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO', '{\"id\": 11, \"cel\": \"78787878\", \"nro\": 8, \"status\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-03-05T19:37:15.000000Z\", \"updated_at\": \"2025-03-05T19:37:15.000000Z\", \"observacion\": null, \"precio_compra\": null, \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-05\", \"margen_ganancia\": null, \"codigo_solicitud\": \"SOL.8\", \"estado_solicitud\": \"PENDIENTE\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": null, \"fecha_verificacion\": null}', '{\"id\": 11, \"cel\": \"78787878\", \"nro\": 8, \"status\": 1, \"sede_id\": 1, \"cliente_id\": 1, \"created_at\": \"2025-03-05T19:37:15.000000Z\", \"updated_at\": \"2025-03-06T12:17:46.000000Z\", \"observacion\": \"OBSERVACION RECHAZADO\", \"precio_compra\": null, \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-05\", \"margen_ganancia\": null, \"codigo_solicitud\": \"SOL.8\", \"estado_solicitud\": \"RECHAZADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": null, \"fecha_verificacion\": \"2025-03-06\"}', 'SOLICITUD DE PRODUCTO', '2025-03-06', '08:17:46', '2025-03-06 12:17:46', '2025-03-06 12:17:46'),
+(114, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO', '{\"id\": 13, \"cel\": \"78787878\", \"nro\": 10, \"status\": 1, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-03-06T12:12:57.000000Z\", \"updated_at\": \"2025-03-06T12:12:57.000000Z\", \"observacion\": null, \"precio_compra\": null, \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-06\", \"margen_ganancia\": null, \"codigo_solicitud\": \"SOL.10\", \"estado_solicitud\": \"PENDIENTE\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": null, \"fecha_verificacion\": null}', '{\"id\": 13, \"cel\": \"78787878\", \"nro\": 10, \"status\": 1, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-03-06T12:12:57.000000Z\", \"updated_at\": \"2025-03-06T13:29:59.000000Z\", \"observacion\": \"\", \"precio_compra\": 4500, \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-06\", \"margen_ganancia\": 300, \"codigo_solicitud\": \"SOL.10\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"PENDIENTE\", \"fecha_verificacion\": \"2025-03-06\"}', 'SOLICITUD DE PRODUCTO', '2025-03-06', '09:29:59', '2025-03-06 13:29:59', '2025-03-06 13:29:59'),
+(115, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ EL ESTADO DE UNA SOLICITUD DE PRODUCTO', '{\"id\": 13, \"cel\": \"78787878\", \"nro\": 10, \"status\": 1, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-03-06T12:12:57.000000Z\", \"updated_at\": \"2025-03-06T13:29:59.000000Z\", \"observacion\": \"\", \"precio_compra\": \"4500.00\", \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-06\", \"margen_ganancia\": \"300.00\", \"codigo_solicitud\": \"SOL.10\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"PENDIENTE\", \"fecha_verificacion\": \"2025-03-06\"}', '{\"id\": 13, \"cel\": \"78787878\", \"nro\": 10, \"status\": 1, \"sede_id\": 2, \"cliente_id\": 1, \"created_at\": \"2025-03-06T12:12:57.000000Z\", \"updated_at\": \"2025-03-06T13:30:25.000000Z\", \"observacion\": \"\", \"precio_compra\": \"4500.00\", \"nombre_cliente\": \"MARIO ALBERTO\", \"fecha_solicitud\": \"2025-03-06\", \"margen_ganancia\": \"300.00\", \"codigo_solicitud\": \"SOL.10\", \"estado_solicitud\": \"APROBADO\", \"apellidos_cliente\": \"GONZALES PAREDES\", \"estado_seguimiento\": \"ENTREGADO\", \"fecha_verificacion\": \"2025-03-06\"}', 'SOLICITUD DE PRODUCTO', '2025-03-06', '09:30:25', '2025-03-06 13:30:25', '2025-03-06 13:30:25');
 
 -- --------------------------------------------------------
 
@@ -411,7 +417,9 @@ INSERT INTO `notificacions` (`id`, `descripcion`, `fecha`, `hora`, `modulo`, `re
 (7, 'Nueva orden de venta <b>ORD.5</b>', '2025-03-05', '15:17:00', 'OrdenVenta', 7, '2025-03-05 19:17:41', '2025-03-05 19:17:41'),
 (8, 'Nueva solicitud de producto <b>SOL.6</b>', '2025-03-05', '15:26:00', 'SolicitudProducto', 8, '2025-03-05 19:26:52', '2025-03-05 19:26:52'),
 (9, 'Nueva solicitud de producto <b>SOL.7</b>', '2025-03-05', '15:28:00', 'SolicitudProducto', 9, '2025-03-05 19:28:08', '2025-03-05 19:28:08'),
-(10, 'Nueva solicitud de producto <b>SOL.8</b>', '2025-03-05', '15:37:00', 'SolicitudProducto', 11, '2025-03-05 19:37:19', '2025-03-05 19:37:19');
+(10, 'Nueva solicitud de producto <b>SOL.8</b>', '2025-03-05', '15:37:00', 'SolicitudProducto', 11, '2025-03-05 19:37:19', '2025-03-05 19:37:19'),
+(11, 'Nueva solicitud de producto <b>SOL.9</b>', '2025-03-06', '08:11:00', 'SolicitudProducto', 12, '2025-03-06 12:11:59', '2025-03-06 12:11:59'),
+(12, 'Nueva solicitud de producto <b>SOL.10</b>', '2025-03-06', '08:12:00', 'SolicitudProducto', 13, '2025-03-06 12:12:59', '2025-03-06 12:12:59');
 
 -- --------------------------------------------------------
 
@@ -440,9 +448,11 @@ INSERT INTO `notificacion_users` (`notificacion_id`, `user_id`, `visto`, `create
 (6, 1, 1, '2025-02-18 21:28:13', '2025-02-24 22:42:49'),
 (7, 1, 1, '2025-03-05 19:17:41', '2025-03-05 19:23:50'),
 (7, 2, 0, '2025-03-05 19:17:41', '2025-03-05 19:17:41'),
-(8, 1, 0, '2025-03-05 19:26:52', '2025-03-05 19:26:52'),
-(9, 1, 0, '2025-03-05 19:28:08', '2025-03-05 19:28:08'),
-(10, 1, 0, '2025-03-05 19:37:19', '2025-03-05 19:37:19');
+(8, 1, 1, '2025-03-05 19:26:52', '2025-03-05 19:53:15'),
+(9, 1, 1, '2025-03-05 19:28:08', '2025-03-05 19:53:12'),
+(10, 1, 1, '2025-03-05 19:37:19', '2025-03-05 19:53:10'),
+(11, 1, 1, '2025-03-06 12:11:59', '2025-03-06 13:31:08'),
+(12, 1, 1, '2025-03-06 12:12:59', '2025-03-06 13:31:03');
 
 -- --------------------------------------------------------
 
@@ -721,7 +731,9 @@ INSERT INTO `solicitud_detalles` (`id`, `solicitud_producto_id`, `nombre_product
 (5, 7, 'producto 2 maria', 'detalle del producto de solicitud de la cliente maria', 'link1<br />\nlink2', '2025-02-18 21:28:09', '2025-02-18 21:28:09'),
 (6, 8, 'Producto solicitado 4', 'detalle sol 4', 'links1<br />\nlinks2<br />\nlinks3<br />\nlinks4', '2025-03-05 19:26:48', '2025-03-05 19:26:48'),
 (7, 9, 'producto 5', 'sol prod 5', 'link1<br />\nlink2<br />\nlink333333333', '2025-03-05 19:28:03', '2025-03-05 19:28:03'),
-(9, 11, 'sol prod 6', 'sol 6', 'link', '2025-03-05 19:37:15', '2025-03-05 19:37:15');
+(9, 11, 'sol prod 6', 'sol 6', 'link', '2025-03-05 19:37:15', '2025-03-05 19:37:15'),
+(10, 12, 'solicitud 7', 'detalle sol 7', 'links1<br />\nlinks1<br />\nlinks1<br />\nlinks1vlinks1<br />\nlinks1<br />\nlinks1', '2025-03-06 12:11:56', '2025-03-06 12:11:56'),
+(11, 13, 'Sol prod mario', 'detalle sol prod mario', 'link1link1link1<br />\nlink1link1link1link1link1<br />\nlink1<br />\nlink1<br />\nlink1', '2025-03-06 12:12:57', '2025-03-06 12:12:57');
 
 -- --------------------------------------------------------
 
@@ -761,8 +773,10 @@ INSERT INTO `solicitud_productos` (`id`, `codigo_solicitud`, `nro`, `sede_id`, `
 (6, 'SOL.4', 4, 3, 2, 'MARIA', 'FERNANDEZ', '78787878', 'PENDIENTE', NULL, NULL, 1, '2025-02-18', NULL, NULL, NULL, '2025-02-18 21:09:33', '2025-02-18 21:09:33'),
 (7, 'SOL.5', 5, 3, 2, 'MARIA', 'FERNANDEZ', '78787878', 'PENDIENTE', NULL, NULL, 1, '2025-02-18', NULL, NULL, NULL, '2025-02-18 21:28:09', '2025-02-18 21:28:09'),
 (8, 'SOL.6', 6, 1, 1, 'MARIO ALBERTO', 'GONZALES PAREDES', '78787878', 'APROBADO', 'ENTREGADO', '', 1, '2025-03-05', 4000.00, 3000.00, '2025-03-05', '2025-03-05 19:26:48', '2025-03-05 19:47:35'),
-(9, 'SOL.7', 7, 1, 1, 'MARIO ALBERTO', 'GONZALES PAREDES', '78787878', 'PENDIENTE', NULL, NULL, 1, '2025-03-05', NULL, NULL, NULL, '2025-03-05 19:28:03', '2025-03-05 19:28:03'),
-(11, 'SOL.8', 8, 1, 1, 'MARIO ALBERTO', 'GONZALES PAREDES', '78787878', 'PENDIENTE', NULL, NULL, 1, '2025-03-05', NULL, NULL, NULL, '2025-03-05 19:37:15', '2025-03-05 19:37:15');
+(9, 'SOL.7', 7, 1, 1, 'MARIO ALBERTO', 'GONZALES PAREDES', '78787878', 'RECHAZADO', NULL, '', 1, '2025-03-05', NULL, NULL, '2025-03-06', '2025-03-05 19:28:03', '2025-03-06 12:16:54'),
+(11, 'SOL.8', 8, 1, 1, 'MARIO ALBERTO', 'GONZALES PAREDES', '78787878', 'RECHAZADO', NULL, 'OBSERVACION RECHAZADO', 1, '2025-03-05', NULL, NULL, '2025-03-06', '2025-03-05 19:37:15', '2025-03-06 12:17:46'),
+(12, 'SOL.9', 9, 1, 1, 'MARIO ALBERTO', 'GONZALES PAREDES', '78787878', 'PENDIENTE', NULL, NULL, 1, '2025-03-06', NULL, NULL, NULL, '2025-03-06 12:11:56', '2025-03-06 12:11:56'),
+(13, 'SOL.10', 10, 2, 1, 'MARIO ALBERTO', 'GONZALES PAREDES', '78787878', 'APROBADO', 'ENTREGADO', '', 1, '2025-03-06', 4500.00, 300.00, '2025-03-06', '2025-03-06 12:12:57', '2025-03-06 13:30:25');
 
 -- --------------------------------------------------------
 
@@ -982,7 +996,7 @@ ALTER TABLE `detalle_ventas`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=116;
 
 --
 -- AUTO_INCREMENT de la tabla `migrations`
@@ -1000,7 +1014,7 @@ ALTER TABLE `modulos`
 -- AUTO_INCREMENT de la tabla `notificacions`
 --
 ALTER TABLE `notificacions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `orden_ventas`
@@ -1042,13 +1056,13 @@ ALTER TABLE `sedes`
 -- AUTO_INCREMENT de la tabla `solicitud_detalles`
 --
 ALTER TABLE `solicitud_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `solicitud_productos`
 --
 ALTER TABLE `solicitud_productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `users`

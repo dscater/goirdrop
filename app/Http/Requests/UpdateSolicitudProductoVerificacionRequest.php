@@ -24,8 +24,18 @@ class UpdateSolicitudProductoVerificacionRequest extends FormRequest
         return [
             "estado_solicitud" => "required|string|in:APROBADO,RECHAZADO,PENDIENTE",
             "observacion" => "nullable|min:2|string",
-            "precio_compra" => "required_if:estado_solicitud,APROBADO|numeric|min:0",
-            "margen_ganancia" => "required_if:estado_solicitud,APROBADO|numeric|min:0",
+            "precio_compra" => [
+                "required_if:estado_solicitud,APROBADO",
+                "nullable",
+                "numeric",
+                "min:0"
+            ],
+            "margen_ganancia" => [
+                "required_if:estado_solicitud,APROBADO",
+                "nullable",
+                "numeric",
+                "min:0"
+            ],
         ];
     }
 

@@ -153,6 +153,10 @@ const enviarFormulario = () => {
                     confirmButtonColor: "#3085d6",
                     confirmButtonText: `Aceptar`,
                 });
+                cargarListas();
+                setTimeout(() => {
+                    nroTab.value = 2;
+                }, 400);
             })
             .catch((error) => {
                 console.log("ERROR");
@@ -243,7 +247,7 @@ onMounted(async () => {
                                 <span>Mis solicitudes</span>
                             </div>
                         </div>
-                        <!-- COMPRAS -->
+                        <!-- SOLICITUD PRODUCTOS -->
                         <div class="contenedor-nav bg-white" v-if="nroTab == 1">
                             <div class="row">
                                 <div class="col-12 mt-2">

@@ -23,7 +23,7 @@ const { axiosGet, axiosDelete } = useAxios();
 const modalVerificacion = ref(false);
 const oOrdenVenta = ref(null);
 const paramsOrdenesVenta = ref({
-    perPage: 9,
+    perPage: 12,
     page: 1,
     search: props.codigo,
     estado_orden: "PENDIENTE",

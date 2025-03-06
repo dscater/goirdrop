@@ -130,7 +130,7 @@
         }
 
         .gray {
-            background: rgb(202, 202, 202);
+            background: rgb(236, 236, 236)
         }
 
         .bg-principal {
@@ -155,11 +155,11 @@
         }
 
         .text-md {
-            font-size: 1.2em;
+            font-size: 9pt;
         }
 
-        .bg-ganador {
-            background-color: #e7ffe7;
+        .derecha {
+            text-align: right;
         }
     </style>
 </head>
@@ -183,30 +183,89 @@
 
     <table border="1">
         <thead>
-            <tr>
+            <tr class="bg-principal">
                 <th width="8%">CÓDIGO</th>
                 <th>CLIENTE</th>
                 <th>CELULAR</th>
                 <th>CORREO</th>
                 <th>ESTADO DE ORDEN</th>
                 <th>COMPROBANTE</th>
+                <th width="10%">PRODUCTO</th>
+                <th width="10%">CANTIDAD</th>
+                <th width="10%">PRECIO COMPRA</th>
+                <th width="10%">SUBTOTAL</th>
                 <th>OBSERVACIÓN</th>
                 <th width="9%">FECHA DE ORDEN</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($orden_ventas as $orden_venta)
-                <tr>
-                    <td>{{ $orden_venta->codigo }}</td>
-                    <td>{{ $orden_venta->cliente->full_name }}</td>
-                    <td>{{ $orden_venta->cliente->cel }}</td>
-                    <td>{{ $orden_venta->cliente->correo }}</td>
-                    <td>{{ $orden_venta->estado_orden }}</td>
-                    <td>{{ $orden_venta->comprobante ? 'SI' : 'NO' }}</td>
-                    <td>{{ $orden_venta->observacion }}</td>
-                    <td>{{ $orden_venta->fecha_orden_t }}</td>
+            @php
+                $suma_total = 0;
+            @endphp
+            @foreach ($orden_ventas as $key => $orden_venta)
+                @php
+                    $class = '';
+                    if ($key % 2 != 0) {
+                        $class = 'gray';
+                    }
+                @endphp
+                <tr class="{{ $class }}">
+                    <td rowspan="{{ count($orden_venta->detalleVenta) }}">{{ $orden_venta->codigo }}</td>
+                    <td rowspan="{{ count($orden_venta->detalleVenta) }}">{{ $orden_venta->cliente->full_name }}
+                    </td>
+                    <td rowspan="{{ count($orden_venta->detalleVenta) }}">{{ $orden_venta->cliente->cel }}</td>
+                    <td rowspan="{{ count($orden_venta->detalleVenta) }}">{{ $orden_venta->cliente->correo }}</td>
+                    <td rowspan="{{ count($orden_venta->detalleVenta) }}">{{ $orden_venta->estado_orden }}</td>
+                    <td rowspan="{{ count($orden_venta->detalleVenta) }}">
+                        {{ $orden_venta->comprobante ? 'SI' : 'NO' }}</td>
+                    @php
+                        $primero = App\Models\DetalleVenta::where('orden_venta_id', $orden_venta->id)->get()->first();
+                        $sgtes = App\Models\DetalleVenta::where('orden_venta_id', $orden_venta->id)
+                            ->where('id', '!=', $primero->id)
+                            ->get();
+                    @endphp
+                    <td>
+                        {{ $primero->producto->nombre }}
+                    </td>
+                    <td>
+                        {{ $primero->cantidad }}
+                    </td>
+                    <td class="derecha">
+                        {{ number_format($primero->precio, 2, '.', ',') }}
+                    </td>
+                    <td class="derecha">
+                        {{ number_format($primero->subtotal, 2, '.', ',') }}
+                    </td>
+                    <td rowspan="{{ count($orden_venta->detalleVenta) }}">{{ $orden_venta->observacion }}</td>
+                    <td rowspan="{{ count($orden_venta->detalleVenta) }}">{{ $orden_venta->fecha_orden_t }}</td>
                 </tr>
+                @foreach ($sgtes as $det)
+                    <tr class="{{ $class }}">
+                        <td>
+                            {{ $det->producto->nombre }}
+                        </td>
+                        <td>
+                            {{ $det->cantidad }}
+                        </td>
+                        <td class="derecha">
+                            {{ number_format($det->precio, 2, '.', ',') }}
+                        </td>
+                        <td class="derecha">
+                            {{ number_format($det->subtotal, 2, '.', ',') }}
+                        </td>
+                    </tr>
+                @endforeach
+                @php
+                    $suma_total += (float) $orden_venta->total;
+                @endphp
             @endforeach
+            <tr class="bg-principal">
+                <td colspan="9" class="text-md bold derecha">
+                    TOTAL
+                </td>
+                <td class="text-md bold derecha">{{ number_format($suma_total, 2, '.', ',') }}</td>
+                <td colspan="2"></td>
+            </tr>
         </tbody>
     </table>
 </body>
